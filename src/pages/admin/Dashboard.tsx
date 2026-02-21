@@ -54,6 +54,15 @@ const AdminDashboard = () => {
     const normalizeName = (name: string) =>
         name.replace(/^\[COMPLEMENTO REF [\w_]+\]\s*/i, '').trim().toLowerCase();
 
+    const getOrderRef = (order: any) => {
+        if (!order || !order.created_at) return 'N/A';
+        const d = new Date(order.created_at);
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const seq = String(order.seq_number || 0).padStart(4, '0');
+        return `${dd}${mm}_${seq}`;
+    };
+
     const isPending = (s: string) => s === 'new' || s === 'pending';
 
     // When a modal opens, fetch best prices from last 15 days (only for pending orders)
@@ -182,16 +191,6 @@ const AdminDashboard = () => {
         if (!error) { fetchDashboardData(); setViewingOrder(null); }
         else alert('Erro ao excluir pedido: ' + error.message);
     };
-
-    const getOrderRef = (order: any) => {
-        if (!order || !order.created_at) return 'N/A';
-        const d = new Date(order.created_at);
-        const dd = String(d.getDate()).padStart(2, '0');
-        const mm = String(d.getMonth() + 1).padStart(2, '0');
-        const seq = String(order.seq_number || 0).padStart(4, '0');
-        return `${dd}${mm}_${seq}`;
-    };
-
     const exportPDF = () => {
         const doc = new jsPDF() as any;
         doc.setFont("helvetica", "bold");
