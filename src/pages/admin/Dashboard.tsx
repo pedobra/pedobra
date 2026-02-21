@@ -14,7 +14,11 @@ import {
     PackageCheck,
     AlertTriangle,
     Building2,
-    Sparkles
+    Sparkles,
+    MapPin,
+    Save,
+    User,
+    Check
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -40,6 +44,7 @@ const AdminDashboard = () => {
     const [dateFrom, setDateFrom] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [viewingOrder, setViewingOrder] = useState<any>(null);
+    const [historyOrder, setHistoryOrder] = useState<any>(null);
     const [priceSuggestions, setPriceSuggestions] = useState<Record<string, { supplierName: string; unitValue: number }>>({});
     const [loadingPrices, setLoadingPrices] = useState(false);
     const navigate = useNavigate();
@@ -120,17 +125,22 @@ const AdminDashboard = () => {
         fetchPrices();
     }, [viewingOrder]);
 
-    // Stats calculados dinamicamente conforme a obra selecionada
+    // Stats com isRealCompleted — partial+filho_completed conta como concluded
     const stats = useMemo(() => {
         const base = siteFilter ? orders.filter(o => o.site_id === siteFilter) : orders;
         return base.reduce((acc, curr: any) => {
+            const childOrder = curr.status === 'partial'
+                ? orders.find(o => o.items?.some((i: any) => i.name?.includes(`[COMPLEMENTO REF ${getOrderRef(curr)}]`)))
+                : null;
+            const isRealCompleted = curr.status === 'completed' || (curr.status === 'partial' && childOrder?.status === 'completed');
+            const effectiveStatus = isRealCompleted ? 'completed' : curr.status;
+
             acc.total++;
-            const st = curr.status as string;
-            if (st === 'new' || st === 'pending') acc.new++;
-            else if (st === 'approved') acc.approved++;
-            else if (st === 'denied') acc.denied++;
-            else if (st === 'partial') acc.partial++;
-            else if (st === 'completed') acc.completed++;
+            if (effectiveStatus === 'new' || effectiveStatus === 'pending') acc.new++;
+            else if (effectiveStatus === 'approved') acc.approved++;
+            else if (effectiveStatus === 'denied') acc.denied++;
+            else if (effectiveStatus === 'partial') acc.partial++;
+            else if (effectiveStatus === 'completed') acc.completed++;
             return acc;
         }, { total: 0, new: 0, approved: 0, denied: 0, partial: 0, completed: 0 });
     }, [orders, siteFilter]);
@@ -197,7 +207,11 @@ const AdminDashboard = () => {
     };
 
     const filteredOrders = orders.filter(order => {
-        if (statusFilter && order.status !== statusFilter) return false;
+        const childOrder = order.status === 'partial' ? orders.find(o => o.items?.some((i: any) => i.name?.includes(`[COMPLEMENTO REF ${getOrderRef(order)}]`))) : null;
+        const isRealCompleted = order.status === 'completed' || (order.status === 'partial' && childOrder?.status === 'completed');
+        const effectiveStatus = isRealCompleted ? 'completed' : order.status;
+
+        if (statusFilter && effectiveStatus !== statusFilter) return false;
         if (siteFilter && order.site_id !== siteFilter) return false;
         if (dateFrom) {
             const orderDate = new Date(order.created_at);
@@ -337,7 +351,15 @@ const AdminDashboard = () => {
                                 const finalUiStatus = isRealCompleted ? 'completed' : order.status;
 
                                 return (
-                                    <tr key={order.id} className="clickable-row" onClick={() => setViewingOrder(order)}>
+                                    <tr
+                                        key={order.id}
+                                        className="clickable-row"
+                                        onClick={() => {
+                                            // Parcial: abre histórico com pedido filho
+                                            if (order.status === 'partial') setHistoryOrder(order);
+                                            else setViewingOrder(order);
+                                        }}
+                                    >
                                         <td><span className="id-tag">#{getOrderRef(order)}</span></td>
                                         <td><strong>{order.sites?.name}</strong></td>
                                         <td>{order.profiles?.name}</td>
@@ -367,6 +389,108 @@ const AdminDashboard = () => {
                     </table>
                 </div>
             </section>
+
+            {/* ── Modal de Histórico (Rec. Parcial) ── */}
+            {historyOrder && (() => {
+                const childOrder = orders.find(o => o.items?.some((i: any) => i.name?.includes(`[COMPLEMENTO REF ${getOrderRef(historyOrder)}]`)));
+                return (
+                    <div className="modal-overlay glass" onClick={() => setHistoryOrder(null)}>
+                        <div className="modal-card animate-fade" onClick={e => e.stopPropagation()} style={{ width: '640px', padding: '40px', background: '#fff', color: '#111', borderRadius: '24px', boxShadow: '0 24px 48px rgba(0,0,0,0.1)', maxHeight: '90vh', overflowY: 'auto' }}>
+                            <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(243,156,18,0.1)', color: '#f39c12', marginBottom: '16px' }}>
+                                    <History size={28} />
+                                </div>
+                                <h2 style={{ fontSize: '24px', fontWeight: 900, letterSpacing: '-0.5px', marginBottom: '8px' }}>Histórico do Pedido</h2>
+                                <p style={{ color: '#666' }}>Acompanhamento detallhado da solicitação <strong>#{getOrderRef(historyOrder)}</strong></p>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', background: '#f8f9fa', padding: '24px', borderRadius: '16px', marginBottom: '32px' }}>
+                                <div>
+                                    <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Construction size={12} style={{ display: 'inline', marginRight: '4px' }} /> OBRA DESTINO</span>
+                                    <strong style={{ fontSize: '14px' }}>{historyOrder.sites?.name || 'Desconhecida'}</strong>
+                                </div>
+                                <div>
+                                    <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Check size={12} style={{ display: 'inline', marginRight: '4px' }} /> STATUS ATUAL</span>
+                                    <strong style={{ fontSize: '14px', color: (historyOrder.status === 'completed' || childOrder?.status === 'completed') ? '#27ae60' : '#f39c12' }}>
+                                        {(historyOrder.status === 'completed' || childOrder?.status === 'completed') ? 'RECEBIMENTO CONCLUÍDO' : 'RECEBIMENTO PARCIAL'}
+                                    </strong>
+                                </div>
+                                {historyOrder.approved_at && (
+                                    <div>
+                                        <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><User size={12} style={{ display: 'inline', marginRight: '4px' }} /> APROVADO POR</span>
+                                        <strong style={{ fontSize: '14px' }}>{historyOrder.approved_by_name || 'Admin'} <br /> <span style={{ fontSize: '11px', color: '#888', fontWeight: 'normal' }}>{new Date(historyOrder.approved_at).toLocaleString('pt-BR')}</span></strong>
+                                    </div>
+                                )}
+                                {historyOrder.received_at && (
+                                    <div>
+                                        <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><CheckCircle size={12} style={{ display: 'inline', marginRight: '4px' }} /> RECEBIDO POR</span>
+                                        <strong style={{ fontSize: '14px' }}>{historyOrder.received_by_name} <br /> <span style={{ fontSize: '11px', color: '#888', fontWeight: 'normal' }}>{new Date(historyOrder.received_at).toLocaleString('pt-BR')}</span></strong>
+                                    </div>
+                                )}
+                            </div>
+
+                            <h3 style={{ fontSize: '14px', letterSpacing: '1px', color: '#888', textTransform: 'uppercase', marginBottom: '16px', fontWeight: 700 }}>Resumo de Itens Originais x Recebidos</h3>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', marginBottom: '40px' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '2px solid #eee' }}>
+                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: '#888' }}>MATERIAL</th>
+                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: '#888', width: '100px', textAlign: 'center' }}>SOLICITADOS</th>
+                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: '#888', width: '100px', textAlign: 'center' }}>RECEBIDOS</th>
+                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: '#888', width: '100px', textAlign: 'center' }}>FALTANTES</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {historyOrder.items?.map((it: any, i: number) => {
+                                        const qty = parseFloat(it.quantity) || 0;
+                                        const rec = parseFloat(it.received_quantity) || 0;
+                                        const missing = qty - rec;
+                                        return (
+                                            <tr key={i} style={{ borderBottom: '1px solid #f5f5f5' }}>
+                                                <td style={{ padding: '16px', fontWeight: 600 }}>{it.name} <span style={{ fontSize: '11px', color: '#999', marginLeft: '8px' }}>{it.unit}</span></td>
+                                                <td style={{ padding: '16px', textAlign: 'center' }}>{qty}</td>
+                                                <td style={{ padding: '16px', textAlign: 'center', color: '#27ae60', fontWeight: 'bold' }}>{rec}</td>
+                                                <td style={{ padding: '16px', textAlign: 'center', color: missing > 0 ? '#e74c3c' : '#ccc', fontWeight: missing > 0 ? 'bold' : 'normal' }}>{missing > 0 ? missing : '-'}</td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+
+                            {childOrder && (
+                                <div style={{ background: '#fafafa', padding: '24px', borderRadius: '12px', border: '1px solid #eee' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                                        <h3 style={{ fontSize: '14px', letterSpacing: '1px', color: '#555', textTransform: 'uppercase', fontWeight: 700, margin: 0 }}><FileText size={16} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '6px' }} /> Pedido Complementar Gerado Automático</h3>
+                                        <span className={`status-pill ${childOrder.status}`} style={{ fontWeight: 800 }}>
+                                            {childOrder.status === 'new' && 'Pendente'}
+                                            {childOrder.status === 'approved' && 'Aprovado'}
+                                            {childOrder.status === 'denied' && 'Negado'}
+                                            {childOrder.status === 'partial' && 'Rec. Parcial'}
+                                            {childOrder.status === 'completed' && 'Concluído'}
+                                        </span>
+                                    </div>
+                                    <p style={{ fontSize: '13px', color: '#666', marginBottom: '16px' }}>Identificador do novo pedido (contém sobras pendentes): <strong>#{getOrderRef(childOrder)}</strong> </p>
+
+                                    <ul style={{ margin: 0, paddingLeft: '20px', color: '#333' }}>
+                                        {childOrder.items?.map((it: any, idx: number) => (
+                                            <li key={idx} style={{ marginBottom: '8px', fontSize: '14px' }}><strong>{it.quantity} {it.unit}</strong> - {it.name.replace(`[COMPLEMENTO REF ${getOrderRef(historyOrder)}]`, '')}</li>
+                                        ))}
+                                    </ul>
+                                    {childOrder.status === 'completed' && childOrder.received_at && (
+                                        <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px dashed #ccc', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                            <span style={{ fontSize: '13px', color: '#555' }}><strong>Recebido por:</strong> {childOrder.received_by_name}</span>
+                                            <span style={{ fontSize: '13px', color: '#555' }}><strong>Data da conclusão:</strong> {new Date(childOrder.received_at).toLocaleString('pt-BR')}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            <div style={{ textAlign: 'center', marginTop: '30px' }}>
+                                <button onClick={() => setHistoryOrder(null)} style={{ border: '1px solid #ccc', background: 'transparent', color: '#555', cursor: 'pointer', fontWeight: 600, transition: '0.3s', width: '100%', padding: '14px', borderRadius: '12px' }}>Fechar Histórico</button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            })()}
 
             {/* ── Modal de Detalhes ── */}
             {viewingOrder && (
