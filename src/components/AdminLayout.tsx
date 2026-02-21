@@ -21,12 +21,19 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const location = useLocation();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userName, setUserName] = useState('Admin Master');
-    const [hasNotification, setHasNotification] = useState(false);
+    // Inicializa do localStorage para sobreviver ao refresh
+    const [hasNotification, setHasNotification] = useState(
+        () => localStorage.getItem('pedobra_notif') === 'true'
+    );
 
-    const lastCheckRef = useRef<string>(new Date().toISOString());
+    // lastCheckRef também persistido — evita re-detectar pedidos antigos após refresh
+    const lastCheckRef = useRef<string>(
+        localStorage.getItem('pedobra_last_check') || new Date().toISOString()
+    );
 
     const triggerNotification = () => {
         setHasNotification(true);
+        localStorage.setItem('pedobra_notif', 'true'); // persiste o badge
         if (navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 500]);
         if ('Notification' in window && Notification.permission === 'granted') {
             new Notification('📦 Novo Pedido — PedObra', {
@@ -54,6 +61,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 .gt('created_at', since);
 
             if (!error) {
+                // persiste o timestamp para sobreviver ao refresh
+                localStorage.setItem('pedobra_last_check', nextSince);
                 lastCheckRef.current = nextSince;
                 const newCount = data?.length ?? 0;
                 if (newCount > 0) {
@@ -120,7 +129,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                     {hasNotification && (
                         <button
                             className="notif-badge-mobile"
-                            onClick={() => setHasNotification(false)}
+                            onClick={() => { setHasNotification(false); localStorage.removeItem('pedobra_notif'); }}
                             title="Novo pedido — toque para dispensar"
                         >
                             <span className="notif-dot" />
@@ -203,7 +212,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         {hasNotification && (
                             <button
                                 className="notif-badge"
-                                onClick={() => setHasNotification(false)}
+                                onClick={() => { setHasNotification(false); localStorage.removeItem('pedobra_notif'); }}
                                 title="Novo pedido — clique para dispensar"
                             >
                                 <span className="notif-dot" />
