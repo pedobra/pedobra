@@ -7,15 +7,11 @@ import {
     LogOut,
     Construction,
     ChevronRight,
-    Clock,
-    CheckCircle,
-    XCircle,
     FileText,
     Send,
     Trash2,
     MapPin,
-    Archive,
-    PackageCheck
+    Archive
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { generateOrderPDF } from '../../lib/generateOrderPDF';
@@ -214,13 +210,13 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                             <span>{order.items.length} itens solicitados</span>
                                         </div>
                                     </div>
-                                    <div className={`status-icon-box ${order.status}`}>
-                                        {order.status === 'new' && <Clock size={20} />}
-                                        {order.status === 'approved' && <CheckCircle size={20} />}
-                                        {order.status === 'denied' && <XCircle size={20} />}
-                                        {order.status === 'partial' && <PackageCheck size={20} />}
-                                        {order.status === 'completed' && <PackageCheck size={20} />}
-                                    </div>
+                                    <span className={`status-pill ${order.status}`}>
+                                        {order.status === 'new' && 'Pendente'}
+                                        {order.status === 'approved' && 'Aprovado'}
+                                        {order.status === 'denied' && 'Negado'}
+                                        {order.status === 'partial' && 'Rec. Parcial'}
+                                        {order.status === 'completed' && 'Concluído'}
+                                    </span>
                                 </div>
                                 <div className="order-footer">
                                     <span className="order-date">{new Date(order.created_at).toLocaleDateString()}</span>
@@ -318,15 +314,8 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                         <div className="sheet-handle"></div>
                         <div className="sheet-header" style={{ marginBottom: '16px' }}>
                             <h2 style={{ fontSize: '20px', fontWeight: 'bold' }}>Pedido #{getOrderRef(viewingOrder)}</h2>
-                            <p style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                                <span className={`status-icon-box ${viewingOrder.status}`} style={{ width: '24px', height: '24px', padding: '4px', display: 'inline-flex' }}>
-                                    {viewingOrder.status === 'new' && <Clock size={14} />}
-                                    {viewingOrder.status === 'approved' && <CheckCircle size={14} />}
-                                    {viewingOrder.status === 'denied' && <XCircle size={14} />}
-                                    {viewingOrder.status === 'partial' && <PackageCheck size={14} />}
-                                    {viewingOrder.status === 'completed' && <PackageCheck size={14} />}
-                                </span>
-                                <span style={{ textTransform: 'uppercase', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px', color: 'var(--text-muted)' }}>
+                            <p style={{ marginTop: '8px' }}>
+                                <span className={`status-pill ${viewingOrder.status}`}>
                                     {viewingOrder.status === 'new' ? 'Pendente' : viewingOrder.status === 'approved' ? 'Aprovado' : viewingOrder.status === 'partial' ? 'Rec. Parcial' : viewingOrder.status === 'completed' ? 'Concluído' : 'Negado'}
                                 </span>
                             </p>
@@ -395,12 +384,12 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
         .order-id { font-family: monospace; font-size: 13px; color: var(--primary); }
         .item-count { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 13px; }
         
-        .status-icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .status-icon-box.new { color: var(--primary); background: rgba(255, 215, 0, 0.05); }
-        .status-icon-box.approved { color: var(--status-approved); background: rgba(52, 199, 89, 0.05); }
-        .status-icon-box.denied { color: var(--status-denied); background: rgba(255, 59, 48, 0.05); }
-        .status-icon-box.partial { color: #f39c12; background: rgba(243, 156, 18, 0.05); }
-        .status-icon-box.completed { color: #27ae60; background: rgba(39, 174, 96, 0.05); }
+        .status-pill { display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+        .status-pill.new      { background: rgba(255,215,0,0.1);   color: var(--primary);          border: 1px solid rgba(255,215,0,0.2); }
+        .status-pill.approved { background: rgba(52,199,89,0.1);   color: #34C759;                 border: 1px solid rgba(52,199,89,0.2); }
+        .status-pill.denied   { background: rgba(255,59,48,0.1);   color: #FF3B30;                 border: 1px solid rgba(255,59,48,0.2); }
+        .status-pill.partial  { background: rgba(243,156,18,0.1);  color: #f39c12;                 border: 1px solid rgba(243,156,18,0.2); }
+        .status-pill.completed{ background: rgba(39,174,96,0.1);   color: #27ae60;                 border: 1px solid rgba(39,174,96,0.2); }
 
         .order-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); margin-top: 4px; padding-top: 12px;}
         .order-date { font-size: 12px; color: var(--text-muted); }
