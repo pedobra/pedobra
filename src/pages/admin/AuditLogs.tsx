@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Activity, Filter, Calendar, User, Database, ArrowRight } from 'lucide-react';
+import { Activity, Calendar, User, Database } from 'lucide-react';
 
 const AdminAuditLogs = () => {
     const [logs, setLogs] = useState<any[]>([]);

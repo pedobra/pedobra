@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Package, History, Construction, ChevronLeft, CheckCircle, PackageCheck, Send, Archive } from 'lucide-react';
+import { Package, ChevronLeft, CheckCircle, PackageCheck, Send, Archive } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const WorkerReceiving = ({ profile }: { profile: any }) => {
