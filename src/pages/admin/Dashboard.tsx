@@ -15,10 +15,11 @@ import {
     AlertTriangle,
     Building2,
     Sparkles,
-    MapPin,
-    Save,
     User,
-    Check
+    Check,
+    History,
+    Construction,
+    FileText
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
