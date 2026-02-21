@@ -390,6 +390,17 @@ const AdminObras = () => {
         .input-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
         .input-field input { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; }
         .form-row-dual { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        @media (max-width: 768px) {
+          .view-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+          .header-actions { flex-wrap: wrap; gap: 8px; }
+          .page-title { font-size: 22px; }
+          .premium-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
+          .modern-table { min-width: 600px; }
+          .obras-grid-reduced { grid-template-columns: repeat(2, 1fr); }
+          .modal-card { width: 92vw; padding: 24px; }
+          .form-row-dual { grid-template-columns: 1fr; }
+        }
       `}</style>
         </div>
     );

@@ -579,6 +579,8 @@ const AdminDashboard = () => {
             .date-pill { flex: 1; }
             .search-bar-glass { width: 100% !important; }
             .site-filter-wrap { flex: 1 !important; }
+            .premium-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
+            .modern-table { min-width: 560px; }
         }
       `}</style>
         </div>

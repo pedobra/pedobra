@@ -296,6 +296,15 @@ const AdminSettings = () => {
         .toggle-btn { flex-shrink: 0; transition: 0.2s; }
         .toggle-btn.on { color: var(--primary); }
         .toggle-btn.off { color: var(--text-muted); }
+
+        @media (max-width: 768px) {
+          .settings-grid { grid-template-columns: 1fr; }
+          .view-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+          .input-group { flex-direction: column; gap: 0; }
+          .page-title { font-size: 22px; }
+          .settings-sidebar { order: -1; }
+          .logo-preview-box { height: 120px; }
+        }
       `}</style>
         </div>
     );

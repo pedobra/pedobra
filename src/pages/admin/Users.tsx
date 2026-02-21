@@ -263,6 +263,16 @@ const AdminUsers = () => {
         
         .modal-footer-info { display: flex; align-items: center; gap: 10px; background: rgba(255, 215, 0, 0.05); padding: 12px 16px; border-radius: 12px; font-size: 12px; color: var(--primary); margin-bottom: 32px; }
         .modal-actions-btns { display: flex; justify-content: flex-end; gap: 16px; }
+
+        @media (max-width: 768px) {
+          .view-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+          .header-actions { flex-wrap: wrap; }
+          .page-title { font-size: 22px; }
+          .premium-table-card { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
+          .modern-table { min-width: 540px; }
+          .modal-card { width: 92vw; padding: 24px; }
+          .input-group { grid-template-columns: 1fr; }
+        }
       `}</style>
         </div>
     );

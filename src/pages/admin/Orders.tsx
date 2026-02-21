@@ -713,6 +713,17 @@ const AdminOrders = () => {
 
         .empty-preview { padding: 32px; display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--text-muted); font-size: 13px; }
         .modal-actions-btns { display: flex; justify-content: flex-end; gap: 16px; margin-top: 16px; }
+
+        @media (max-width: 768px) {
+          .view-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+          .header-actions { flex-wrap: wrap; gap: 8px; }
+          .page-title { font-size: 22px; }
+          .premium-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; }
+          .modern-table { min-width: 580px; }
+          .modal-card { width: 92vw; padding: 20px; border-radius: 20px; max-height: 90vh; overflow-y: auto; }
+          .builder-fields { flex-wrap: wrap; }
+          .qty-input { width: 100%; }
+        }
       `}</style>
         </div>
     );
