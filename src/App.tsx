@@ -12,6 +12,7 @@ import AdminSettings from './pages/admin/Settings';
 import AdminAuditLogs from './pages/admin/AuditLogs';
 import WorkerDashboard from './pages/worker/Dashboard';
 import WorkerReceiving from './pages/worker/Receiving';
+import ThemeToggle from './components/ThemeToggle';
 
 function App() {
   const [session, setSession] = useState<any>(null);
@@ -57,9 +58,9 @@ function App() {
   };
 
   if (loading) return (
-    <div style={{ background: '#121212', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f4c325', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ background: 'var(--bg-dark)', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexDirection: 'column', gap: '20px' }}>
       <div className="loader"></div>
-      <div style={{ fontSize: '18px', letterSpacing: '2px', fontWeight: 300 }}>PEDOBRA</div>
+      <div style={{ fontSize: '18px', letterSpacing: '2px', fontWeight: 300, color: 'var(--text-primary)' }}>PEDOBRA</div>
       <style>{`
         .loader {
           width: 40px;
@@ -80,7 +81,7 @@ function App() {
         <Route path="/" element={
           !session ? <LandingPage /> :
             !profile ? (
-              <div style={{ background: '#121212', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', flexDirection: 'column', gap: '20px' }}>
+              <div style={{ background: 'var(--bg-dark)', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)', flexDirection: 'column', gap: '20px' }}>
                 <p>Perfil não encontrado no sistema.</p>
                 <button className="btn-primary" onClick={() => supabase.auth.signOut()}>Sair e Tentar Novamente</button>
               </div>
@@ -123,6 +124,7 @@ function App() {
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
+      <ThemeToggle />
     </Router>
   );
 }

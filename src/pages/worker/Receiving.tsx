@@ -268,7 +268,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
 
             <style>{`
         .worker-app {
-          min-height: 100vh; background: #000; color: white;
+          min-height: 100vh; background: var(--bg-dark); color: var(--text-primary);
           padding-top: 80px; padding-bottom: 40px;
         }
         .app-header {

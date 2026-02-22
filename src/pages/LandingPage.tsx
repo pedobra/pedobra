@@ -137,7 +137,7 @@ const LandingPage = () => {
 
             <style>{`
         .landing-page {
-          background: #000;
+          background: var(--bg-dark);
           min-height: 100vh;
           position: relative;
           overflow: hidden;

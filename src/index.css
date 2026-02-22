@@ -1,11 +1,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 :root {
+  --primary: #FFCC00;
+  --primary-glow: rgba(255, 204, 0, 0.2);
+  --bg-dark: #F5F5F7;
+  --bg-card: #FFFFFF;
+  --bg-sidebar: #FFFFFF;
+  --bg-input: #F0F0F0;
+
+  --text-primary: #1D1D1F;
+  --text-secondary: #515154;
+  --text-muted: #86868B;
+
+  --border: rgba(0, 0, 0, 0.08);
+  --border-bright: rgba(0, 0, 0, 0.15);
+  --bg-glass: rgba(255, 255, 255, 0.7);
+
+  --status-approved: #28a745;
+  --status-pending: #ffc107;
+  --status-denied: #dc3545;
+
+  --font-main: 'Plus Jakarta Sans', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+
+  --shadow-premium: 0 4px 20px -5px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="dark"] {
   --primary: #FFD700;
-  /* Richer Gold */
   --primary-glow: rgba(255, 215, 0, 0.15);
   --bg-dark: #0A0A0B;
-  /* Deeper Black/Navy */
   --bg-card: #141417;
   --bg-sidebar: #0f0f12;
   --bg-input: #1b1b1f;
@@ -21,9 +45,6 @@
   --status-approved: #34C759;
   --status-pending: #FFD700;
   --status-denied: #FF3B30;
-
-  --font-main: 'Plus Jakarta Sans', sans-serif;
-  --font-display: 'Outfit', sans-serif;
 
   --shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
 }
