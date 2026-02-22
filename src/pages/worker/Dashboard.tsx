@@ -87,8 +87,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
             const { data: newMat, error } = await supabase.from('materials').insert({
                 name: currentItem.customName,
                 unit: 'un',
-                category: 'Geral',
-                min_stock: 0
+                category: 'Geral'
             }).select().single();
             setLoading(false);
 
