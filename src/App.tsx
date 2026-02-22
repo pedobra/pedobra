@@ -12,7 +12,6 @@ import AdminSettings from './pages/admin/Settings';
 import AdminAuditLogs from './pages/admin/AuditLogs';
 import WorkerDashboard from './pages/worker/Dashboard';
 import WorkerReceiving from './pages/worker/Receiving';
-import ThemeToggle from './components/ThemeToggle';
 
 function App() {
   const [session, setSession] = useState<any>(null);
@@ -124,7 +123,6 @@ function App() {
 
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-      <ThemeToggle />
     </Router>
   );
 }

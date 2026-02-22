@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Menu, X } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();
@@ -126,6 +127,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                     <strong>PedObra</strong>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <ThemeToggle />
                     {hasNotification && (
                         <button
                             className="notif-badge-mobile"
@@ -208,7 +210,8 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             <main className="admin-main-stage">
                 <header className="stage-header">
                     {/* Badge de novo pedido — lado esquerdo */}
-                    <div className="stage-header-left">
+                    <div className="stage-header-left" style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                        <ThemeToggle />
                         {hasNotification && (
                             <button
                                 className="notif-badge"

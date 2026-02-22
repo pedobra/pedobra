@@ -18,26 +18,20 @@ export default function ThemeToggle() {
         <button
             onClick={toggleTheme}
             style={{
-                position: 'fixed',
-                bottom: '24px',
-                right: '24px',
-                width: '56px',
-                height: '56px',
-                borderRadius: '50%',
-                background: theme === 'light' ? '#1D1D1F' : '#F5F5F7',
-                color: theme === 'light' ? '#FFFFFF' : '#1D1D1F',
+                background: 'transparent',
+                border: 'none',
+                color: 'inherit',
+                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 14px rgba(0,0,0,0.25)',
-                border: 'none',
-                cursor: 'pointer',
-                zIndex: 9999,
-                transition: 'all 0.3s ease'
+                padding: '8px',
+                borderRadius: '8px',
+                transition: '0.3s'
             }}
             title={theme === 'light' ? 'Ativar Modo Escuro' : 'Ativar Modo Claro'}
         >
-            {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
+            {theme === 'light' ? <Moon size={20} color="var(--text-primary)" /> : <Sun size={20} color="var(--text-primary)" />}
         </button>
     );
 }

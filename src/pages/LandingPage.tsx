@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Construction, ArrowRight } from 'lucide-react';
+import ThemeToggle from '../components/ThemeToggle';
 
 const LandingPage = () => {
     const [logoClicks, setLogoClicks] = useState(0);
@@ -67,6 +68,7 @@ const LandingPage = () => {
                     <span className="logo-text">PedObra</span>
                 </div>
                 <div className="nav-links">
+                    <ThemeToggle />
                     <button className="login-trigger" onClick={() => setIsLogin(true)}>Entrar</button>
                 </div>
             </nav>

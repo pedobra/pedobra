@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { generateOrderPDF } from '../../lib/generateOrderPDF';
+import ThemeToggle from '../../components/ThemeToggle';
 
 const WorkerDashboard = ({ profile }: { profile: any }) => {
     const navigate = useNavigate();
@@ -171,16 +172,19 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
             <header className="app-header glass">
                 <div className="worker-meta">
                     <div className="app-logo">
-                        <Construction size={22} color="black" />
+                        <Construction size={22} color="var(--bg-dark)" />
                     </div>
                     <div className="worker-text">
                         <strong>{profile.name}</strong>
                         <span>{profile.sites?.name || 'Administração'}</span>
                     </div>
                 </div>
-                <button className="logout-btn" onClick={handleLogout}>
-                    <LogOut size={20} />
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <ThemeToggle />
+                    <button className="logout-btn" onClick={handleLogout}>
+                        <LogOut size={20} />
+                    </button>
+                </div>
             </header>
 
             <main className="app-content animate-fade">
