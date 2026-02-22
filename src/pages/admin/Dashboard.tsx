@@ -395,16 +395,16 @@ const AdminDashboard = () => {
                 const childOrder = orders.find(o => o.items?.some((i: any) => i.name?.includes(`[COMPLEMENTO REF ${getOrderRef(historyOrder)}]`)));
                 return (
                     <div className="modal-overlay glass" onClick={() => setHistoryOrder(null)}>
-                        <div className="modal-card animate-fade" onClick={e => e.stopPropagation()} style={{ width: '640px', padding: '40px', background: '#fff', color: '#111', borderRadius: '24px', boxShadow: '0 24px 48px rgba(0,0,0,0.1)', maxHeight: '90vh', overflowY: 'auto' }}>
+                        <div className="modal-card animate-fade" onClick={e => e.stopPropagation()} style={{ width: '640px', padding: '40px', background: 'var(--bg-card)', color: 'var(--text-primary)', borderRadius: '24px', boxShadow: '0 24px 48px rgba(0,0,0,0.1)', maxHeight: '90vh', overflowY: 'auto' }}>
                             <div style={{ textAlign: 'center', marginBottom: '32px' }}>
                                 <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(243,156,18,0.1)', color: '#f39c12', marginBottom: '16px' }}>
                                     <History size={28} />
                                 </div>
                                 <h2 style={{ fontSize: '24px', fontWeight: 900, letterSpacing: '-0.5px', marginBottom: '8px' }}>Histórico do Pedido</h2>
-                                <p style={{ color: '#666' }}>Acompanhamento detallhado da solicitação <strong>#{getOrderRef(historyOrder)}</strong></p>
+                                <p style={{ color: 'var(--text-secondary)' }}>Acompanhamento detallhado da solicitação <strong>#{getOrderRef(historyOrder)}</strong></p>
                             </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', background: '#f8f9fa', padding: '24px', borderRadius: '16px', marginBottom: '32px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', background: 'var(--bg-input)', padding: '24px', borderRadius: '16px', marginBottom: '32px' }}>
                                 <div>
                                     <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Construction size={12} style={{ display: 'inline', marginRight: '4px' }} /> OBRA DESTINO</span>
                                     <strong style={{ fontSize: '14px' }}>{historyOrder.sites?.name || 'Desconhecida'}</strong>
@@ -457,7 +457,7 @@ const AdminDashboard = () => {
                             </table>
 
                             {childOrder && (
-                                <div style={{ background: '#fafafa', padding: '24px', borderRadius: '12px', border: '1px solid #eee' }}>
+                                <div style={{ background: 'var(--bg-sidebar)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                                         <h3 style={{ fontSize: '14px', letterSpacing: '1px', color: '#555', textTransform: 'uppercase', fontWeight: 700, margin: 0 }}><FileText size={16} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '6px' }} /> Pedido Complementar Gerado Automático</h3>
                                         <span className={`status-pill ${childOrder.status}`} style={{ fontWeight: 800 }}>
@@ -485,7 +485,7 @@ const AdminDashboard = () => {
                             )}
 
                             <div style={{ textAlign: 'center', marginTop: '30px' }}>
-                                <button onClick={() => setHistoryOrder(null)} style={{ border: '1px solid #ccc', background: 'transparent', color: '#555', cursor: 'pointer', fontWeight: 600, transition: '0.3s', width: '100%', padding: '14px', borderRadius: '12px' }}>Fechar Histórico</button>
+                                <button onClick={() => setHistoryOrder(null)} style={{ border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-primary)', cursor: 'pointer', fontWeight: 600, transition: '0.3s', width: '100%', padding: '14px', borderRadius: '12px' }}>Fechar Histórico</button>
                             </div>
                         </div>
                     </div>
@@ -495,14 +495,14 @@ const AdminDashboard = () => {
             {/* ── Modal de Detalhes ── */}
             {viewingOrder && (
                 <div className="modal-overlay glass" onClick={() => setViewingOrder(null)}>
-                    <div className="modal-card animate-fade" onClick={e => e.stopPropagation()} style={{ width: '600px', padding: '40px', background: '#f8f9fa', color: '#111', borderRadius: '24px', boxShadow: '0 24px 48px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
+                    <div className="modal-card animate-fade" onClick={e => e.stopPropagation()} style={{ width: '600px', padding: '40px', background: 'var(--bg-card)', color: 'var(--text-primary)', borderRadius: '24px', boxShadow: '0 24px 48px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
                         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                            <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#111' }}>PEDIDO Nº {getOrderRef(viewingOrder)}</h2>
-                            <p style={{ color: '#666', marginTop: '8px' }}>Obra: <strong style={{ color: '#111' }}>{viewingOrder.sites?.name || 'Desconhecida'}</strong> | Por: <strong style={{ color: '#111' }}>{viewingOrder.profiles?.name || 'Admin'}</strong></p>
-                            <p style={{ color: '#888', marginTop: '4px', fontSize: '13px' }}>Data: {new Date(viewingOrder.created_at).toLocaleString('pt-BR')}</p>
+                            <h2 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--text-primary)' }}>PEDIDO Nº {getOrderRef(viewingOrder)}</h2>
+                            <p style={{ color: 'var(--text-secondary)', marginTop: '8px' }}>Obra: <strong style={{ color: 'var(--text-primary)' }}>{viewingOrder.sites?.name || 'Desconhecida'}</strong> | Por: <strong style={{ color: 'var(--text-primary)' }}>{viewingOrder.profiles?.name || 'Admin'}</strong></p>
+                            <p style={{ color: 'var(--text-muted)', marginTop: '4px', fontSize: '13px' }}>Data: {new Date(viewingOrder.created_at).toLocaleString('pt-BR')}</p>
                         </div>
 
-                        <div style={{ background: '#fff', borderRadius: '16px', padding: '24px', marginBottom: '24px', border: '1px solid #eaeaea', maxHeight: '45vh', overflowY: 'auto' }}>
+                        <div style={{ background: 'var(--bg-sidebar)', borderRadius: '16px', padding: '24px', marginBottom: '24px', border: '1px solid var(--border)', maxHeight: '45vh', overflowY: 'auto' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                                 <h4 style={{ color: '#888', fontSize: '11px', letterSpacing: '2px', fontWeight: 800, textTransform: 'uppercase', margin: 0 }}>ITENS SOLICITADOS</h4>
                                 <span style={{ fontSize: '10px', color: '#aaa', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -557,7 +557,7 @@ const AdminDashboard = () => {
                         </div>
 
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center', marginBottom: '20px' }}>
-                            <button onClick={() => { setViewingOrder(null); navigate('/admin/orders'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '11px 18px', borderRadius: '12px', background: '#eaeaea', color: '#111', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
+                            <button onClick={() => { setViewingOrder(null); navigate('/admin/orders'); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '11px 18px', borderRadius: '12px', background: 'var(--bg-input)', color: 'var(--text-primary)', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
                                 <Edit2 size={15} /> Alterar
                             </button>
                             <button onClick={() => handleDelete(viewingOrder.id)} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '11px 18px', borderRadius: '12px', background: 'rgba(255,59,48,0.1)', color: '#FF3B30', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
@@ -584,7 +584,7 @@ const AdminDashboard = () => {
                         </div>
 
                         <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                            <button onClick={() => setViewingOrder(null)} style={{ border: '1px solid #ccc', background: 'transparent', color: '#555', cursor: 'pointer', fontWeight: 600, width: '100%', padding: '13px', borderRadius: '12px' }}>Fechar</button>
+                            <button onClick={() => setViewingOrder(null)} style={{ border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-primary)', cursor: 'pointer', fontWeight: 600, width: '100%', padding: '13px', borderRadius: '12px' }}>Fechar</button>
                         </div>
                     </div>
                 </div>

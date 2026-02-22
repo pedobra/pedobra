@@ -145,7 +145,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             <aside className={`sidebar-glass ${mobileMenuOpen ? 'mobile-open' : ''}`}>
                 <div className="sidebar-brand">
                     <div className="brand-logo">
-                        <Construction size={20} color="black" />
+                        <Construction size={20} color="var(--bg-dark)" />
                     </div>
                     <div className="brand-text">
                         <strong>PedObra</strong>
@@ -246,7 +246,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         .admin-wrapper {
           display: flex;
           min-height: 100vh;
-          background: #050505;
+          background: var(--bg-dark);
           padding: 16px;
           gap: 16px;
         }
@@ -388,7 +388,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         }
         .avatar { width: 32px; height: 32px; background: rgba(255,215,0,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
         .user-info { display: flex; flex-direction: column; }
-        .user-info strong { font-size: 13px; color: white; }
+        .user-info strong { font-size: 13px; color: var(--text-primary); }
         .user-info span { font-size: 10px; color: var(--status-approved); }
         .logout-icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: 0.3s; margin-left: 8px;}
         .logout-icon-btn:hover { color: var(--status-denied); }
@@ -420,7 +420,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               position: sticky; top: 0; z-index: 1000;
            }
            .brand-small { display: flex; align-items: center; gap: 8px; }
-           .menu-toggle { background: transparent; border: none; color: white; cursor: pointer; }
+           .menu-toggle { background: transparent; border: none; color: var(--text-primary); cursor: pointer; }
            
            .sidebar-glass { 
               position: fixed; top: 72px; left: 0; right: 0; bottom: 0; 

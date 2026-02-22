@@ -284,18 +284,18 @@ const AdminOrders = () => {
                             </button>
                         </header>
 
-                        <div style={{ background: '#fff', color: '#111', borderRadius: '16px', padding: '40px', boxShadow: '0 4px 24px rgba(0,0,0,0.1)' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '40px', paddingBottom: '24px', borderBottom: '1px solid #eee' }}>
+                        <div style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', borderRadius: '16px', padding: '40px', border: '1px solid var(--border)', boxShadow: '0 4px 24px rgba(0,0,0,0.1)' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '40px', paddingBottom: '24px', borderBottom: '1px solid var(--border)' }}>
                                 <div>
-                                    <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Building2 size={12} style={{ display: 'inline', marginRight: '4px' }} /> OBRA</span>
+                                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Building2 size={12} style={{ display: 'inline', marginRight: '4px' }} /> OBRA</span>
                                     <strong style={{ fontSize: '18px' }}>{historyOrder.sites?.name || 'Desconhecida'}</strong>
                                 </div>
                                 <div>
-                                    <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><User size={12} style={{ display: 'inline', marginRight: '4px' }} /> SOLICITADO POR</span>
+                                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}><User size={12} style={{ display: 'inline', marginRight: '4px' }} /> SOLICITADO POR</span>
                                     <strong style={{ fontSize: '16px' }}>{historyOrder.profiles?.name}</strong>
                                 </div>
                                 <div>
-                                    <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Calendar size={12} style={{ display: 'inline', marginRight: '4px' }} /> DATA DA SOLICITAÇÃO</span>
+                                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Calendar size={12} style={{ display: 'inline', marginRight: '4px' }} /> DATA DA SOLICITAÇÃO</span>
                                     <strong style={{ fontSize: '16px' }}>{new Date(historyOrder.created_at).toLocaleDateString('pt-BR')}</strong>
                                 </div>
                                 <div>
@@ -565,7 +565,7 @@ const AdminOrders = () => {
                             <p style={{ color: '#888', marginTop: '4px', fontSize: '13px' }}>Data: {new Date(viewingOrder.created_at).toLocaleString('pt-BR')}</p>
                         </div>
 
-                        <div style={{ background: '#fff', borderRadius: '16px', padding: '24px', marginBottom: '24px', border: '1px solid #eaeaea', boxShadow: '0 4px 12px rgba(0,0,0,0.02)', maxHeight: '45vh', overflowY: 'auto' }}>
+                        <div style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '24px', marginBottom: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(0,0,0,0.02)', maxHeight: '45vh', overflowY: 'auto' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                                 <h4 style={{ color: '#888', fontSize: '11px', letterSpacing: '2px', fontWeight: 800, textTransform: 'uppercase', margin: 0 }}>ITENS SOLICITADOS</h4>
                                 <span style={{ fontSize: '10px', color: '#aaa', display: 'flex', alignItems: 'center', gap: '4px' }}>

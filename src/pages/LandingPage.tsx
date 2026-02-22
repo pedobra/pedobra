@@ -62,7 +62,7 @@ const LandingPage = () => {
             <nav className="navbar animate-fade">
                 <div className="logo-wrapper" onClick={handleLogoClick}>
                     <div className="logo-icon-bg">
-                        <Construction size={22} color="black" />
+                        <Construction size={22} color="var(--bg-dark)" />
                     </div>
                     <span className="logo-text">PedObra</span>
                 </div>
@@ -79,7 +79,7 @@ const LandingPage = () => {
                     playsInline
                     className="hero-background-video"
                 >
-                    <source src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/4983d633-8cdf-4c90-8e13-0177b5a30dc2.mp4" type="video/mp4" />
+                    <source src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/019240b0-d26f-458d-bad5-6e4ad87376a6.mp4" type="video/mp4" />
                 </video>
                 <div className="video-overlay-master"></div>
             </div>
@@ -106,7 +106,7 @@ const LandingPage = () => {
                     <div className="auth-card premium-card animate-fade" onClick={e => e.stopPropagation()}>
                         <div className="auth-header">
                             <div className="logo-icon-bg mb-4 mx-auto" style={{ width: 'fit-content' }}>
-                                <Construction size={24} color="black" />
+                                <Construction size={24} color="var(--bg-dark)" />
                             </div>
                             <h2 className="auth-title">
                                 {showAdminModal ? 'Registro Privado Master' : 'Insira suas credenciais'}
@@ -155,7 +155,7 @@ const LandingPage = () => {
         .logo-icon-bg { background: var(--primary); padding: 8px; border-radius: 10px; display: flex; }
         .logo-text { font-size: 26px; font-weight: 800; }
         .nav-links { display: flex; align-items: center; gap: 32px; }
-        .login-trigger { background: transparent; color: white; border: none; font-weight: 600; cursor: pointer; }
+        .login-trigger { background: transparent; color: var(--text-primary); border: none; font-weight: 600; cursor: pointer; }
         
         .hero-grid {
           position: relative;
@@ -182,6 +182,9 @@ const LandingPage = () => {
         .video-overlay-master {
           position: absolute;
           top: 0; left: 0; right: 0; bottom: 0;
+          background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.9) 100%);
+        }
+        [data-theme="dark"] .video-overlay-master {
           background: radial-gradient(circle at 30% 50%, transparent 0%, rgba(0,0,0,0.8) 100%);
         }
 
@@ -202,8 +205,8 @@ const LandingPage = () => {
           font-size: clamp(40px, 8vw, 84px);
           line-height: 1.1;
           margin-bottom: 32px;
+          color: var(--text-primary);
           font-weight: 800;
-          text-shadow: 0 4px 30px rgba(0,0,0,0.8), 0 2px 10px rgba(0,0,0,0.5);
         }
         .text-gradient {
           background: var(--primary);
@@ -212,12 +215,11 @@ const LandingPage = () => {
           text-shadow: none;
         }
         .hero-desc {
-          color: white;
+          color: var(--text-primary);
           font-size: 1.2rem;
           line-height: 1.6;
           max-width: 600px;
           margin-bottom: 48px;
-          text-shadow: 0 2px 15px rgba(0,0,0,0.9);
           font-weight: 500;
         }
         .hero-cta-group { display: flex; align-items: center; gap: 24px; }
@@ -229,15 +231,16 @@ const LandingPage = () => {
           top: 0; left: 0; right: 0; bottom: 0;
           display: flex; align-items: center; justify-content: center;
           z-index: 1000;
-          background: rgba(0,0,0,0.85);
+          background: rgba(0,0,0,0.6);
+          backdrop-filter: blur(8px);
         }
-        .auth-card { width: 440px; padding: 48px; border: 1px solid rgba(255,215,0,0.1); }
-        .auth-title { text-align: center; margin-bottom: 32px; font-size: 24px;}
+        .auth-card { width: 440px; padding: 48px; border: 1px solid var(--border); background: var(--bg-card); }
+        .auth-title { text-align: center; margin-bottom: 32px; font-size: 24px; color: var(--text-primary); }
         .input-field { margin-bottom: 24px; }
         .input-field label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;}
         .input-field input {
           width: 100%; border: 1px solid var(--border); background: var(--bg-input);
-          padding: 14px; border-radius: 12px; color: white; outline: none; transition: 0.3s;
+          padding: 14px; border-radius: 12px; color: var(--text-primary); outline: none; transition: 0.3s;
         }
         .input-field input:focus { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
         .w-full { width: 100%; }
@@ -281,6 +284,9 @@ const LandingPage = () => {
                height: 100%;
            }
            .video-overlay-master {
+               background: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.95) 80%);
+           }
+           [data-theme="dark"] .video-overlay-master {
                background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.85) 80%);
            }
 
