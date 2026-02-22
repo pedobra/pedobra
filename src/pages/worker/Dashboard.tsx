@@ -200,32 +200,38 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                     </div>
 
                     <div className="order-list">
-                        {orders.map(order => (
-                            <div key={order.id} className="order-card-compact premium-card" onClick={() => setViewingOrder(order)} style={{ cursor: 'pointer' }}>
-                                <div className="order-main">
-                                    <div className="order-info">
-                                        <span className="order-id">REF: {getOrderRef(order)}</span>
-                                        <div className="item-count">
-                                            <Package size={14} />
-                                            <span>{order.items.length} itens solicitados</span>
+                        {orders.map(order => {
+                            const childOrder = order.status === 'partial' ? orders.find(o => o.items?.some((i: any) => i.name?.includes(`[COMPLEMENTO REF ${getOrderRef(order)}]`))) : null;
+                            const isRealCompleted = order.status === 'completed' || (order.status === 'partial' && childOrder?.status === 'completed');
+                            const finalUiStatus = isRealCompleted ? 'completed' : order.status;
+
+                            return (
+                                <div key={order.id} className="order-card-compact premium-card" onClick={() => setViewingOrder(order)} style={{ cursor: 'pointer' }}>
+                                    <div className="order-main">
+                                        <div className="order-info">
+                                            <span className="order-id">REF: {getOrderRef(order)}</span>
+                                            <div className="item-count">
+                                                <Package size={14} />
+                                                <span>{order.items.length} itens solicitados</span>
+                                            </div>
                                         </div>
+                                        <span className={`status-pill ${finalUiStatus}`}>
+                                            {finalUiStatus === 'new' && 'Pendente'}
+                                            {finalUiStatus === 'approved' && 'Aprovado'}
+                                            {finalUiStatus === 'denied' && 'Negado'}
+                                            {finalUiStatus === 'partial' && 'Rec. Parcial'}
+                                            {finalUiStatus === 'completed' && 'Concluído'}
+                                        </span>
                                     </div>
-                                    <span className={`status-pill ${order.status}`}>
-                                        {order.status === 'new' && 'Pendente'}
-                                        {order.status === 'approved' && 'Aprovado'}
-                                        {order.status === 'denied' && 'Negado'}
-                                        {order.status === 'partial' && 'Rec. Parcial'}
-                                        {order.status === 'completed' && 'Concluído'}
-                                    </span>
+                                    <div className="order-footer">
+                                        <span className="order-date">{new Date(order.created_at).toLocaleDateString()}</span>
+                                        <button className="btn-text-action" onClick={(e) => { e.stopPropagation(); exportPDF(order); }}>
+                                            <FileText size={16} /> Ver PDF
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="order-footer">
-                                    <span className="order-date">{new Date(order.created_at).toLocaleDateString()}</span>
-                                    <button className="btn-text-action" onClick={(e) => { e.stopPropagation(); exportPDF(order); }}>
-                                        <FileText size={16} /> Ver PDF
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                 </section>
             </main>
@@ -308,35 +314,41 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 </div>
             )}
 
-            {viewingOrder && (
-                <div className="modal-overlay-mobile glass" onClick={() => setViewingOrder(null)}>
-                    <div className="mobile-sheet premium-card animate-fade" onClick={e => e.stopPropagation()}>
-                        <div className="sheet-handle"></div>
-                        <div className="sheet-header" style={{ marginBottom: '16px' }}>
-                            <h2 style={{ fontSize: '20px', fontWeight: 'bold' }}>Pedido #{getOrderRef(viewingOrder)}</h2>
-                            <p style={{ marginTop: '8px' }}>
-                                <span className={`status-pill ${viewingOrder.status}`}>
-                                    {viewingOrder.status === 'new' ? 'Pendente' : viewingOrder.status === 'approved' ? 'Aprovado' : viewingOrder.status === 'partial' ? 'Rec. Parcial' : viewingOrder.status === 'completed' ? 'Concluído' : 'Negado'}
-                                </span>
-                            </p>
-                        </div>
-                        <div className="items-preview-list" style={{ flex: 1, minHeight: '200px' }}>
-                            {viewingOrder.items?.map((item: any, idx: number) => (
-                                <div key={idx} className="preview-row" style={{ borderBottom: '1px dashed var(--border)', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <span style={{ fontSize: '15px' }}>{item.name}</span>
-                                    <strong style={{ color: 'var(--primary)' }}>{item.quantity} {item.unit || 'un'}</strong>
-                                </div>
-                            ))}
-                        </div>
-                        <div className="sheet-footer" style={{ marginTop: '24px' }}>
-                            <button className="btn-ghost" onClick={() => setViewingOrder(null)}>Fechar</button>
-                            <button className="btn-primary" onClick={(e) => { e.stopPropagation(); exportPDF(viewingOrder); }}>
-                                <FileText size={18} /> Ver PDF
-                            </button>
+            {viewingOrder && (() => {
+                const childOrder = viewingOrder.status === 'partial' ? orders.find(o => o.items?.some((i: any) => i.name?.includes(`[COMPLEMENTO REF ${getOrderRef(viewingOrder)}]`))) : null;
+                const isRealCompleted = viewingOrder.status === 'completed' || (viewingOrder.status === 'partial' && childOrder?.status === 'completed');
+                const finalUiStatus = isRealCompleted ? 'completed' : viewingOrder.status;
+
+                return (
+                    <div className="modal-overlay-mobile glass" onClick={() => setViewingOrder(null)}>
+                        <div className="mobile-sheet premium-card animate-fade" onClick={e => e.stopPropagation()}>
+                            <div className="sheet-handle"></div>
+                            <div className="sheet-header" style={{ marginBottom: '16px' }}>
+                                <h2 style={{ fontSize: '20px', fontWeight: 'bold' }}>Pedido #{getOrderRef(viewingOrder)}</h2>
+                                <p style={{ marginTop: '8px' }}>
+                                    <span className={`status-pill ${finalUiStatus}`}>
+                                        {finalUiStatus === 'new' ? 'Pendente' : finalUiStatus === 'approved' ? 'Aprovado' : finalUiStatus === 'partial' ? 'Rec. Parcial' : finalUiStatus === 'completed' ? 'Concluído' : 'Negado'}
+                                    </span>
+                                </p>
+                            </div>
+                            <div className="items-preview-list" style={{ flex: 1, minHeight: '200px' }}>
+                                {viewingOrder.items?.map((item: any, idx: number) => (
+                                    <div key={idx} className="preview-row" style={{ borderBottom: '1px dashed var(--border)', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ fontSize: '15px' }}>{item.name}</span>
+                                        <strong style={{ color: 'var(--primary)' }}>{item.quantity} {item.unit || 'un'}</strong>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="sheet-footer" style={{ marginTop: '24px' }}>
+                                <button className="btn-ghost" onClick={() => setViewingOrder(null)}>Fechar</button>
+                                <button className="btn-primary" onClick={(e) => { e.stopPropagation(); exportPDF(viewingOrder); }}>
+                                    <FileText size={18} /> Ver PDF
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            })()}
 
             <style>{`
         .worker-app {
@@ -433,7 +445,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
            }
         }
       `}</style>
-        </div>
+        </div >
     );
 };
 
