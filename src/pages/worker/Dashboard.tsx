@@ -11,7 +11,9 @@ import {
     Send,
     Trash2,
     MapPin,
-    Archive
+    Archive,
+    Search,
+    MessageSquare
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { generateOrderPDF } from '../../lib/generateOrderPDF';
@@ -27,6 +29,17 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
     const [items, setItems] = useState<any[]>([]);
     const [currentItem, setCurrentItem] = useState({ material_id: '', quantity: 0, customName: '' });
     const [isCustom, setIsCustom] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [observations, setObservations] = useState('');
+
+    const getOrderRef = (order: any) => {
+        if (!order || !order.created_at) return 'N/A';
+        const d = new Date(order.created_at);
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const seq = String(order.seq_number || 0).padStart(4, '0');
+        return `${dd}${mm}_${seq}`;
+    };
 
     useEffect(() => {
         fetchOrders();
@@ -48,7 +61,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
         if (data) setMaterials(data);
     };
 
-    const addItem = () => {
+    const addItem = async () => {
         if (isCustom) {
             if (!currentItem.customName) {
                 alert('Por favor, descreva o material desejado.');
@@ -67,11 +80,29 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
         }
 
         if (isCustom) {
+            const confirmNew = window.confirm(`O insumo "${currentItem.customName}" não existe. Deseja cadastrá-lo ao sistema e adicionar ao pedido?`);
+            if (!confirmNew) return;
+
+            setLoading(true);
+            const { data: newMat, error } = await supabase.from('materials').insert({
+                name: currentItem.customName,
+                unit: 'un',
+                category: 'Geral',
+                min_stock: 0
+            }).select().single();
+            setLoading(false);
+
+            if (error || !newMat) {
+                alert('Erro ao cadastrar novo insumo.');
+                return;
+            }
+
+            setMaterials([...materials, newMat]);
             setItems([...items, {
-                material_id: 'custom',
+                material_id: newMat.id,
                 quantity: currentItem.quantity,
-                name: `(NOVO) ${currentItem.customName}`,
-                unit: 'un'
+                name: newMat.name,
+                unit: newMat.unit
             }]);
             setCurrentItem({ material_id: '', quantity: 0, customName: '' });
             setIsCustom(false);
@@ -109,6 +140,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 site_id: profile.site_id,
                 user_id: profile.id,
                 items: items,
+                observations: observations,
                 status: 'new'
             });
 
@@ -116,6 +148,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
 
             setShowModal(false);
             setItems([]);
+            setObservations('');
             fetchOrders();
             alert('Pedido enviado com sucesso para análise admin.');
         } catch (err: any) {
@@ -128,15 +161,6 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
     const handleLogout = async () => {
         await supabase.auth.signOut();
         navigate('/');
-    };
-
-    const getOrderRef = (order: any) => {
-        if (!order || !order.created_at) return 'N/A';
-        const d = new Date(order.created_at);
-        const dd = String(d.getDate()).padStart(2, '0');
-        const mm = String(d.getMonth() + 1).padStart(2, '0');
-        const seq = String(order.seq_number || 0).padStart(4, '0');
-        return `${dd}${mm}_${seq}`;
     };
 
     const exportPDF = (order: any) => {
@@ -191,6 +215,17 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 </div>
 
                 <section className="history-section">
+                    <div className="search-bar-worker" style={{ marginBottom: '24px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: '12px', padding: '0 16px', display: 'flex', alignItems: 'center', gap: '12px', height: '48px' }}>
+                        <Search size={18} color="var(--text-muted)" />
+                        <input
+                            type="text"
+                            placeholder="Buscar pedido por número (REF)..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                            style={{ background: 'transparent', border: 'none', color: 'white', width: '100%', outline: 'none', fontSize: '15px' }}
+                        />
+                    </div>
+
                     <div className="section-title-row">
                         <div className="title-with-icon">
                             <History size={18} color="var(--primary)" />
@@ -200,7 +235,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                     </div>
 
                     <div className="order-list">
-                        {orders.map(order => {
+                        {orders.filter(o => getOrderRef(o).toLowerCase().includes(searchTerm.toLowerCase())).map(order => {
                             const childOrder = order.status === 'partial' ? orders.find(o => o.items?.some((i: any) => i.name?.includes(`[COMPLEMENTO REF ${getOrderRef(order)}]`))) : null;
                             const isRealCompleted = order.status === 'completed' || (order.status === 'partial' && childOrder?.status === 'completed');
                             const finalUiStatus = isRealCompleted ? 'completed' : order.status;
@@ -283,7 +318,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                 </div>
                             </div>
                             <button className="toggle-custom-btn" onClick={() => setIsCustom(!isCustom)}>
-                                {isCustom ? '← Voltar para Catálogo' : '+ Insumo não listado?'}
+                                {isCustom ? '← Voltar para Catálogo' : '+ Não encontrou? Cadastrar Insumo Avulso'}
                             </button>
                         </div>
 
@@ -302,6 +337,19 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                     </div>
                                 ))
                             )}
+                        </div>
+
+                        <div style={{ padding: '0 16px', marginBottom: '16px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)', marginBottom: '8px', fontSize: '13px' }}>
+                                <MessageSquare size={14} color="var(--text-muted)" />
+                                <strong>Observações</strong>
+                            </div>
+                            <textarea
+                                placeholder="Adicione observações para este pedido (opcional)..."
+                                value={observations}
+                                onChange={e => setObservations(e.target.value)}
+                                style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px', color: 'white', outline: 'none', resize: 'vertical', minHeight: '80px', fontSize: '14px' }}
+                            />
                         </div>
 
                         <div className="sheet-footer">
@@ -331,7 +379,13 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                     </span>
                                 </p>
                             </div>
-                            <div className="items-preview-list" style={{ flex: 1, minHeight: '200px' }}>
+                            {viewingOrder.observations && (
+                                <div style={{ padding: '16px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid var(--border)' }}>
+                                    <span style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '1px' }}>Observações:</span>
+                                    <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-secondary)' }}>{viewingOrder.observations}</p>
+                                </div>
+                            )}
+                            <div className="items-preview-list" style={{ flex: 1, minHeight: '120px' }}>
                                 {viewingOrder.items?.map((item: any, idx: number) => (
                                     <div key={idx} className="preview-row" style={{ borderBottom: '1px dashed var(--border)', padding: '12px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <span style={{ fontSize: '15px' }}>{item.name}</span>
