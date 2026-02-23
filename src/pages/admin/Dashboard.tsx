@@ -446,7 +446,7 @@ const AdminDashboard = () => {
                                         const missing = qty - rec;
                                         return (
                                             <tr key={i} style={{ borderBottom: '1px solid #f5f5f5' }}>
-                                                <td style={{ padding: '16px', fontWeight: 600 }}>{it.name} <span style={{ fontSize: '11px', color: '#999', marginLeft: '8px' }}>{it.unit}</span></td>
+                                                <td style={{ padding: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>{it.name} <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: '8px' }}>{it.unit}</span></td>
                                                 <td style={{ padding: '16px', textAlign: 'center' }}>{qty}</td>
                                                 <td style={{ padding: '16px', textAlign: 'center', color: '#27ae60', fontWeight: 'bold' }}>{rec}</td>
                                                 <td style={{ padding: '16px', textAlign: 'center', color: missing > 0 ? '#e74c3c' : '#ccc', fontWeight: missing > 0 ? 'bold' : 'normal' }}>{missing > 0 ? missing : '-'}</td>
@@ -526,7 +526,7 @@ const AdminDashboard = () => {
                                         const hint = priceSuggestions[item.name];
                                         return (
                                             <tr key={idx}>
-                                                <td style={{ padding: '12px 0', borderBottom: border, fontWeight: 600, color: '#222', fontSize: '13px' }}>{item.name}</td>
+                                                <td style={{ padding: '12px 0', borderBottom: border, fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>{item.name}</td>
                                                 <td style={{ padding: '12px 0', borderBottom: border, color: '#666', textAlign: 'center', fontSize: '13px' }}>{item.unit || 'un'}</td>
                                                 <td style={{ padding: '12px 0', borderBottom: border, color: '#111', fontWeight: 900, textAlign: 'right', fontSize: '15px' }}>{item.quantity}</td>
                                                 <td style={{ padding: '12px 0', borderBottom: border, textAlign: 'right', fontSize: '12px' }}>
@@ -601,7 +601,7 @@ const AdminDashboard = () => {
             background: rgba(255,255,255,0.03); border: 1px solid var(--border);
             border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 10px; width: 220px; height: 42px;
         }
-        .search-bar-glass input { background: transparent; border: none; color: white; outline: none; width: 100%; font-size: 13px; }
+        .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 13px; }
 
         /* Filtro por obra */
         .site-filter-wrap {
@@ -609,10 +609,10 @@ const AdminDashboard = () => {
             border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 8px; height: 42px;
         }
         .site-filter-wrap select {
-            background: transparent; border: none; color: white; outline: none; font-size: 13px;
+            background: transparent; border: none; color: var(--text-primary); outline: none; font-size: 13px;
             cursor: pointer; max-width: 160px;
         }
-        .site-filter-wrap select option { background: #1a1a1f; color: white; }
+        .site-filter-wrap select option { background: var(--bg-card); color: var(--text-primary); }
 
         /* Cards */
         .stats-layout { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
@@ -666,7 +666,7 @@ const AdminDashboard = () => {
             gap: 8px; height: 42px; cursor: pointer; transition: 0.2s;
         }
         .date-pill:hover { border-color: var(--border-bright); background: rgba(255,255,255,0.06); }
-        .date-filter-input { background: transparent; border: none; color: white; outline: none; font-size: 13px; cursor: pointer; width: 118px; color-scheme: dark; }
+        .date-filter-input { background: transparent; border: none; color: var(--text-primary); outline: none; font-size: 13px; cursor: pointer; width: 118px; color-scheme: dark; }
         .date-filter-sep { color: var(--text-muted); font-size: 13px; }
         .date-filter-clear { background: rgba(255,59,48,0.08); border: 1px solid rgba(255,59,48,0.2); color: #FF3B30; cursor: pointer; font-size: 12px; padding: 6px 10px; border-radius: 10px; transition: 0.2s; }
         .date-filter-clear:hover { background: rgba(255,59,48,0.18); }
@@ -691,7 +691,7 @@ const AdminDashboard = () => {
         .status-pill .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
 
         .row-action-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; border-radius: 6px; transition: 0.2s; }
-        .row-action-btn:hover { color: white; background: rgba(255,255,255,0.06); }
+        .row-action-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.06); }
 
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 999; }
         .modal-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 24px 48px rgba(0,0,0,0.5); }

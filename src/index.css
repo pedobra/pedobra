@@ -8,9 +8,9 @@
   --bg-sidebar: #FFFFFF;
   --bg-input: #F0F0F0;
 
-  --text-primary: #1D1D1F;
-  --text-secondary: #515154;
-  --text-muted: #86868B;
+  --text-primary: #111111;
+  --text-secondary: #444444;
+  --text-muted: #777777;
 
   --border: rgba(0, 0, 0, 0.08);
   --border-bright: rgba(0, 0, 0, 0.15);
@@ -35,8 +35,8 @@
   --bg-input: #1b1b1f;
 
   --text-primary: #FFFFFF;
-  --text-secondary: #8E8E93;
-  --text-muted: #55555a;
+  --text-secondary: #E0E0E0;
+  --text-muted: #B0B0B0;
 
   --border: rgba(255, 255, 255, 0.08);
   --border-bright: rgba(255, 255, 255, 0.15);

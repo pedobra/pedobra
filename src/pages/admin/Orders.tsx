@@ -558,7 +558,7 @@ const AdminOrders = () => {
 
             {viewingOrder && (
                 <div className="modal-overlay glass" onClick={() => setViewingOrder(null)}>
-                    <div className="modal-card animate-fade" onClick={e => e.stopPropagation()} style={{ width: '600px', padding: '40px', background: '#f8f9fa', color: '#111', borderRadius: '24px', boxShadow: '0 24px 48px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
+                    <div className="modal-card animate-fade" onClick={e => e.stopPropagation()} style={{ width: '600px', padding: '40px', background: 'var(--bg-card)', color: 'var(--text-primary)', borderRadius: '24px', boxShadow: '0 24px 48px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
                         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
                             <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#111' }}>PEDIDO Nº {getOrderRef(viewingOrder)}</h2>
                             <p style={{ color: '#666', marginTop: '8px' }}>Obra: <strong style={{ color: '#111' }}>{viewingOrder.sites?.name || 'Desconhecida'}</strong> | Por: <strong style={{ color: '#111' }}>{viewingOrder.profiles?.name || 'Admin'}</strong></p>
@@ -589,7 +589,7 @@ const AdminOrders = () => {
                                         const hint = priceSuggestions[item.name];
                                         return (
                                             <tr key={idx}>
-                                                <td style={{ padding: '11px 0', borderBottom: border, fontWeight: 600, color: '#222', fontSize: '13px' }}>{item.name}</td>
+                                                <td style={{ padding: '11px 0', borderBottom: border, fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>{item.name}</td>
                                                 <td style={{ padding: '11px 0', borderBottom: border, color: '#666', textAlign: 'center', fontSize: '13px' }}>{item.unit || 'un'}</td>
                                                 <td style={{ padding: '11px 0', borderBottom: border, color: '#111', fontWeight: 900, textAlign: 'right', fontSize: '15px' }}>{item.quantity}</td>
                                                 <td style={{ padding: '11px 0', borderBottom: border, textAlign: 'right', fontSize: '12px' }}>
@@ -611,7 +611,7 @@ const AdminOrders = () => {
                         </div>
 
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-                            <button onClick={() => { setViewingOrder(null); handleEdit(viewingOrder); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '12px', background: '#eaeaea', color: '#111', border: 'none', cursor: 'pointer', fontWeight: 600, transition: '0.3s' }}>
+                            <button onClick={() => { setViewingOrder(null); handleEdit(viewingOrder); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '12px', background: 'var(--bg-input)', color: 'var(--text-primary)', border: 'none', cursor: 'pointer', fontWeight: 600, transition: '0.3s' }}>
                                 <Edit2 size={16} /> Alterar
                             </button>
                             <button onClick={() => { handleDelete(viewingOrder.id); setViewingOrder(null); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '12px', background: 'rgba(255,59,48,0.1)', color: '#FF3B30', border: 'none', cursor: 'pointer', fontWeight: 600, transition: '0.3s' }}>
@@ -643,7 +643,7 @@ const AdminOrders = () => {
                             )}
                         </div>
                         <div style={{ textAlign: 'center', marginTop: '30px' }}>
-                            <button onClick={() => setViewingOrder(null)} style={{ border: '1px solid #ccc', background: 'transparent', color: '#555', cursor: 'pointer', fontWeight: 600, transition: '0.3s', width: '100%', padding: '14px', borderRadius: '12px' }}>Sair da Visualização</button>
+                            <button onClick={() => setViewingOrder(null)} style={{ border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-primary)', cursor: 'pointer', fontWeight: 600, transition: '0.3s', width: '100%', padding: '14px', borderRadius: '12px' }}>Sair da Visualização</button>
                         </div>
                     </div>
                 </div>
@@ -660,7 +660,7 @@ const AdminOrders = () => {
            border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 12px; width: 300px;
            height: 48px;
         }
-        .search-bar-glass input { background: transparent; border: none; color: white; outline: none; width: 100%; font-size: 14px; }
+        .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; }
         
         .premium-table-wrapper { background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; }
         .modern-table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -690,11 +690,11 @@ const AdminOrders = () => {
         .modal-card { width: 500px; padding: 48px; border-radius: 32px; }
         .input-field { margin-bottom: 24px; }
         .input-field label, .section-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-        .modal-select { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; appearance: none; }
+        .modal-select { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); outline: none; appearance: none; }
         
         .item-builder-box { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
         .builder-fields { display: flex; gap: 12px; align-items: stretch; }
-        .modal-input { padding: 12px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; }
+        .modal-input { padding: 12px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); outline: none; }
         .flex-1 { flex: 1; min-width: 0; }
         .qty-input { width: 80px; text-align: center; }
         .btn-add-mini { padding: 0 16px; border-radius: 10px; }

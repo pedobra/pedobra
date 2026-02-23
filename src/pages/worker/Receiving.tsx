@@ -139,7 +139,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
                 </button>
                 <div className="worker-meta">
                     <div className="app-logo">
-                        <Archive size={20} color="black" />
+                        <Archive size={20} color="var(--bg-dark)" />
                     </div>
                 </div>
             </header>
@@ -222,7 +222,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
                                                 value={item.received_quantity}
                                                 onChange={e => handleItemChange(idx, 'received_quantity', e.target.value)}
                                                 placeholder="0"
-                                                style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'white', padding: '12px', outline: 'none' }}
+                                                style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', padding: '12px', outline: 'none' }}
                                             />
                                         </div>
                                         <div>
@@ -233,7 +233,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
                                                 value={item.unit_value}
                                                 onChange={e => handleItemChange(idx, 'unit_value', e.target.value)}
                                                 placeholder="0,00"
-                                                style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'white', padding: '12px', outline: 'none' }}
+                                                style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', padding: '12px', outline: 'none' }}
                                             />
                                         </div>
                                     </div>
@@ -243,7 +243,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
                                         <select
                                             value={item.supplier_id}
                                             onChange={e => handleItemChange(idx, 'supplier_id', e.target.value)}
-                                            style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'white', padding: '12px', outline: 'none' }}
+                                            style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', padding: '12px', outline: 'none' }}
                                         >
                                             <option value="">Selecione...</option>
                                             {suppliers.map(sup => (
@@ -276,7 +276,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
           display: flex; align-items: center; justify-content: space-between;
           padding: 0 24px; z-index: 100; border-bottom: 1px solid var(--border);
         }
-        .back-btn { display: flex; align-items: center; gap: 4px; background: transparent; border: none; color: white; font-weight: 600; cursor: pointer;}
+        .back-btn { display: flex; align-items: center; gap: 4px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; cursor: pointer;}
         .worker-meta { display: flex; align-items: center; gap: 12px; }
         .app-logo { background: var(--primary); padding: 6px; border-radius: 8px; }
 
