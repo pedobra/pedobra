@@ -19,6 +19,33 @@ import { useNavigate } from 'react-router-dom';
 import { generateOrderPDF } from '../../lib/generateOrderPDF';
 import ThemeToggle from '../../components/ThemeToggle';
 
+const MATERIAL_CATEGORIES = [
+    'Estrutural',
+    'Elétrica',
+    'Hidráulica',
+    'Acabamento',
+    'Outros'
+];
+
+const MATERIAL_UNITS = [
+    { value: 'un', label: 'un (Unidade)' },
+    { value: 'kg', label: 'kg (Quilograma)' },
+    { value: 't', label: 't (Tonelada)' },
+    { value: 'g', label: 'g (Grama)' },
+    { value: 'm', label: 'm (Metro Linear)' },
+    { value: 'm²', label: 'm² (Metro Quadrado)' },
+    { value: 'm³', label: 'm³ (Metro Cúbico)' },
+    { value: 'L', label: 'L (Litro)' },
+    { value: 'ml', label: 'ml (Mililitro)' },
+    { value: 'cx', label: 'cx (Caixa)' },
+    { value: 'saco', label: 'saco (Saco)' },
+    { value: 'lata', label: 'lata (Lata)' },
+    { value: 'galão', label: 'galão (Galão)' },
+    { value: 'rolo', label: 'rolo (Rolo)' },
+    { value: 'cj', label: 'cj (Conjunto)' },
+    { value: 'par', label: 'par (Par)' }
+];
+
 const WorkerDashboard = ({ profile }: { profile: any }) => {
     const navigate = useNavigate();
     const [orders, setOrders] = useState<any[]>([]);
@@ -28,7 +55,13 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
     const [loading, setLoading] = useState(false);
 
     const [items, setItems] = useState<any[]>([]);
-    const [currentItem, setCurrentItem] = useState({ material_id: '', quantity: 0, customName: '' });
+    const [currentItem, setCurrentItem] = useState({
+        material_id: '',
+        quantity: 0,
+        customName: '',
+        category: 'Outros',
+        unit: 'un'
+    });
     const [isCustom, setIsCustom] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [observations, setObservations] = useState('');
@@ -81,14 +114,37 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
         }
 
         if (isCustom) {
-            const confirmNew = window.confirm(`O insumo "${currentItem.customName}" não existe. Deseja cadastrá-lo ao sistema e adicionar ao pedido?`);
+            // Check for duplicates first
+            const duplicate = materials.find(m => m.name.toLowerCase().trim() === currentItem.customName.toLowerCase().trim());
+
+            if (duplicate) {
+                const useExisting = window.confirm(`O insumo "${duplicate.name}" já existe no catálogo. Deseja utilizá-lo ao invés de criar um novo?`);
+                if (useExisting) {
+                    const existingInList = items.find(i => i.material_id === duplicate.id);
+                    if (existingInList) {
+                        setItems(items.map(i =>
+                            i.material_id === duplicate.id
+                                ? { ...i, quantity: i.quantity + currentItem.quantity }
+                                : i
+                        ));
+                    } else {
+                        setItems([...items, { material_id: duplicate.id, quantity: currentItem.quantity, name: duplicate.name, unit: duplicate.unit }]);
+                    }
+                    setCurrentItem({ material_id: '', quantity: 0, customName: '', category: 'Outros', unit: 'un' });
+                    setIsCustom(false);
+                    return;
+                }
+                return;
+            }
+
+            const confirmNew = window.confirm(`Deseja cadastrar o novo insumo "${currentItem.customName}"?`);
             if (!confirmNew) return;
 
             setLoading(true);
             const { data: newMat, error } = await supabase.from('materials').insert({
                 name: currentItem.customName,
-                unit: 'un',
-                category: 'Geral'
+                unit: currentItem.unit,
+                category: currentItem.category
             }).select().single();
             setLoading(false);
 
@@ -104,7 +160,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 name: newMat.name,
                 unit: newMat.unit
             }]);
-            setCurrentItem({ material_id: '', quantity: 0, customName: '' });
+            setCurrentItem({ material_id: '', quantity: 0, customName: '', category: 'Outros', unit: 'un' });
             setIsCustom(false);
         } else {
             const mat = materials.find(m => m.id === currentItem.material_id);
@@ -120,7 +176,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
             } else {
                 setItems([...items, { ...currentItem, name: mat.name, unit: mat.unit }]);
             }
-            setCurrentItem({ material_id: '', quantity: 0, customName: '' });
+            setCurrentItem({ material_id: '', quantity: 0, customName: '', category: 'Outros', unit: 'un' });
         }
     };
 
@@ -225,7 +281,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                             placeholder="Buscar pedido por número (REF)..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
-                            style={{ background: 'transparent', border: 'none', color: 'white', width: '100%', outline: 'none', fontSize: '15px' }}
+                            style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', width: '100%', outline: 'none', fontSize: '15px' }}
                         />
                     </div>
 
@@ -291,13 +347,31 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                             </div>
                             <div className="builder-fields">
                                 {isCustom ? (
-                                    <input
-                                        type="text"
-                                        placeholder="Descreva o material..."
-                                        className="flex-1"
-                                        value={currentItem.customName}
-                                        onChange={e => setCurrentItem({ ...currentItem, customName: e.target.value })}
-                                    />
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+                                        <input
+                                            type="text"
+                                            placeholder="Nome do novo Insumo..."
+                                            value={currentItem.customName}
+                                            onChange={e => setCurrentItem({ ...currentItem, customName: e.target.value })}
+                                            style={{ width: '100%' }}
+                                        />
+                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                            <select
+                                                value={currentItem.category}
+                                                onChange={e => setCurrentItem({ ...currentItem, category: e.target.value })}
+                                            >
+                                                <option value="">Categoria...</option>
+                                                {MATERIAL_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                            </select>
+                                            <select
+                                                value={currentItem.unit}
+                                                onChange={e => setCurrentItem({ ...currentItem, unit: e.target.value })}
+                                            >
+                                                <option value="">Unidade...</option>
+                                                {MATERIAL_UNITS.map(un => <option key={un.value} value={un.value}>{un.label}</option>)}
+                                            </select>
+                                        </div>
+                                    </div>
                                 ) : (
                                     <select
                                         value={currentItem.material_id}
@@ -351,7 +425,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                 placeholder="Adicione observações para este pedido (opcional)..."
                                 value={observations}
                                 onChange={e => setObservations(e.target.value)}
-                                style={{ width: '100%', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px', color: 'white', outline: 'none', resize: 'vertical', minHeight: '80px', fontSize: '14px' }}
+                                style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', padding: '12px', color: 'var(--text-primary)', outline: 'none', resize: 'vertical', minHeight: '80px', fontSize: '14px' }}
                             />
                         </div>
 
@@ -432,7 +506,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
         .btn-hero-action {
           width: 100%; background: var(--bg-card); border: 1px solid var(--border);
           border-radius: 20px; padding: 20px; display: flex; align-items: center; gap: 16px;
-          text-align: left; transition: 0.3s; color: white; cursor: pointer;
+          text-align: left; transition: 0.3s; color: var(--text-primary); cursor: pointer;
         }
         .btn-hero-action:hover { border-color: var(--primary); transform: translateY(-4px); }
         .btn-icon-box { width: 52px; height: 52px; background: var(--primary-glow); color: var(--primary); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
@@ -462,7 +536,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
 
         .order-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); margin-top: 4px; padding-top: 12px;}
         .order-date { font-size: 12px; color: var(--text-muted); }
-        .btn-text-action { display: flex; align-items: center; gap: 6px; background: transparent; border: none; color: white; font-size: 12px; font-weight: 700; cursor: pointer;}
+        .btn-text-action { display: flex; align-items: center; gap: 6px; background: transparent; border: none; color: var(--text-primary); font-size: 12px; font-weight: 700; cursor: pointer;}
 
         /* Mobile Sheet Styling */
         .modal-overlay-mobile { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1000; background: rgba(0,0,0,0.8); display: flex; align-items: flex-end; }
@@ -474,7 +548,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
 
         .item-builder { margin-bottom: 32px; display: flex; flex-direction: column; gap: 12px; }
         .builder-fields { display: flex; gap: 12px; }
-        .builder-fields select, .builder-fields input[type="text"] { flex: 1; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: white; padding: 12px; outline: none; }
+        .builder-fields select, .builder-fields input[type="text"] { flex: 1; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); padding: 12px; outline: none; }
         .builder-row-sm { display: flex; gap: 10px; }
         .qty-input { width: 80px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: white; padding: 12px; text-align: center; outline: none; }
         .btn-add-item { background: var(--primary); color: black; border: none; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 48px;}
