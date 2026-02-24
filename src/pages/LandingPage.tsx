@@ -194,8 +194,8 @@ const LandingPage = () => {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          background: rgba(255, 215, 0, 0.1);
-          border: 1px solid rgba(255, 215, 0, 0.2);
+          background: var(--primary-glow);
+          border: 1px solid var(--border);
           padding: 8px 16px;
           border-radius: 100px;
           font-size: 13px;

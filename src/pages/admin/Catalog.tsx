@@ -476,7 +476,7 @@ const AdminCatalog = () => {
             border-radius: 12px; padding: 0 14px; display: flex; align-items: center; gap: 10px;
             width: 260px; height: 42px;
         }
-        .search-bar-glass input { background: transparent; border: none; color: white; outline: none; width: 100%; font-size: 13px; }
+        .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 13px; }
 
         .premium-table-wrapper {
             background: var(--bg-card);
@@ -533,7 +533,7 @@ const AdminCatalog = () => {
         }
         .specialty-badge {
             display: inline-block;
-            background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.15);
+            background: var(--primary-glow); border: 1px solid var(--border);
             padding: 2px 7px; border-radius: 6px; font-size: 11px; color: var(--primary);
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
             max-width: 100%; vertical-align: middle;
@@ -559,7 +559,7 @@ const AdminCatalog = () => {
             border-radius: 7px; padding: 6px; display: flex; align-items: center; justify-content: center;
             cursor: pointer; transition: 0.2s;
         }
-        .icon-btn-edit:hover { background: rgba(255,215,0,0.1); color: var(--primary); border-color: rgba(255,215,0,0.2); }
+        .icon-btn-edit:hover { background: var(--primary-glow); color: var(--primary); border-color: var(--border-bright); }
         .icon-btn-delete:hover { background: rgba(255,59,48,0.1); color: #FF3B30; border-color: rgba(255,59,48,0.2); }
 
         .whatsapp-link-icon { color: #25D366; display: flex; align-items: center; background: rgba(37,211,102,0.1); padding: 5px; border-radius: 7px; transition: 0.2s; flex-shrink: 0; }
@@ -570,14 +570,14 @@ const AdminCatalog = () => {
         .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .input-field { margin-bottom: 16px; }
         .input-field label { display: block; font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 7px; }
-        .input-field input, .input-field select { width: 100%; padding: 12px 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; color: white; outline: none; font-size: 13px; box-sizing: border-box; }
+        .input-field input, .input-field select { width: 100%; padding: 12px 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; color: var(--text-primary); outline: none; font-size: 13px; box-sizing: border-box; }
         .input-field input:focus, .input-field select:focus { border-color: var(--primary); }
         .modal-actions-btns { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
 
         .form-section-label {
             font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase;
             letter-spacing: 1.5px; margin-bottom: 14px; margin-top: 4px;
-            padding-bottom: 7px; border-bottom: 1px solid rgba(255,215,0,0.12);
+            padding-bottom: 7px; border-bottom: 1px solid var(--border);
             display: flex; align-items: center;
         }
 
@@ -613,7 +613,7 @@ const AdminCatalog = () => {
 
         @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
         .specialty-custom-field { animation: slideDown 0.18s ease; }
-        .specialty-custom-field input { border-color: rgba(255,215,0,0.3) !important; background: rgba(255,215,0,0.04) !important; }
+        .specialty-custom-field input { border-color: var(--primary) !important; background: var(--primary-glow) !important; }
       `}</style>
         </div>
     );

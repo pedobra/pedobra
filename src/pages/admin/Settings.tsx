@@ -269,7 +269,7 @@ const AdminSettings = () => {
         .input-group { display: flex; gap: 20px; }
         .input-field { margin-bottom: 24px; flex: 1; }
         .input-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
-        .input-field input { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; transition: 0.3s; font-size: 14px; }
+        .input-field input { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); outline: none; transition: 0.3s; font-size: 14px; }
         .input-field input:focus { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
         
         .cep-input-wrapper { position: relative; }
@@ -283,13 +283,13 @@ const AdminSettings = () => {
         .logo-placeholder { display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--text-muted); font-size: 12px; }
         .hint { font-size: 11px; color: var(--text-muted); line-height: 1.5; margin-top: 12px; }
 
-        .security-info { display: flex; flex-direction: column; gap: 12px; background: rgba(255, 215, 0, 0.02); margin-bottom: 24px; }
+        .security-info { display: flex; flex-direction: column; gap: 12px; background: var(--primary-glow); margin-bottom: 24px; }
         .security-info strong { font-size: 14px; color: var(--primary); }
         .security-info p { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
 
         .impressos-card { display: flex; flex-direction: column; }
         .toggle-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: 0.2s; }
-        .toggle-row:hover { border-color: var(--primary); background: rgba(255,215,0,0.04); }
+        .toggle-row:hover { border-color: var(--primary); background: var(--primary-glow); }
         .toggle-info { display: flex; flex-direction: column; gap: 4px; }
         .toggle-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
         .toggle-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; }

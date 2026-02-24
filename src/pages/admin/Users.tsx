@@ -225,7 +225,7 @@ const AdminUsers = () => {
         .page-subtitle { color: var(--text-secondary); font-size: 14px; }
         .header-actions { display: flex; gap: 16px; }
         
-        .filter-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px 20px; border-radius: 12px; color: white; display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; }
+        .filter-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 12px 20px; border-radius: 12px; color: var(--text-primary); display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; }
 
         .premium-table-card { background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; }
         .modern-table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -236,20 +236,20 @@ const AdminUsers = () => {
         .user-cell { display: flex; align-items: center; gap: 14px; }
         .user-icon { width: 32px; height: 32px; background: var(--bg-input); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
         .user-name-stack { display: flex; flex-direction: column; }
-        .user-name-stack strong { font-size: 14px; color: white; }
+        .user-name-stack strong { font-size: 14px; color: var(--text-primary); }
         .user-name-stack span { font-size: 11px; color: var(--text-muted); font-family: monospace; }
         
         .email-cell { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); }
 
         .role-pill { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        .role-pill.admin { background: rgba(255, 215, 0, 0.1); color: var(--primary); }
+        .role-pill.admin { background: var(--primary-glow); color: var(--primary); }
         .role-pill.worker { background: rgba(255, 255, 255, 0.05); color: var(--text-secondary); }
 
-        .obra-tag { font-weight: 600; color: white; }
+        .obra-tag { font-weight: 600; color: var(--text-primary); }
         .unassigned { color: var(--text-muted); font-weight: 400; font-style: italic; }
 
         .icon-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
-        .icon-btn:hover { color: white; }
+        .icon-btn:hover { color: var(--text-primary); }
         .icon-btn.delete:hover { color: var(--status-denied); }
 
         .modal-card { width: 600px; padding: 48px; border-radius: 32px; }
@@ -258,10 +258,10 @@ const AdminUsers = () => {
         .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .input-field { margin-bottom: 24px; }
         .input-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-        .input-field input, .input-field select { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; }
+        .input-field input, .input-field select { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); outline: none; }
         .input-field input:focus, .input-field select:focus { border-color: var(--primary); }
         
-        .modal-footer-info { display: flex; align-items: center; gap: 10px; background: rgba(255, 215, 0, 0.05); padding: 12px 16px; border-radius: 12px; font-size: 12px; color: var(--primary); margin-bottom: 32px; }
+        .modal-footer-info { display: flex; align-items: center; gap: 10px; background: var(--primary-glow); padding: 12px 16px; border-radius: 12px; font-size: 12px; color: var(--primary); margin-bottom: 32px; }
         .modal-actions-btns { display: flex; justify-content: flex-end; gap: 16px; }
 
         @media (max-width: 768px) {

@@ -199,8 +199,8 @@ const AdminAuditLogs = () => {
         .filters-container { display: flex; flex-direction: column; gap: 20px; padding: 20px; }
         .filters-grid { display: flex; gap: 16px; flex-wrap: wrap; }
         .filter-item { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 10px 16px; border-radius: 12px; }
-        .filter-item select, .filter-item input { background: transparent; border: none; color: white; outline: none; font-size: 13px; }
-        .filter-item select option { background: var(--bg-card); color: white; }
+        .filter-item select, .filter-item input { background: transparent; border: none; color: var(--text-primary); outline: none; font-size: 13px; }
+        .filter-item select option { background: var(--bg-card); color: var(--text-primary); }
         .date-picker-dark::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
         .logs-table th { font-size: 11px; letter-spacing: 1px; color: var(--text-muted); }
@@ -211,10 +211,10 @@ const AdminAuditLogs = () => {
         .date-cell span { color: var(--text-muted); font-size: 12px; }
 
         .user-cell { display: flex; align-items: center; gap: 12px; }
-        .avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: rgba(255, 215, 0, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; }
+        .avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-glow); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; }
         
         .action-badge { font-size: 11px; font-weight: 700; padding: 6px 10px; border-radius: 6px; border: 1px solid; text-transform: uppercase; letter-spacing: 1px; }
-        .module-tag { background: rgba(255,255,255,0.08); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #ddd; }
+        .module-tag { background: rgba(255,255,255,0.08); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
         
         .details-cell { max-width: 300px; }
         .details-scroller { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; overflow-x: auto; white-space: nowrap; }

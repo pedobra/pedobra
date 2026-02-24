@@ -397,7 +397,7 @@ const AdminDashboard = () => {
                     <div className="modal-overlay glass" onClick={() => setHistoryOrder(null)}>
                         <div className="modal-card animate-fade" onClick={e => e.stopPropagation()} style={{ width: '640px', padding: '40px', background: 'var(--bg-card)', color: 'var(--text-primary)', borderRadius: '24px', boxShadow: '0 24px 48px rgba(0,0,0,0.1)', maxHeight: '90vh', overflowY: 'auto' }}>
                             <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '16px', background: 'rgba(243,156,18,0.1)', color: '#f39c12', marginBottom: '16px' }}>
+                                <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '16px', background: 'var(--primary-glow)', color: 'var(--primary)', marginBottom: '16px' }}>
                                     <History size={28} />
                                 </div>
                                 <h2 style={{ fontSize: '24px', fontWeight: 900, letterSpacing: '-0.5px', marginBottom: '8px' }}>Histórico do Pedido</h2>
@@ -411,7 +411,7 @@ const AdminDashboard = () => {
                                 </div>
                                 <div>
                                     <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Check size={12} style={{ display: 'inline', marginRight: '4px' }} /> STATUS ATUAL</span>
-                                    <strong style={{ fontSize: '14px', color: (historyOrder.status === 'completed' || childOrder?.status === 'completed') ? '#27ae60' : '#f39c12' }}>
+                                    <strong style={{ fontSize: '14px', color: (historyOrder.status === 'completed' || childOrder?.status === 'completed') ? 'var(--status-approved)' : 'var(--status-pending)' }}>
                                         {(historyOrder.status === 'completed' || childOrder?.status === 'completed') ? 'RECEBIMENTO CONCLUÍDO' : 'RECEBIMENTO PARCIAL'}
                                     </strong>
                                 </div>
@@ -626,7 +626,7 @@ const AdminDashboard = () => {
         .stat-card-premium.gold.active-filter  { box-shadow: 0 0 0 2px var(--primary); }
         .stat-card-premium.green.active-filter  { box-shadow: 0 0 0 2px var(--status-approved); }
         .stat-card-premium.red.active-filter    { box-shadow: 0 0 0 2px var(--status-denied); }
-        .stat-card-premium.yellow.active-filter { box-shadow: 0 0 0 2px #f39c12; }
+        .stat-card-premium.yellow.active-filter { box-shadow: 0 0 0 2px var(--status-pending); }
         .stat-card-premium.orange.active-filter { box-shadow: 0 0 0 2px #e67e22; }
         .stat-card-premium.teal.active-filter   { box-shadow: 0 0 0 2px #1abc9c; }
 
@@ -636,14 +636,14 @@ const AdminDashboard = () => {
         .card-icon.gold   { color: var(--primary); }
         .card-icon.green  { color: var(--status-approved); }
         .card-icon.red    { color: var(--status-denied); }
-        .card-icon.yellow { color: #f39c12; }
+        .card-icon.yellow { color: var(--status-pending); }
         .card-icon.orange { color: #e67e22; }
         .card-icon.teal   { color: #1abc9c; }
 
         .card-value { font-size: 32px; font-weight: 800; font-family: var(--font-display); }
         .text-green  { color: var(--status-approved); }
         .text-red    { color: var(--status-denied); }
-        .text-yellow { color: #f39c12; }
+        .text-yellow { color: var(--status-pending); }
         .text-orange { color: #e67e22; }
         .text-teal   { color: #1abc9c; }
         .glow { position: absolute; width: 80px; height: 80px; background: var(--primary-glow); filter: blur(40px); top: -10px; right: -10px; z-index: 0; }
@@ -654,7 +654,7 @@ const AdminDashboard = () => {
         .section-title { font-size: 18px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 12px; }
         .filter-active-tag {
             font-size: 11px; font-weight: 600; color: var(--primary);
-            background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2);
+            background: var(--primary-glow); border: 1px solid var(--border);
             padding: 3px 10px 3px 12px; border-radius: 100px;
             display: inline-flex; align-items: center; gap: 8px;
         }
@@ -682,8 +682,8 @@ const AdminDashboard = () => {
         .id-tag { background: var(--bg-input); padding: 5px 9px; border-radius: 7px; font-family: monospace; font-size: 12px; color: var(--primary); }
 
         .status-pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 100px; font-size: 11px; font-weight: 600; white-space: nowrap; }
-        .status-pill.new       { background: rgba(255,215,0,0.08);  color: var(--primary); }
-        .status-pill.pending   { background: rgba(255,215,0,0.08);  color: var(--primary); }
+        .status-pill.new       { background: var(--primary-glow);  color: var(--primary); }
+        .status-pill.pending   { background: var(--primary-glow);  color: var(--primary); }
         .status-pill.approved  { background: rgba(52,199,89,0.1);   color: var(--status-approved); }
         .status-pill.denied    { background: rgba(255,59,48,0.1);   color: var(--status-denied); }
         .status-pill.partial   { background: rgba(230,126,34,0.1);  color: #e67e22; }

@@ -300,7 +300,7 @@ const AdminOrders = () => {
                                 </div>
                                 <div>
                                     <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Check size={12} style={{ display: 'inline', marginRight: '4px' }} /> STATUS ATUAL</span>
-                                    <strong style={{ fontSize: '14px', color: (historyOrder.status === 'completed' || childOrder?.status === 'completed') ? '#27ae60' : '#f39c12' }}>
+                                    <strong style={{ fontSize: '14px', color: (historyOrder.status === 'completed' || childOrder?.status === 'completed') ? 'var(--status-approved)' : 'var(--status-pending)' }}>
                                         {(historyOrder.status === 'completed' || childOrder?.status === 'completed') ? 'RECEBIMENTO CONCLUÍDO' : 'RECEBIMENTO PARCIAL'}
                                     </strong>
                                 </div>
@@ -335,10 +335,10 @@ const AdminOrders = () => {
                                         const missing = qty - rec;
                                         return (
                                             <tr key={i} style={{ borderBottom: '1px solid #f5f5f5' }}>
-                                                <td style={{ padding: '16px', fontWeight: 600 }}>{it.name} <span style={{ fontSize: '11px', color: '#999', marginLeft: '8px' }}>{it.unit}</span></td>
+                                                <td style={{ padding: '16px', fontWeight: 600 }}>{it.name} <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: '8px' }}>{it.unit}</span></td>
                                                 <td style={{ padding: '16px', textAlign: 'center' }}>{qty}</td>
-                                                <td style={{ padding: '16px', textAlign: 'center', color: '#27ae60', fontWeight: 'bold' }}>{rec}</td>
-                                                <td style={{ padding: '16px', textAlign: 'center', color: missing > 0 ? '#e74c3c' : '#ccc', fontWeight: missing > 0 ? 'bold' : 'normal' }}>{missing > 0 ? missing : '-'}</td>
+                                                <td style={{ padding: '16px', textAlign: 'center', color: 'var(--status-approved)', fontWeight: 'bold' }}>{rec}</td>
+                                                <td style={{ padding: '16px', textAlign: 'center', color: missing > 0 ? 'var(--status-denied)' : '#ccc', fontWeight: missing > 0 ? 'bold' : 'normal' }}>{missing > 0 ? missing : '-'}</td>
                                             </tr>
                                         );
                                     })}
@@ -441,7 +441,7 @@ const AdminOrders = () => {
                                             <td style={{ textAlign: 'right' }}>
                                                 <div className="table-actions-btns" onClick={e => e.stopPropagation()}>
                                                     {(finalUiStatus === 'partial' || finalUiStatus === 'completed') && (
-                                                        <button className="icon-btn-pdf" style={{ color: '#f39c12' }} title="Ver Histórico Completo" onClick={(e) => { e.stopPropagation(); setHistoryOrder(order); }}>
+                                                        <button className="icon-btn-pdf" style={{ color: 'var(--status-pending)' }} title="Ver Histórico Completo" onClick={(e) => { e.stopPropagation(); setHistoryOrder(order); }}>
                                                             <History size={16} />
                                                         </button>
                                                     )}
@@ -578,9 +578,9 @@ const AdminOrders = () => {
                                     <tr>
                                         <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#888', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase' }}>MATERIAL / INSUMO</th>
                                         <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#888', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', width: '50px', textAlign: 'center' }}>UN</th>
-                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#888', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', width: '55px', textAlign: 'right' }}>QTDE</th>
-                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#f39c12', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', textAlign: 'right', width: '80px' }}>MENOR R$</th>
-                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#f39c12', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', paddingLeft: '12px' }}>FORNECEDOR</th>
+                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: 'var(--text-muted)', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', width: '55px', textAlign: 'right' }}>QTDE</th>
+                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: 'var(--status-pending)', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', textAlign: 'right', width: '80px' }}>MENOR R$</th>
+                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: 'var(--status-pending)', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', paddingLeft: '12px' }}>FORNECEDOR</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -617,7 +617,7 @@ const AdminOrders = () => {
                             <button onClick={() => { handleDelete(viewingOrder.id); setViewingOrder(null); }} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '12px', background: 'rgba(255,59,48,0.1)', color: '#FF3B30', border: 'none', cursor: 'pointer', fontWeight: 600, transition: '0.3s' }}>
                                 <Trash2 size={16} /> Excluir
                             </button>
-                            <button onClick={(e) => exportPDF(e, viewingOrder)} style={{ background: 'var(--primary)', color: 'black', display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 800, transition: '0.3s', boxShadow: '0 4px 12px rgba(255,215,0,0.3)' }}>
+                            <button onClick={(e) => exportPDF(e, viewingOrder)} style={{ background: 'var(--primary)', color: 'var(--bg-card)', display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', borderRadius: '12px', border: 'none', cursor: 'pointer', fontWeight: 800, transition: '0.3s', boxShadow: '0 4px 12px var(--primary-glow)' }}>
                                 <FileDown size={18} /> Gerar PDF
                             </button>
                         </div>
@@ -670,11 +670,11 @@ const AdminOrders = () => {
         .order-id-badge { font-family: monospace; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; color: var(--text-secondary); }
         
         .status-pill { padding: 6px 12px; border-radius: 100px; font-size: 11px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
-        .status-pill.new { background: rgba(255,215,0,0.1); color: var(--primary); border: 1px solid rgba(255,215,0,0.2); }
-        .status-pill.approved { background: rgba(52,199,89,0.1); color: #34C759; border: 1px solid rgba(52,199,89,0.2); }
-        .status-pill.denied { background: rgba(255,59,48,0.1); color: #FF3B30; border: 1px solid rgba(255,59,48,0.2); }
-        .status-pill.partial { background: rgba(243,156,18,0.1); color: #f39c12; border: 1px solid rgba(243,156,18,0.2); }
-        .status-pill.completed { background: rgba(39,174,96,0.1); color: #27ae60; border: 1px solid rgba(39,174,96,0.2); }
+        .status-pill.new { background: var(--primary-glow); color: var(--primary); border: 1px solid var(--border); }
+        .status-pill.approved { background: rgba(52,199,89,0.1); color: var(--status-approved); border: 1px solid rgba(52,199,89,0.2); }
+        .status-pill.denied { background: rgba(255,59,48,0.1); color: var(--status-denied); border: 1px solid rgba(255,59,48,0.2); }
+        .status-pill.partial { background: rgba(230,126,34,0.1); color: #e67e22; border: 1px solid rgba(230,126,34,0.2); }
+        .status-pill.completed { background: rgba(39,174,96,0.1); color: var(--status-approved); border: 1px solid rgba(39,174,96,0.2); }
 
         .table-actions-btns { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
         .clickable-row { cursor: pointer; transition: 0.3s; }

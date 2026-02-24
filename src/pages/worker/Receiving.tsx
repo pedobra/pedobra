@@ -179,7 +179,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
                                                     <span>{order.items.length} itens no pedido</span>
                                                 </div>
                                             </div>
-                                            <div className="status-icon-box approved" style={{ background: itemsReceived === totalItems ? 'rgba(52, 199, 89, 0.1)' : 'rgba(255, 215, 0, 0.1)', color: itemsReceived === totalItems ? 'var(--status-approved)' : 'var(--primary)' }}>
+                                            <div className="status-icon-box approved" style={{ background: itemsReceived === totalItems ? 'rgba(52, 199, 89, 0.1)' : 'var(--primary-glow)', color: itemsReceived === totalItems ? 'var(--status-approved)' : 'var(--primary)' }}>
                                                 {itemsReceived === totalItems ? <PackageCheck size={20} /> : <Archive size={20} />}
                                             </div>
                                         </div>
@@ -208,7 +208,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
 
                         <div className="items-preview-list" style={{ maxHeight: '50vh', overflowY: 'auto', paddingRight: '4px' }}>
                             {editingItems.map((item: any, idx: number) => (
-                                <div key={idx} style={{ background: 'rgba(255,255,255,0.03)', borderRadius: '16px', padding: '16px', marginBottom: '12px', border: '1px solid var(--border)' }}>
+                                <div key={idx} style={{ background: 'var(--bg-glass)', borderRadius: '16px', padding: '16px', marginBottom: '12px', border: '1px solid var(--border)' }}>
                                     <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                                         <strong style={{ fontSize: '15px' }}>{item.name}</strong>
                                         <span style={{ fontSize: '14px', color: 'var(--primary)', fontWeight: 'bold' }}>Sol: {item.quantity} {item.unit || 'un'}</span>

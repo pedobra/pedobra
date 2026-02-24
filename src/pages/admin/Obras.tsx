@@ -325,15 +325,15 @@ const AdminObras = () => {
            border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 12px; width: 300px;
            height: 48px;
         }
-        .search-bar-glass input { background: transparent; border: none; color: white; outline: none; width: 100%; font-size: 14px; }
+        .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; }
 
         .premium-table-wrapper { background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; }
         .modern-table { width: 100%; border-collapse: collapse; text-align: left; }
         .modern-table th { padding: 20px 24px; font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 1px; border-bottom: 1px solid var(--border); }
         .modern-table td { padding: 18px 24px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
         .modern-table tr:hover { background: rgba(255,255,255,0.015); }
-        .row-alert-yellow { background: rgba(255, 215, 0, 0.06) !important; border-left: 3px solid rgba(255,215,0,0.5); }
-        .row-alert-yellow:hover { background: rgba(255, 215, 0, 0.1) !important; }
+        .row-alert-yellow { background: var(--primary-glow) !important; border-left: 3px solid var(--primary); }
+        .row-alert-yellow:hover { background: var(--primary-glow) !important; opacity: 0.8; }
         .row-alert-red { background: rgba(255, 59, 48, 0.07) !important; border-left: 3px solid rgba(255,59,48,0.5); }
         .row-alert-red:hover { background: rgba(255, 59, 48, 0.12) !important; }
         .clickable-row { cursor: pointer; }
@@ -344,13 +344,13 @@ const AdminObras = () => {
             cursor: pointer; padding: 8px; border-radius: 8px; transition: 0.2s;
             display: flex; align-items: center; justify-content: center;
         }
-        .icon-btn-edit:hover { background: rgba(255,215,0,0.1); color: var(--primary); }
+        .icon-btn-edit:hover { background: var(--primary-glow); color: var(--primary); }
         .icon-btn-delete:hover { background: rgba(255,59,48,0.1); color: #FF3B30; }
 
         .obra-identity { display: flex; align-items: center; gap: 12px; }
-        .obra-icon-mini { width: 32px; height: 32px; background: rgba(255,215,0,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary); }
+        .obra-icon-mini { width: 32px; height: 32px; background: var(--primary-glow); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary); }
         
-        .count-badge { background: rgba(255,215,0,0.05); color: var(--primary); padding: 5px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1px solid rgba(255,215,0,0.1); }
+        .count-badge { background: var(--primary-glow); color: var(--primary); padding: 5px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); }
 
         .money-value { font-size: 13px; font-weight: 700; font-family: monospace; color: var(--text-secondary); }
         .money-value.used     { color: #e67e22; }
@@ -365,21 +365,21 @@ const AdminObras = () => {
         .obra-card-small:hover { border-color: var(--primary); transform: translateY(-4px); background: rgba(255,255,255,0.02); }
         
         .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-        .obra-card-small h3 { font-size: 18px; color: white; margin: 0; }
+        .obra-card-small h3 { font-size: 18px; color: var(--text-primary); margin: 0; }
         
         .card-actions-mini { display: flex; gap: 4px; }
         .card-icon-action { 
             background: transparent; border: none; color: var(--text-muted); 
             cursor: pointer; padding: 6px; border-radius: 6px; transition: 0.2s;
         }
-        .card-icon-action:hover { background: rgba(255,215,0,0.1); color: var(--primary); }
+        .card-icon-action:hover { background: var(--primary-glow); color: var(--primary); }
         .card-icon-action.delete:hover { background: rgba(255,59,48,0.1); color: #FF3B30; }
 
         .card-mid { margin-bottom: 12px; }
         .order-pill { font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; }
         .card-address { display: flex; align-items: center; gap: 8px; color: var(--text-muted); margin-bottom: 20px; }
         .card-address span { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .btn-card-enter { width: 100%; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: white; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-card-enter { width: 100%; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-primary); padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
         .add-obra-card-small { border: 2px dashed var(--border); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; color: var(--text-muted); transition: 0.3s; min-height: 160px; }
         .add-obra-card-small:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-glow); }
@@ -388,7 +388,7 @@ const AdminObras = () => {
         .modal-actions-btns { display: flex; justify-content: flex-end; gap: 16px; margin-top: 32px; }
         .input-field { margin-bottom: 24px; }
         .input-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-        .input-field input { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: white; outline: none; }
+        .input-field input { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); outline: none; }
         .form-row-dual { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
         @media (max-width: 768px) {

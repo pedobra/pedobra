@@ -379,17 +379,12 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           from { opacity: 0; transform: scale(0.7) translateX(-10px); }
           to   { opacity: 1; transform: scale(1) translateX(0); }
         }
-        @keyframes pulse-gold {
-          0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
-          70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
-        }
         .user-profile {
           display: flex; align-items: center; gap: 12px; padding: 6px 16px;
           background: rgba(255,255,255,0.03); border-radius: 12px;
           border: 1px solid var(--border);
         }
-        .avatar { width: 32px; height: 32px; background: rgba(255,215,0,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .avatar { width: 32px; height: 32px; background: var(--primary-glow); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
         .user-info { display: flex; flex-direction: column; }
         .user-info strong { font-size: 13px; color: var(--text-primary); }
         .user-info span { font-size: 10px; color: var(--status-approved); }

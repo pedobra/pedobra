@@ -1,23 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --primary: #FFCC00;
-  --primary-glow: rgba(255, 204, 0, 0.2);
-  --bg-dark: #F5F5F7;
+  --primary: #000000;
+  --primary-glow: rgba(0, 0, 0, 0.1);
+  --bg-dark: #F9F6EF;
+  /* Starlight background */
   --bg-card: #FFFFFF;
   --bg-sidebar: #FFFFFF;
-  --bg-input: #F0F0F0;
+  --bg-input: #F2F2F7;
 
-  --text-primary: #111111;
-  --text-secondary: #444444;
-  --text-muted: #777777;
+  --text-primary: #000000;
+  /* Jet Black text */
+  --text-secondary: #3A3A3C;
+  --text-muted: #636366;
 
   --border: rgba(0, 0, 0, 0.08);
   --border-bright: rgba(0, 0, 0, 0.15);
-  --bg-glass: rgba(255, 255, 255, 0.7);
+  --bg-glass: rgba(249, 246, 239, 0.8);
 
   --status-approved: #28a745;
-  --status-pending: #ffc107;
+  --status-pending: #F4C325;
   --status-denied: #dc3545;
 
   --font-main: 'Plus Jakarta Sans', sans-serif;
@@ -27,23 +29,26 @@
 }
 
 [data-theme="dark"] {
-  --primary: #FFD700;
-  --primary-glow: rgba(255, 215, 0, 0.15);
-  --bg-dark: #0A0A0B;
-  --bg-card: #141417;
-  --bg-sidebar: #0f0f12;
-  --bg-input: #1b1b1f;
+  --primary: #F9F6EF;
+  /* Starlight primary */
+  --primary-glow: rgba(249, 246, 239, 0.15);
+  --bg-dark: #000000;
+  /* Jet Black background */
+  --bg-card: #0A0A0B;
+  --bg-sidebar: #050505;
+  --bg-input: #121214;
 
-  --text-primary: #FFFFFF;
-  --text-secondary: #E0E0E0;
-  --text-muted: #B0B0B0;
+  --text-primary: #F9F6EF;
+  /* Starlight text */
+  --text-secondary: #B0B0B5;
+  --text-muted: #7C7C80;
 
-  --border: rgba(255, 255, 255, 0.08);
-  --border-bright: rgba(255, 255, 255, 0.15);
-  --bg-glass: rgba(20, 20, 23, 0.7);
+  --border: rgba(255, 255, 255, 0.1);
+  --border-bright: rgba(255, 255, 255, 0.2);
+  --bg-glass: rgba(0, 0, 0, 0.7);
 
   --status-approved: #34C759;
-  --status-pending: #FFD700;
+  --status-pending: #F9F6EF;
   --status-denied: #FF3B30;
 
   --shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
@@ -109,7 +114,7 @@ h3,
 
 .btn-primary {
   background: var(--primary);
-  color: #000;
+  color: var(--bg-card);
   padding: 12px 24px;
   font-weight: 700;
   border-radius: 12px;
