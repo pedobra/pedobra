@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Box, Search, Trash2, Warehouse, MessageCircle, MapPin, Loader2, Truck } from 'lucide-react';
+import { Plus, Box, Search, Trash2, Warehouse, MessageCircle, MapPin, Loader2, Truck, Upload, Download } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 const SPECIALTY_OPTIONS = [
@@ -164,6 +164,73 @@ const AdminCatalog = () => {
         setLoading(false);
     };
 
+    const downloadCSVTemplate = () => {
+        const headers = "Nome;Categoria;Unidade\n";
+        const rows = [
+            "Cimento Portland;Estrutural;saco",
+            "Cabo Flexível 2.5mm;Elétrica;rolo",
+            "Tubo PVC 100mm;Hidráulica;m",
+            "Tinta Acrílica Branca;Acabamento;lata"
+        ].join("\n");
+        const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "modelo_importacao_materiais.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const handleCSVImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            const content = event.target?.result as string;
+            const lines = content.split('\n').map(l => l.trim()).filter(Boolean);
+
+            // Skip header
+            const rows = lines.slice(1);
+            const materialsToImport: any[] = [];
+            const existingNames = new Set(data.map(m => m.name.toLowerCase().trim()));
+
+            rows.forEach((line) => {
+                const [name, category, unit] = line.split(';').map(s => s.trim());
+                if (name && !existingNames.has(name.toLowerCase())) {
+                    materialsToImport.push({
+                        name,
+                        category: category || 'Geral',
+                        unit: unit || 'un'
+                    });
+                }
+            });
+
+            if (materialsToImport.length === 0) {
+                alert('Nenhum material novo encontrado para importar ou arquivo mal formatado.');
+                return;
+            }
+
+            if (!window.confirm(`Deseja importar ${materialsToImport.length} materiais?`)) return;
+
+            setLoading(true);
+            const { error } = await supabase.from('materials').insert(materialsToImport);
+
+            if (error) {
+                alert('Erro na importação: ' + error.message);
+            } else {
+                alert('Importação concluída com sucesso!');
+                fetchData();
+            }
+            setLoading(false);
+            // Clear input
+            e.target.value = '';
+        };
+        reader.readAsText(file, 'UTF-8');
+    };
+
     return (
         <div className="catalog-view">
             <header className="view-header">
@@ -176,6 +243,17 @@ const AdminCatalog = () => {
                         <Search size={16} color="var(--text-muted)" />
                         <input type="text" placeholder={`Buscar ${type === 'materials' ? 'material' : 'fornecedor'}...`} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                     </div>
+                    {type === 'materials' && (
+                        <>
+                            <button className="btn-ghost" onClick={downloadCSVTemplate} title="Baixar Modelo CSV">
+                                <Download size={18} /> Modelo
+                            </button>
+                            <label className="btn-ghost" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Upload size={18} /> Importar CSV
+                                <input type="file" accept=".csv" onChange={handleCSVImport} style={{ display: 'none' }} />
+                            </label>
+                        </>
+                    )}
                     <button className="btn-primary" onClick={handleOpenCreate}>
                         <Plus size={18} /> {type === 'materials' ? 'Cadastrar Insumo' : 'Novo Fornecedor'}
                     </button>
