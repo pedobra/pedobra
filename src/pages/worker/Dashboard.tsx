@@ -373,6 +373,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                             </select>
                                         </div>
                                     </div>
+                                ) : (
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
                                         <select
                                             value={selectedCategory}
