@@ -29,6 +29,7 @@ const AdminSettings = () => {
         logo_url: '',
         pdf_show_site_address: true
     });
+    const [sites, setSites] = useState<any[]>([]);
 
     useEffect(() => {
         fetchSettings();
@@ -37,6 +38,27 @@ const AdminSettings = () => {
     const fetchSettings = async () => {
         const { data } = await supabase.from('company_settings').select('*').single();
         if (data) setSettings(data);
+
+        // Fetch sites for permissions
+        const { data: sitesData } = await supabase.from('sites').select('*').order('name');
+        if (sitesData) setSites(sitesData);
+    };
+
+    const toggleSitePermission = async (siteId: string, currentSettings: any) => {
+        const newSettings = {
+            ...currentSettings,
+            allow_custom_materials: !currentSettings?.allow_custom_materials
+        };
+
+        const { error } = await supabase
+            .from('sites')
+            .update({ settings: newSettings })
+            .eq('id', siteId);
+
+        if (error) alert(error.message);
+        else {
+            setSites(sites.map(s => s.id === siteId ? { ...s, settings: newSettings } : s));
+        }
     };
 
     const handleCEPBlur = async () => {
@@ -249,6 +271,34 @@ const AdminSettings = () => {
                             </div>
                         </div>
                     </div>
+
+                    {/* PERMISSÕES POR OBRA */}
+                    <div className="premium-card permissions-card">
+                        <div className="section-title-sm" style={{ marginBottom: '20px' }}>
+                            <ShieldCheck size={16} />
+                            <span>Controle de Campo</span>
+                        </div>
+                        <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                            Defina se o encarregado pode cadastrar novos insumos em cada obra.
+                        </p>
+
+                        <div className="sites-permissions-list">
+                            {sites.map(site => {
+                                const allowed = site.settings?.allow_custom_materials ?? true;
+                                return (
+                                    <div key={site.id} className="site-perm-item" onClick={() => toggleSitePermission(site.id, site.settings)}>
+                                        <div className="site-info-min">
+                                            <strong>{site.name}</strong>
+                                            <span>Insumos Avulsos: {allowed ? 'Liberado' : 'Bloqueado'}</span>
+                                        </div>
+                                        <div className={`toggle-switch-compact ${allowed ? 'on' : 'off'}`}>
+                                            <div className="switch-knob" />
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </aside>
             </div>
 
@@ -296,6 +346,23 @@ const AdminSettings = () => {
         .toggle-btn { flex-shrink: 0; transition: 0.2s; }
         .toggle-btn.on { color: var(--primary); }
         .toggle-btn.off { color: var(--text-muted); }
+
+        .permissions-card { margin-top: 0; }
+        .sites-permissions-list { display: flex; flex-direction: column; gap: 8px; }
+        .site-perm-item { 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 10px 14px; background: rgba(255,255,255,0.02); 
+            border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: 0.2s;
+        }
+        .site-perm-item:hover { border-color: var(--primary); }
+        .site-info-min { display: flex; flex-direction: column; gap: 2px; }
+        .site-info-min strong { font-size: 13px; color: var(--text-primary); }
+        .site-info-min span { font-size: 10px; color: var(--text-muted); }
+        
+        .toggle-switch-compact { width: 34px; height: 18px; background: var(--border); border-radius: 100px; position: relative; transition: 0.3s; }
+        .toggle-switch-compact.on { background: var(--primary); }
+        .switch-knob { width: 14px; height: 14px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
+        .toggle-switch-compact.on .switch-knob { left: 18px; }
 
         @media (max-width: 768px) {
           .settings-grid { grid-template-columns: 1fr; }

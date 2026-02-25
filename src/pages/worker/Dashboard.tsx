@@ -413,9 +413,11 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                     </button>
                                 </div>
                             </div>
-                            <button className="toggle-custom-btn" onClick={() => setIsCustom(!isCustom)}>
-                                {isCustom ? '← Voltar para Catálogo' : '+ Não encontrou? Cadastrar Insumo Avulso'}
-                            </button>
+                            {((profile.sites?.settings?.allow_custom_materials !== false) || isCustom) && (
+                                <button className="toggle-custom-btn" onClick={() => setIsCustom(!isCustom)}>
+                                    {isCustom ? '← Voltar para Catálogo' : '+ Não encontrou? Cadastrar Insumo Avulso'}
+                                </button>
+                            )}
                         </div>
 
                         <div className="items-preview-list">
