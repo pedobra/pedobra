@@ -64,6 +64,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
     });
     const [isCustom, setIsCustom] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
     const [observations, setObservations] = useState('');
 
     const getOrderRef = (order: any) => {
@@ -372,14 +373,33 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                             </select>
                                         </div>
                                     </div>
-                                ) : (
-                                    <select
-                                        value={currentItem.material_id}
-                                        onChange={e => setCurrentItem({ ...currentItem, material_id: e.target.value })}
-                                    >
-                                        <option value="">Selecione o Insumo...</option>
-                                        {materials.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                                    </select>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+                                        <select
+                                            value={selectedCategory}
+                                            onChange={e => {
+                                                setSelectedCategory(e.target.value);
+                                                setCurrentItem({ ...currentItem, material_id: '' });
+                                            }}
+                                            style={{ border: '1px solid var(--primary)', background: 'var(--primary-glow)' }}
+                                        >
+                                            <option value="">Filtrar por Categoria...</option>
+                                            {MATERIAL_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                        </select>
+
+                                        <select
+                                            value={currentItem.material_id}
+                                            onChange={e => setCurrentItem({ ...currentItem, material_id: e.target.value })}
+                                        >
+                                            <option value="">Selecione o Insumo...</option>
+                                            {materials
+                                                .filter(m => !selectedCategory || m.category === selectedCategory)
+                                                .map(m => (
+                                                    <option key={m.id} value={m.id}>
+                                                        {m.name}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </div>
                                 )}
                                 <div className="builder-row-sm">
                                     <input
