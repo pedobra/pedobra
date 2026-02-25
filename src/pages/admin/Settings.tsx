@@ -30,6 +30,7 @@ const AdminSettings = () => {
         pdf_show_site_address: true
     });
     const [sites, setSites] = useState<any[]>([]);
+    const [siteSearchTerm, setSiteSearchTerm] = useState('');
 
     useEffect(() => {
         fetchSettings();
@@ -282,21 +283,35 @@ const AdminSettings = () => {
                             Defina se o encarregado pode cadastrar novos insumos em cada obra.
                         </p>
 
-                        <div className="sites-permissions-list">
-                            {sites.map(site => {
-                                const allowed = site.settings?.allow_custom_materials ?? true;
-                                return (
-                                    <div key={site.id} className="site-perm-item" onClick={() => toggleSitePermission(site.id, site.settings)}>
-                                        <div className="site-info-min">
-                                            <strong>{site.name}</strong>
-                                            <span>Insumos Avulsos: {allowed ? 'Liberado' : 'Bloqueado'}</span>
-                                        </div>
-                                        <div className={`toggle-switch-compact ${allowed ? 'on' : 'off'}`}>
-                                            <div className="switch-knob" />
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                        <div className="site-search-wrapper">
+                            <Search size={14} />
+                            <input
+                                type="text"
+                                placeholder="Buscar obra..."
+                                value={siteSearchTerm}
+                                onChange={e => setSiteSearchTerm(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="sites-permissions-scroll">
+                            <div className="sites-permissions-list">
+                                {sites
+                                    .filter(site => site.name.toLowerCase().includes(siteSearchTerm.toLowerCase()))
+                                    .map(site => {
+                                        const allowed = site.settings?.allow_custom_materials ?? true;
+                                        return (
+                                            <div key={site.id} className="site-perm-item" onClick={() => toggleSitePermission(site.id, site.settings)}>
+                                                <div className="site-info-min">
+                                                    <strong>{site.name}</strong>
+                                                    <span>Insumos Avulsos: {allowed ? 'Liberado' : 'Bloqueado'}</span>
+                                                </div>
+                                                <div className={`toggle-switch-compact ${allowed ? 'on' : 'off'}`}>
+                                                    <div className="switch-knob" />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                            </div>
                         </div>
                     </div>
                 </aside>
@@ -363,6 +378,25 @@ const AdminSettings = () => {
         .toggle-switch-compact.on { background: var(--primary); }
         .switch-knob { width: 14px; height: 14px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
         .toggle-switch-compact.on .switch-knob { left: 18px; }
+
+        .site-search-wrapper { 
+            display: flex; align-items: center; gap: 8px; 
+            background: var(--bg-input); border: 1px solid var(--border); 
+            border-radius: 8px; padding: 8px 12px; margin-bottom: 12px;
+            color: var(--text-muted);
+        }
+        .site-search-wrapper input { 
+            background: transparent; border: none; outline: none; 
+            color: var(--text-primary); font-size: 13px; width: 100%;
+        }
+        .sites-permissions-scroll { 
+            max-height: 280px; overflow-y: auto; padding-right: 4px;
+            scroll-behavior: smooth;
+        }
+        .sites-permissions-scroll::-webkit-scrollbar { width: 4px; }
+        .sites-permissions-scroll::-webkit-scrollbar-track { background: transparent; }
+        .sites-permissions-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        .sites-permissions-scroll::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
         @media (max-width: 768px) {
           .settings-grid { grid-template-columns: 1fr; }
