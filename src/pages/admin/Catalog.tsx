@@ -195,25 +195,47 @@ const AdminCatalog = () => {
             // Skip header
             const rows = lines.slice(1);
             const materialsToImport: any[] = [];
+            let skippedCount = 0;
             const existingNames = new Set(data.map(m => m.name.toLowerCase().trim()));
 
             rows.forEach((line) => {
-                const [name, category, unit] = line.split(';').map(s => s.trim());
-                if (name && !existingNames.has(name.toLowerCase())) {
+                const parts = line.split(';').map(s => s.trim());
+                if (parts.length < 1) return;
+
+                const [name, category, unit] = parts;
+                if (!name) return;
+
+                const normalizedName = name.toLowerCase();
+                if (!existingNames.has(normalizedName)) {
                     materialsToImport.push({
-                        name,
+                        name: name, // Keep original casing for display
                         category: category || 'Geral',
                         unit: unit || 'un'
                     });
+                    existingNames.add(normalizedName);
+                } else {
+                    skippedCount++;
                 }
             });
 
             if (materialsToImport.length === 0) {
-                alert('Nenhum material novo encontrado para importar ou arquivo mal formatado.');
+                if (skippedCount > 0) {
+                    alert(`Todos os ${skippedCount} materiais do arquivo já estão cadastrados.`);
+                } else {
+                    alert('Nenhum material válido encontrado no arquivo ou formato incorreto.');
+                }
+                e.target.value = '';
                 return;
             }
 
-            if (!window.confirm(`Deseja importar ${materialsToImport.length} materiais?`)) return;
+            const confirmMsg = skippedCount > 0
+                ? `Deseja importar ${materialsToImport.length} novos materiais? (${skippedCount} duplicados serão ignorados).`
+                : `Deseja importar ${materialsToImport.length} materiais?`;
+
+            if (!window.confirm(confirmMsg)) {
+                e.target.value = '';
+                return;
+            }
 
             setLoading(true);
             const { error } = await supabase.from('materials').insert(materialsToImport);
