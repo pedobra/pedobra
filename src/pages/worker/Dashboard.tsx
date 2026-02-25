@@ -381,7 +381,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                                 setSelectedCategory(e.target.value);
                                                 setCurrentItem({ ...currentItem, material_id: '' });
                                             }}
-                                            style={{ border: '1px solid var(--primary)', background: 'var(--primary-glow)' }}
+                                            style={{ color: 'var(--text-primary)' }}
                                         >
                                             <option value="">Filtrar por Categoria...</option>
                                             {MATERIAL_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
