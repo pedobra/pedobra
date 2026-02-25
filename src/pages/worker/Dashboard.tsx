@@ -19,13 +19,8 @@ import { useNavigate } from 'react-router-dom';
 import { generateOrderPDF } from '../../lib/generateOrderPDF';
 import ThemeToggle from '../../components/ThemeToggle';
 
-const MATERIAL_CATEGORIES = [
-    'Estrutural',
-    'Elétrica',
-    'Hidráulica',
-    'Acabamento',
-    'Outros'
-];
+// Categorias dinâmicas carregadas do banco de dados no componente
+
 
 const MATERIAL_UNITS = [
     { value: 'un', label: 'un (Unidade)' },
@@ -66,6 +61,9 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [observations, setObservations] = useState('');
+
+    // Dynamically derive categories from fetched materials
+    const categories = Array.from(new Set(materials.map(m => m.category))).filter(Boolean).sort() as string[];
 
     const getOrderRef = (order: any) => {
         if (!order || !order.created_at) return 'N/A';
@@ -362,7 +360,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                                 onChange={e => setCurrentItem({ ...currentItem, category: e.target.value })}
                                             >
                                                 <option value="">Categoria...</option>
-                                                {MATERIAL_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                                {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                                             </select>
                                             <select
                                                 value={currentItem.unit}
@@ -384,7 +382,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                             style={{ color: 'var(--text-primary)' }}
                                         >
                                             <option value="">Filtrar por Categoria...</option>
-                                            {MATERIAL_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                            {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                                         </select>
 
                                         <select
