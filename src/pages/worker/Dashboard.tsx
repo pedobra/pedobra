@@ -550,8 +550,8 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
         .builder-fields { display: flex; gap: 12px; }
         .builder-fields select, .builder-fields input[type="text"] { flex: 1; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); padding: 12px; outline: none; }
         .builder-row-sm { display: flex; gap: 10px; }
-        .qty-input { width: 80px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: white; padding: 12px; text-align: center; outline: none; }
-        .btn-add-item { background: var(--primary); color: black; border: none; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 48px;}
+        .qty-input { width: 80px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); padding: 12px; text-align: center; outline: none; }
+        .btn-add-item { background: var(--primary); color: var(--bg-card); border: none; padding: 12px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 48px;}
         .toggle-custom-btn { background: transparent; border: none; color: var(--primary); font-size: 12px; font-weight: 700; cursor: pointer; align-self: flex-start; padding: 4px 0; }
 
         .items-preview-list { margin-bottom: 40px; background: rgba(255,255,255,0.02); border-radius: 20px; padding: 8px; border: 1px solid var(--border); }

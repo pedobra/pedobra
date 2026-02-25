@@ -560,9 +560,9 @@ const AdminOrders = () => {
                 <div className="modal-overlay glass" onClick={() => setViewingOrder(null)}>
                     <div className="modal-card animate-fade" onClick={e => e.stopPropagation()} style={{ width: '600px', padding: '40px', background: 'var(--bg-card)', color: 'var(--text-primary)', borderRadius: '24px', boxShadow: '0 24px 48px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
                         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                            <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#111' }}>PEDIDO Nº {getOrderRef(viewingOrder)}</h2>
-                            <p style={{ color: '#666', marginTop: '8px' }}>Obra: <strong style={{ color: '#111' }}>{viewingOrder.sites?.name || 'Desconhecida'}</strong> | Por: <strong style={{ color: '#111' }}>{viewingOrder.profiles?.name || 'Admin'}</strong></p>
-                            <p style={{ color: '#888', marginTop: '4px', fontSize: '13px' }}>Data: {new Date(viewingOrder.created_at).toLocaleString('pt-BR')}</p>
+                            <h2 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--text-primary)' }}>PEDIDO Nº {getOrderRef(viewingOrder)}</h2>
+                            <p style={{ color: 'var(--text-secondary)', marginTop: '8px' }}>Obra: <strong style={{ color: 'var(--text-primary)' }}>{viewingOrder.sites?.name || 'Desconhecida'}</strong> | Por: <strong style={{ color: 'var(--text-primary)' }}>{viewingOrder.profiles?.name || 'Admin'}</strong></p>
+                            <p style={{ color: 'var(--text-muted)', marginTop: '4px', fontSize: '13px' }}>Data: {new Date(viewingOrder.created_at).toLocaleString('pt-BR')}</p>
                         </div>
 
                         <div style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '24px', marginBottom: '24px', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(0,0,0,0.02)', maxHeight: '45vh', overflowY: 'auto' }}>
@@ -576,8 +576,8 @@ const AdminOrders = () => {
                             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                                 <thead>
                                     <tr>
-                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#888', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase' }}>MATERIAL / INSUMO</th>
-                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#888', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', width: '50px', textAlign: 'center' }}>UN</th>
+                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: 'var(--text-muted)', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase' }}>MATERIAL / INSUMO</th>
+                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: 'var(--text-muted)', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', width: '50px', textAlign: 'center' }}>UN</th>
                                         <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: 'var(--text-muted)', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', width: '55px', textAlign: 'right' }}>QTDE</th>
                                         <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: 'var(--status-pending)', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', textAlign: 'right', width: '80px' }}>MENOR R$</th>
                                         <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: 'var(--status-pending)', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', paddingLeft: '12px' }}>FORNECEDOR</th>
@@ -585,13 +585,13 @@ const AdminOrders = () => {
                                 </thead>
                                 <tbody>
                                     {(viewingOrder.items || []).map((item: any, idx: number) => {
-                                        const border = idx !== viewingOrder.items.length - 1 ? '1px solid #f0f0f0' : 'none';
+                                        const border = idx !== viewingOrder.items.length - 1 ? '1px solid var(--border)' : 'none';
                                         const hint = priceSuggestions[item.name];
                                         return (
                                             <tr key={idx}>
                                                 <td style={{ padding: '11px 0', borderBottom: border, fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>{item.name}</td>
-                                                <td style={{ padding: '11px 0', borderBottom: border, color: '#666', textAlign: 'center', fontSize: '13px' }}>{item.unit || 'un'}</td>
-                                                <td style={{ padding: '11px 0', borderBottom: border, color: '#111', fontWeight: 900, textAlign: 'right', fontSize: '15px' }}>{item.quantity}</td>
+                                                <td style={{ padding: '11px 0', borderBottom: border, color: 'var(--text-secondary)', textAlign: 'center', fontSize: '13px' }}>{item.unit || 'un'}</td>
+                                                <td style={{ padding: '11px 0', borderBottom: border, color: 'var(--text-primary)', fontWeight: 900, textAlign: 'right', fontSize: '15px' }}>{item.quantity}</td>
                                                 <td style={{ padding: '11px 0', borderBottom: border, textAlign: 'right', fontSize: '12px' }}>
                                                     {loadingPrices ? <span style={{ color: '#ccc' }}>...</span>
                                                         : hint ? <span style={{ fontWeight: 700, color: '#27ae60', fontFamily: 'monospace' }}>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(hint.unitValue)}</span>

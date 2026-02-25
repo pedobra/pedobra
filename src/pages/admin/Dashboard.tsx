@@ -406,50 +406,53 @@ const AdminDashboard = () => {
 
                             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', background: 'var(--bg-input)', padding: '24px', borderRadius: '16px', marginBottom: '32px' }}>
                                 <div>
-                                    <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Construction size={12} style={{ display: 'inline', marginRight: '4px' }} /> OBRA DESTINO</span>
-                                    <strong style={{ fontSize: '14px' }}>{historyOrder.sites?.name || 'Desconhecida'}</strong>
+                                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Construction size={12} style={{ display: 'inline', marginRight: '4px' }} /> OBRA DESTINO</span>
+                                    <strong style={{ fontSize: '18px', color: 'var(--text-primary)' }}>{historyOrder.sites?.name || 'Admin'}</strong>
                                 </div>
-                                <div>
-                                    <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Check size={12} style={{ display: 'inline', marginRight: '4px' }} /> STATUS ATUAL</span>
-                                    <strong style={{ fontSize: '14px', color: (historyOrder.status === 'completed' || childOrder?.status === 'completed') ? 'var(--status-approved)' : 'var(--status-pending)' }}>
-                                        {(historyOrder.status === 'completed' || childOrder?.status === 'completed') ? 'RECEBIMENTO CONCLUÍDO' : 'RECEBIMENTO PARCIAL'}
-                                    </strong>
+                                <div style={{ flex: 1 }}>
+                                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}><Check size={12} style={{ display: 'inline', marginRight: '4px' }} /> STATUS ATUAL</span>
+                                    <span className={`status-pill ${historyOrder.status}`} style={{ fontWeight: 800 }}>
+                                        {historyOrder.status === 'new' && 'Pendente'}
+                                        {historyOrder.status === 'approved' && 'Aprovado'}
+                                        {historyOrder.status === 'denied' && 'Negado'}
+                                        {historyOrder.status === 'partial' && 'Rec. Parcial'}
+                                        {historyOrder.status === 'completed' && 'Concluído'}
+                                    </span>
                                 </div>
-                                {historyOrder.approved_at && (
-                                    <div>
-                                        <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><User size={12} style={{ display: 'inline', marginRight: '4px' }} /> APROVADO POR</span>
-                                        <strong style={{ fontSize: '14px' }}>{historyOrder.approved_by_name || 'Admin'} <br /> <span style={{ fontSize: '11px', color: '#888', fontWeight: 'normal' }}>{new Date(historyOrder.approved_at).toLocaleString('pt-BR')}</span></strong>
-                                    </div>
-                                )}
-                                {historyOrder.received_at && (
-                                    <div>
-                                        <span style={{ fontSize: '12px', color: '#666', fontWeight: 600, display: 'block', marginBottom: '4px' }}><CheckCircle size={12} style={{ display: 'inline', marginRight: '4px' }} /> RECEBIDO POR</span>
-                                        <strong style={{ fontSize: '14px' }}>{historyOrder.received_by_name} <br /> <span style={{ fontSize: '11px', color: '#888', fontWeight: 'normal' }}>{new Date(historyOrder.received_at).toLocaleString('pt-BR')}</span></strong>
-                                    </div>
-                                )}
                             </div>
 
-                            <h3 style={{ fontSize: '14px', letterSpacing: '1px', color: '#888', textTransform: 'uppercase', marginBottom: '16px', fontWeight: 700 }}>Resumo de Itens Originais x Recebidos</h3>
-                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', marginBottom: '40px' }}>
+                            <div style={{ display: 'flex', gap: '20px', marginBottom: '40px' }}>
+                                <div style={{ flex: 1 }}>
+                                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}><User size={12} style={{ display: 'inline', marginRight: '4px' }} /> APROVADO POR</span>
+                                    <strong style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{historyOrder.approved_by_name || 'Admin'} <br /> <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'normal' }}>{new Date(historyOrder.approved_at).toLocaleString('pt-BR')}</span></strong>
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, display: 'block', marginBottom: '4px' }}><CheckCircle size={12} style={{ display: 'inline', marginRight: '4px' }} /> RECEBIDO POR</span>
+                                    <strong style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{historyOrder.received_by_name} <br /> <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'normal' }}>{new Date(historyOrder.received_at).toLocaleString('pt-BR')}</span></strong>
+                                </div>
+                            </div>
+
+                            <h3 style={{ fontSize: '14px', letterSpacing: '1px', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '16px', fontWeight: 700 }}>Resumo de Itens Originais x Recebidos</h3>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', marginBottom: '32px' }}>
                                 <thead>
-                                    <tr style={{ borderBottom: '2px solid #eee' }}>
-                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: '#888' }}>MATERIAL</th>
-                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: '#888', width: '100px', textAlign: 'center' }}>SOLICITADOS</th>
-                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: '#888', width: '100px', textAlign: 'center' }}>RECEBIDOS</th>
-                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: '#888', width: '100px', textAlign: 'center' }}>FALTANTES</th>
+                                    <tr style={{ borderBottom: '1px solid var(--border)' }}>
+                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--text-muted)' }}>MATERIAL</th>
+                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--text-muted)', width: '100px', textAlign: 'center' }}>SOLICITADOS</th>
+                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--text-muted)', width: '100px', textAlign: 'center' }}>RECEBIDOS</th>
+                                        <th style={{ padding: '12px 16px', fontSize: '12px', color: 'var(--text-muted)', width: '100px', textAlign: 'center' }}>FALTANTES</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {historyOrder.items?.map((it: any, i: number) => {
-                                        const qty = parseFloat(it.quantity) || 0;
-                                        const rec = parseFloat(it.received_quantity) || 0;
+                                    {(historyOrder.items || []).map((item: any, idx: number) => {
+                                        const qty = parseFloat(item.quantity) || 0;
+                                        const rec = parseFloat(item.received_quantity) || 0;
                                         const missing = qty - rec;
                                         return (
-                                            <tr key={i} style={{ borderBottom: '1px solid #f5f5f5' }}>
-                                                <td style={{ padding: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>{it.name} <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginLeft: '8px' }}>{it.unit}</span></td>
-                                                <td style={{ padding: '16px', textAlign: 'center' }}>{qty}</td>
+                                            <tr key={idx} style={{ borderBottom: '1px solid var(--border)' }}>
+                                                <td style={{ padding: '16px', fontSize: '14px', color: 'var(--text-primary)' }}>{item.name}</td>
+                                                <td style={{ padding: '16px', textAlign: 'center', color: 'var(--text-primary)' }}>{qty}</td>
                                                 <td style={{ padding: '16px', textAlign: 'center', color: '#27ae60', fontWeight: 'bold' }}>{rec}</td>
-                                                <td style={{ padding: '16px', textAlign: 'center', color: missing > 0 ? '#e74c3c' : '#ccc', fontWeight: missing > 0 ? 'bold' : 'normal' }}>{missing > 0 ? missing : '-'}</td>
+                                                <td style={{ padding: '16px', textAlign: 'center', color: missing > 0 ? '#e74c3c' : 'var(--text-muted)', fontWeight: missing > 0 ? 'bold' : 'normal' }}>{missing > 0 ? missing : '-'}</td>
                                             </tr>
                                         );
                                     })}
@@ -459,7 +462,7 @@ const AdminDashboard = () => {
                             {childOrder && (
                                 <div style={{ background: 'var(--bg-sidebar)', padding: '24px', borderRadius: '12px', border: '1px solid var(--border)' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                                        <h3 style={{ fontSize: '14px', letterSpacing: '1px', color: '#555', textTransform: 'uppercase', fontWeight: 700, margin: 0 }}><FileText size={16} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '6px' }} /> Pedido Complementar Gerado Automático</h3>
+                                        <h3 style={{ fontSize: '14px', letterSpacing: '1px', color: 'var(--text-secondary)', textTransform: 'uppercase', fontWeight: 700, margin: 0 }}><FileText size={16} style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '6px' }} /> Pedido Complementar Gerado Automático</h3>
                                         <span className={`status-pill ${childOrder.status}`} style={{ fontWeight: 800 }}>
                                             {childOrder.status === 'new' && 'Pendente'}
                                             {childOrder.status === 'approved' && 'Aprovado'}
@@ -468,17 +471,17 @@ const AdminDashboard = () => {
                                             {childOrder.status === 'completed' && 'Concluído'}
                                         </span>
                                     </div>
-                                    <p style={{ fontSize: '13px', color: '#666', marginBottom: '16px' }}>Identificador do novo pedido (contém sobras pendentes): <strong>#{getOrderRef(childOrder)}</strong> </p>
+                                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '16px' }}>Identificador do novo pedido (contém sobras pendentes): <strong style={{ color: 'var(--text-primary)' }}>#{getOrderRef(childOrder)}</strong> </p>
 
-                                    <ul style={{ margin: 0, paddingLeft: '20px', color: '#333' }}>
+                                    <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--text-primary)' }}>
                                         {childOrder.items?.map((it: any, idx: number) => (
                                             <li key={idx} style={{ marginBottom: '8px', fontSize: '14px' }}><strong>{it.quantity} {it.unit}</strong> - {it.name.replace(`[COMPLEMENTO REF ${getOrderRef(historyOrder)}]`, '')}</li>
                                         ))}
                                     </ul>
                                     {childOrder.status === 'completed' && childOrder.received_at && (
-                                        <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px dashed #ccc', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                            <span style={{ fontSize: '13px', color: '#555' }}><strong>Recebido por:</strong> {childOrder.received_by_name}</span>
-                                            <span style={{ fontSize: '13px', color: '#555' }}><strong>Data da conclusão:</strong> {new Date(childOrder.received_at).toLocaleString('pt-BR')}</span>
+                                        <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px dashed var(--border)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                            <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}><strong>Recebido por:</strong> {childOrder.received_by_name}</span>
+                                            <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}><strong>Data da conclusão:</strong> {new Date(childOrder.received_at).toLocaleString('pt-BR')}</span>
                                         </div>
                                     )}
                                 </div>
@@ -513,11 +516,11 @@ const AdminDashboard = () => {
                             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                                 <thead>
                                     <tr>
-                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#888', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase' }}>MATERIAL</th>
-                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#888', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', width: '50px', textAlign: 'center' }}>UN</th>
-                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#888', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', width: '60px', textAlign: 'right' }}>QTDE</th>
-                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#f39c12', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', textAlign: 'right', width: '80px' }}>MENOR R$</th>
-                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid #f0f0f0', color: '#f39c12', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', textAlign: 'left', paddingLeft: '12px' }}>FORNECEDOR</th>
+                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: 'var(--text-muted)', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase' }}>MATERIAL</th>
+                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: 'var(--text-muted)', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', width: '50px', textAlign: 'center' }}>UN</th>
+                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: 'var(--text-muted)', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', width: '60px', textAlign: 'right' }}>QTDE</th>
+                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: '#f39c12', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', textAlign: 'right', width: '80px' }}>MENOR R$</th>
+                                        <th style={{ paddingBottom: '10px', borderBottom: '2px solid var(--border)', color: '#f39c12', fontSize: '10px', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', textAlign: 'left', paddingLeft: '12px' }}>FORNECEDOR</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -527,8 +530,8 @@ const AdminDashboard = () => {
                                         return (
                                             <tr key={idx}>
                                                 <td style={{ padding: '12px 0', borderBottom: border, fontWeight: 600, color: 'var(--text-primary)', fontSize: '13px' }}>{item.name}</td>
-                                                <td style={{ padding: '12px 0', borderBottom: border, color: '#666', textAlign: 'center', fontSize: '13px' }}>{item.unit || 'un'}</td>
-                                                <td style={{ padding: '12px 0', borderBottom: border, color: '#111', fontWeight: 900, textAlign: 'right', fontSize: '15px' }}>{item.quantity}</td>
+                                                <td style={{ padding: '12px 0', borderBottom: border, color: 'var(--text-secondary)', textAlign: 'center', fontSize: '13px' }}>{item.unit || 'un'}</td>
+                                                <td style={{ padding: '12px 0', borderBottom: border, color: 'var(--text-primary)', fontWeight: 900, textAlign: 'right', fontSize: '15px' }}>{item.quantity}</td>
                                                 <td style={{ padding: '12px 0', borderBottom: border, textAlign: 'right', fontSize: '12px' }}>
                                                     {loadingPrices ? (
                                                         <span style={{ color: '#ccc' }}>...</span>
@@ -579,7 +582,7 @@ const AdminDashboard = () => {
                             </>}
                             {viewingOrder.status === 'denied' && <>
                                 <button onClick={() => { updateStatus(viewingOrder.id, 'approved'); setViewingOrder({ ...viewingOrder, status: 'approved' }); }} style={{ padding: '11px 20px', borderRadius: '12px', background: '#34C759', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 700 }}><CheckCircle size={16} /> Aprovar</button>
-                                <button onClick={() => { updateStatus(viewingOrder.id, 'new'); setViewingOrder({ ...viewingOrder, status: 'new' }); }} style={{ padding: '11px 20px', borderRadius: '12px', background: '#FF9500', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 700 }}>Pendente</button>
+                                <button onClick={() => { updateStatus(viewingOrder.id, 'denied'); setViewingOrder({ ...viewingOrder, status: 'denied' }); }} style={{ padding: '11px 20px', borderRadius: '12px', background: '#FF3B30', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 700 }}><XCircle size={16} /> Negar</button>
                             </>}
                         </div>
 
