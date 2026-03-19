@@ -26,7 +26,7 @@ export const TrialBanner = () => {
                     onClick={() => navigate('/admin/plans')}
                     className="banner-cta"
                 >
-                    Assinar Plano Premium <ArrowRight size={14} />
+                    ASSINAR PLANO PROFISSIONAL <ArrowRight size={14} />
                 </button>
             </div>
 
