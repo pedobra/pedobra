@@ -69,7 +69,7 @@ const AdminUsers = () => {
             header: 'Ações',
             accessor: (user: any) => (
                 <div className="action-btns" onClick={e => e.stopPropagation()}>
-                    <button className="icon-btn" onClick={() => navigate(`/admin/usuarios/editar/${user.id}`)}><Edit2 size={14} /></button>
+                    <button className="icon-btn" onClick={() => navigate(`/admin/users/editar/${user.id}`)}><Edit2 size={14} /></button>
                     <button className="icon-btn delete" onClick={(e) => handleDelete(user.id, e)}><Trash2 size={14} /></button>
                 </div>
             )
@@ -84,7 +84,7 @@ const AdminUsers = () => {
                     <p className="page-subtitle">Controle de acessos, funções e vínculos operacionais.</p>
                 </div>
                 <div className="header-actions">
-                    <button className="btn-primary" onClick={() => navigate('/admin/usuarios/novo')}>
+                    <button className="btn-primary" onClick={() => navigate('/admin/users/novo')}>
                         <UserPlus size={20} /> Convidar Membro
                     </button>
                 </div>

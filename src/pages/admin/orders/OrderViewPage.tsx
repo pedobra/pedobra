@@ -75,7 +75,7 @@ const OrderViewPage = () => {
     const handleDelete = async () => {
         if (!window.confirm('Excluir este pedido permanentemente?')) return;
         const { error } = await supabase.from('orders').delete().eq('id', id);
-        if (!error) navigate('/admin/pedidos');
+        if (!error) navigate('/admin/orders');
     };
 
     if (loading) return <div className="loading-state">Carregando detalhes...</div>;
@@ -84,7 +84,7 @@ const OrderViewPage = () => {
     return (
         <div className="order-view-page">
             <header className="view-header">
-                <button onClick={() => navigate('/admin/pedidos')} className="btn-back">
+                <button onClick={() => navigate('/admin/orders')} className="btn-back">
                     <ArrowLeft size={18} /> Painel de Pedidos
                 </button>
                 <div className="header-info">
@@ -156,7 +156,7 @@ const OrderViewPage = () => {
                                 <StatusBadge status={complementaryOrder.status} />
                             </div>
                             <p>Este pedido foi gerado automaticamente devido a itens não entregues. REF: <strong>#{getOrderRef(complementaryOrder)}</strong></p>
-                            <button className="btn-text" onClick={() => navigate(`/admin/pedidos/visualizar/${complementaryOrder.id}`)}>Ver Pedido Complementar →</button>
+                            <button className="btn-text" onClick={() => navigate(`/admin/orders/visualizar/${complementaryOrder.id}`)}>Ver Pedido Complementar →</button>
                         </div>
                     )}
                 </div>

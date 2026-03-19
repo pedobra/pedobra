@@ -79,7 +79,7 @@ const AdminOrders = () => {
             accessor: (order: any) => (
                 <div className="action-btns" onClick={e => e.stopPropagation()}>
                     <button className="icon-btn" onClick={() => generateOrderPDF(order, order.profiles?.name || 'Admin')} title="PDF"><FileDown size={14} /></button>
-                    <button className="icon-btn" onClick={() => navigate(`/admin/pedidos/editar/${order.id}`)} title="Editar"><Edit2 size={14} /></button>
+                    <button className="icon-btn" onClick={() => navigate(`/admin/orders/editar/${order.id}`)} title="Editar"><Edit2 size={14} /></button>
                     <button className="icon-btn delete" onClick={(e) => handleDelete(order.id, e)} title="Excluir"><Trash2 size={14} /></button>
                 </div>
             )
@@ -98,7 +98,7 @@ const AdminOrders = () => {
                         <Search size={18} color="var(--text-muted)" />
                         <input type="text" placeholder="Buscar por REF ou Obra..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                     </div>
-                    <button className="btn-primary" onClick={() => navigate('/admin/pedidos/novo')}>
+                    <button className="btn-primary" onClick={() => navigate('/admin/orders/novo')}>
                         <Plus size={20} /> Novo Pedido
                     </button>
                 </div>

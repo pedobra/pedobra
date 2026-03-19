@@ -75,16 +75,16 @@ const SiteFormPage = () => {
         if (error) {
             alert(error.message);
         } else {
-            navigate('/admin/obras');
+            navigate('/admin/sites');
         }
         setLoading(false);
     };
 
     return (
         <div className="site-form-view">
-            <div className="form-header">
-                <button className="btn-back" onClick={() => navigate('/admin/obras')}>
-                    <ArrowLeft size={18} /> Voltar para lista
+            <div className="view-header">
+                <button className="btn-back" onClick={() => navigate('/admin/sites')}>
+                    <ArrowLeft size={18} /> Painel de Canteiros
                 </button>
                 <div className="header-titles">
                     <h1 className="page-title">{id ? 'Editar Canteiro' : 'Novo Canteiro de Obra'}</h1>
@@ -152,7 +152,7 @@ const SiteFormPage = () => {
                 </StandardCard>
 
                 <div className="form-actions-sticky">
-                    <button type="button" className="btn-ghost" onClick={() => navigate('/admin/obras')}>
+                    <button type="button" className="btn-ghost" onClick={() => navigate('/admin/sites')}>
                         Descartar
                     </button>
                     <button type="submit" className="btn-save" disabled={loading}>

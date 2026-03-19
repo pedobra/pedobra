@@ -47,7 +47,7 @@ const AdminObras = () => {
     };
 
     const handleEdit = (obra: any) => {
-        navigate(`/admin/obras/editar/${obra.id}`);
+        navigate(`/admin/sites/editar/${obra.id}`);
     };
 
     const filteredObras = obras.filter(o =>
@@ -85,7 +85,7 @@ const AdminObras = () => {
             header: 'Ações',
             accessor: (obra: any) => (
                 <div className="table-actions-btns">
-                    <button className="icon-btn" onClick={() => handleEdit(obra)} title="Editar"><Edit2 size={16} /></button>
+                    <button className="icon-btn" onClick={() => navigate(`/admin/sites/editar/${obra.id}`)} title="Editar"><Edit2 size={16} /></button>
                     <button className="icon-btn" style={{ color: '#ef4444' }} onClick={async () => {
                         if (confirm('Remover canteiro?')) {
                             await supabase.from('sites').delete().eq('id', obra.id);
@@ -117,7 +117,7 @@ const AdminObras = () => {
                         <Search size={16} color="var(--text-muted)" />
                         <input type="text" placeholder="Pesquisar obra..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                     </div>
-                    <button className="btn-primary" onClick={() => navigate('/admin/obras/novo')}>
+                    <button className="btn-primary" onClick={() => navigate('/admin/sites/novo')}>
                         <Plus size={20} /> Nova Obra
                     </button>
                 </div>
@@ -149,7 +149,7 @@ const AdminObras = () => {
                                 </div>
                             </div>
                         ))}
-                        <div className="add-obra-card-small" onClick={() => navigate('/admin/obras/novo')}>
+                        <div className="add-obra-card-small" onClick={() => navigate('/admin/sites/novo')}>
                             <Plus size={24} />
                             <span>Adicionar Obra</span>
                         </div>

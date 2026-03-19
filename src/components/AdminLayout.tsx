@@ -24,7 +24,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const location = useLocation();
     const { isExpired, loading: subLoading } = useSubscription();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [isCollapsed, setIsCollapsed] = useState(true);
+    const [isCollapsed, setIsCollapsed] = useState(false); // Default to expanded for better first impression
     const [userName, setUserName] = useState('Admin Master');
     // Inicializa do localStorage para sobreviver ao refresh
     const [hasNotification, setHasNotification] = useState(
@@ -190,8 +190,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
             <aside 
                 className={`sidebar-glass ${mobileMenuOpen ? 'mobile-open' : ''} ${isCollapsed ? 'collapsed' : ''}`}
-                onMouseEnter={() => setIsCollapsed(false)}
-                onMouseLeave={() => setIsCollapsed(true)}
             >
                 <div className="sidebar-brand">
                     <div className="brand-logo">
@@ -203,6 +201,13 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                             <span>Painel Administrativo</span>
                         </div>
                     )}
+                    <button 
+                        className="sidebar-toggle-btn" 
+                        onClick={() => setIsCollapsed(!isCollapsed)}
+                        title={isCollapsed ? "Expandir" : "Recolher"}
+                    >
+                        <ChevronRight size={16} className={isCollapsed ? '' : 'rotated'} />
+                    </button>
                 </div>
 
                 <nav className="sidebar-menu">
@@ -214,7 +219,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                     </NavLink>
 
                     {!isCollapsed && <label className="animate-fade-fast">RECURSOS</label>}
-                    <NavLink to="/admin/obras" title={isCollapsed ? "Canteiros de Obra" : ""} className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                    <NavLink to="/admin/sites" title={isCollapsed ? "Canteiros de Obra" : ""} className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
                         <Construction size={20} /> {!isCollapsed && <span className="animate-fade-fast">Canteiros de Obra</span>}
                     </NavLink>
                     <NavLink to="/admin/orders" title={isCollapsed ? "Pedidos" : ""} className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
@@ -326,8 +331,18 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
         .sidebar-brand {
           display: flex; align-items: center; gap: 12px; margin-bottom: 48px; padding: 0 12px;
-          min-height: 40px;
+          min-height: 40px; position: relative;
         }
+        .sidebar-toggle-btn {
+          position: absolute; right: -12px; top: 10px;
+          width: 24px; height: 24px; background: var(--bg-sidebar);
+          border: 1px solid var(--border); border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          cursor: pointer; color: var(--text-muted); transition: 0.3s;
+          z-index: 10;
+        }
+        .sidebar-toggle-btn:hover { color: var(--primary); border-color: var(--primary); transform: scale(1.1); }
+        .sidebar-toggle-btn .rotated { transform: rotate(180deg); }
         .brand-logo {
           background: var(--primary); padding: 8px; border-radius: 12px;
           flex-shrink: 0;

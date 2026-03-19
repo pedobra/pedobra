@@ -62,7 +62,7 @@ const AdminDashboard = () => {
         {
             header: 'Ações',
             accessor: (o: any) => (
-                <button className="icon-btn" onClick={() => navigate(`/admin/pedidos/visualizar/${o.id}`)}>
+                <button className="icon-btn" onClick={() => navigate(`/admin/orders/visualizar/${o.id}`)}>
                     <Eye size={16} />
                 </button>
             )

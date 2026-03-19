@@ -73,7 +73,7 @@ const UserFormPage = () => {
                 }
             }
 
-            navigate('/admin/usuarios');
+            navigate('/admin/users');
         } catch (err: any) {
             alert(err.message);
         } finally {
@@ -84,7 +84,7 @@ const UserFormPage = () => {
     return (
         <div className="user-form-page">
             <header className="view-header">
-                <button onClick={() => navigate('/admin/usuarios')} className="btn-back">
+                <button onClick={() => navigate('/admin/users')} className="btn-back">
                     <ArrowLeft size={18} /> Voltar
                 </button>
                 <div className="header-info">

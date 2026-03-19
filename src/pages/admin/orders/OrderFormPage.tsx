@@ -78,14 +78,14 @@ const OrderFormPage = () => {
             : await supabase.from('orders').insert(payload);
 
         if (error) alert(error.message);
-        else navigate('/admin/pedidos');
+        else navigate('/admin/orders');
         setLoading(false);
     };
 
     return (
         <div className="order-form-page">
             <header className="view-header">
-                <button onClick={() => navigate('/admin/pedidos')} className="btn-back">
+                <button onClick={() => navigate('/admin/orders')} className="btn-back">
                     <ArrowLeft size={18} /> Voltar
                 </button>
                 <div className="header-info">
