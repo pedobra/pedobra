@@ -9,6 +9,7 @@ import AdminObras from './pages/admin/Obras';
 import AdminCatalog from './pages/admin/Catalog';
 import AdminOrders from './pages/admin/Orders';
 import AdminSettings from './pages/admin/Settings';
+import AdminPlans from './pages/admin/Plans';
 import AdminAuditLogs from './pages/admin/AuditLogs';
 import WorkerDashboard from './pages/worker/Dashboard';
 import WorkerReceiving from './pages/worker/Receiving';
@@ -148,6 +149,9 @@ function App() {
         } />
         <Route path="/admin/settings" element={
           session && profile?.role === 'admin' ? <AdminLayout><AdminSettings /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/admin/plans" element={
+          session && profile?.role === 'admin' ? <AdminLayout><AdminPlans /></AdminLayout> : <Navigate to="/" />
         } />
         <Route path="/admin/audit-logs" element={
           session && profile?.role === 'admin' ? <AdminLayout><AdminAuditLogs /></AdminLayout> : <Navigate to="/" />

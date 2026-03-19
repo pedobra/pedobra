@@ -14,7 +14,8 @@ import {
     Activity,
     Menu,
     X,
-    ShieldAlert
+    ShieldAlert,
+    Crown
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ThemeToggle from './ThemeToggle';
@@ -217,6 +218,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                     </NavLink>
                     <NavLink to="/admin/settings" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
                         <Settings size={20} /> {!isCollapsed && <span>Configurações</span>}
+                    </NavLink>
+                    <NavLink to="/admin/plans" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                        <Crown size={20} /> {!isCollapsed && <span>Planos</span>}
                     </NavLink>
                     <NavLink to="/admin/audit-logs" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
                         <Activity size={20} /> {!isCollapsed && <span>Logs</span>}

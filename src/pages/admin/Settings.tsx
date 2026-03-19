@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Building, MapPin, Globe, Save, CheckCircle2, Crown, CreditCard, Star, FileText, Package, Calendar } from 'lucide-react';
-import { useSubscription } from '../../hooks/useSubscription';
+import { Building, MapPin, Globe, Save, CheckCircle2, Star, FileText, Package } from 'lucide-react';
 import StandardCard from '../../components/ui/StandardCard';
 
 const AdminSettings = () => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    const { isTrial, daysRemaining } = useSubscription();
     const [settings, setSettings] = useState({
         company_name: '',
         cnpj: '',
@@ -17,6 +15,7 @@ const AdminSettings = () => {
         address_neighborhood: '',
         address_city: '',
         address_state: '',
+        logo_url: '',
         pdf_show_site_address: true,
         allow_custom_materials_global: false
     });
@@ -50,6 +49,17 @@ const AdminSettings = () => {
             if (!res.erro) {
                 setSettings({ ...settings, address_street: res.logradouro, address_neighborhood: res.bairro, address_city: res.localidade, address_state: res.uf });
             }
+        }
+    };
+
+    const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setSettings({ ...settings, logo_url: reader.result as string });
+            };
+            reader.readAsDataURL(file);
         }
     };
 
@@ -117,30 +127,19 @@ const AdminSettings = () => {
                 </div>
 
                 <div className="side-column">
-                    <StandardCard title="Plano e Assinatura" subtitle="Status do seu licenciamento.">
-                        <div className="plan-card">
-                            <div className="plan-header">
-                                <Crown size={24} className="plan-icon" />
-                                <div>
-                                    <span className="plan-name">Plano Enterprise</span>
-                                    <span className={`plan-status ${isTrial ? 'trial' : 'active'}`}>
-                                        {isTrial ? 'Período de Teste' : 'Assinatura Ativa'}
-                                    </span>
-                                </div>
+                    <StandardCard title="Identidade Visual" subtitle="Faça upload do logotipo da empresa.">
+                        <div className="logo-upload-container">
+                            <div className="logo-preview">
+                                {settings.logo_url ? (
+                                    <img src={settings.logo_url} alt="Logo da Empresa" />
+                                ) : (
+                                    <div className="logo-placeholder">Sem Logo</div>
+                                )}
                             </div>
-                            <div className="plan-details">
-                                <div className="detail-row">
-                                    <Calendar size={14} />
-                                    <span>Vencimento:</span>
-                                    <strong>{isTrial ? `${daysRemaining} dias restantes` : 'Renovação Mensal'}</strong>
-                                </div>
-                                <div className="detail-row">
-                                    <CreditCard size={14} />
-                                    <span>Método:</span>
-                                    <strong>Cartão de Crédito</strong>
-                                </div>
-                            </div>
-                            <button className="btn-secondary w-full">Gerenciar Faturamento</button>
+                            <label className="btn-secondary w-full" style={{ textAlign: 'center', cursor: 'pointer', display: 'block' }}>
+                                Selecionar Nova Imagem
+                                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleLogoChange} />
+                            </label>
                         </div>
                     </StandardCard>
 
@@ -171,17 +170,10 @@ const AdminSettings = () => {
                 .toggle-item strong { display: block; font-size: 14px; color: var(--text-primary); }
                 .toggle-item p { font-size: 12px; color: var(--text-muted); margin: 4px 0 0; }
                 
-                .plan-card { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
-                .plan-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
-                .plan-icon { color: var(--primary); filter: drop-shadow(0 0 8px var(--primary-glow)); }
-                .plan-name { display: block; font-size: 16px; font-weight: 800; color: var(--text-primary); }
-                .plan-status { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; }
-                .plan-status.active { background: rgba(52,199,89,0.1); color: #34C759; }
-                .plan-status.trial { background: rgba(255,149,0,0.1); color: #FF9500; }
-                
-                .plan-details { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
-                .detail-row { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); }
-                .detail-row strong { margin-left: auto; color: var(--text-primary); }
+                .logo-upload-container { display: flex; flex-direction: column; gap: 16px; padding: 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 16px; align-items: center; }
+                .logo-preview { width: 100%; height: 160px; border-radius: 12px; background: var(--bg-card); display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1px dashed var(--border-bright); }
+                .logo-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+                .logo-placeholder { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
                 
                 .support-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
                 .support-list li { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-secondary); cursor: pointer; transition: 0.2s; }
