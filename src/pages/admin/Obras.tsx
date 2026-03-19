@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, MapPin, Search, Edit2, Trash2, Building2 } from 'lucide-react';
+import { Building2, Plus, Search, MapPin, Trash2, Edit2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '../../hooks/useSubscription';
 import ModernTable from '../../components/ui/ModernTable';
@@ -16,12 +16,14 @@ const AdminObras = () => {
     const [loading, setLoading] = useState(true);
     const [viewMode] = useState<'table' | 'cards'>('table');
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const { maxSites } = useSubscription();
 
     const isLimitReached = maxSites ? obras.length >= maxSites : false;
 
     useEffect(() => {
         fetchObras();
+        setSelectedIds([]);
     }, []);
 
     const fetchObras = async () => {
@@ -69,6 +71,24 @@ const AdminObras = () => {
             setObras(enriched);
         } catch (error: any) {
             console.error('Error:', error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        if (selectedIds.length === 0) return;
+        if (!window.confirm(`Deseja excluir permanentemente as ${selectedIds.length} obras selecionadas? Esta ação não pode ser desfeita.`)) return;
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.from('sites').delete().in('id', selectedIds);
+            if (error) throw error;
+            
+            setSelectedIds([]);
+            fetchObras();
+        } catch (error: any) {
+            alert('Erro ao excluir: ' + error.message);
         } finally {
             setLoading(false);
         }
@@ -154,9 +174,34 @@ const AdminObras = () => {
                 </div>
             </header>
 
+            {selectedIds.length > 0 && (
+                <div className="bulk-actions-bar animate-slide-down">
+                    <div className="selection-info">
+                        <strong>{selectedIds.length}</strong> {selectedIds.length === 1 ? 'obra selecionada' : 'obras selecionadas'}
+                    </div>
+                    <div className="bulk-btns">
+                        <button className="btn-danger-ghost" onClick={handleBulkDelete}>
+                            <Trash2 size={16} /> Excluir Selecionados
+                        </button>
+                        <button className="btn-text" onClick={() => setSelectedIds([])}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <StandardCard>
                 {viewMode === 'table' ? (
-                    <ModernTable columns={columns} data={filteredObras} loading={loading} />
+                    <div className="table-view-container animate-fade">
+                        <ModernTable 
+                            columns={columns} 
+                            data={filteredObras} 
+                            loading={loading} 
+                            selectable={true}
+                            selectedIds={selectedIds}
+                            onSelectionChange={setSelectedIds}
+                        />
+                    </div>
                 ) : (
                     <div className="obras-grid-saas">
                         {filteredObras.map(obra => (

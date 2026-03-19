@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
 import { maskPhone } from '../../lib/masks';
+import { Trash2 } from 'lucide-react';
 
 const AdminCatalog = () => {
     const navigate = useNavigate();
@@ -14,10 +15,22 @@ const AdminCatalog = () => {
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [adminProfile, setAdminProfile] = useState<any>(null);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     useEffect(() => {
+        fetchAdminProfile();
         fetchData();
+        setSelectedIds([]);
     }, [type]);
+
+    const fetchAdminProfile = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+            setAdminProfile(data);
+        }
+    };
 
     const fetchData = async () => {
         setLoading(true);
@@ -83,7 +96,8 @@ const AdminCatalog = () => {
                     materialsToImport.push({
                         name: name,
                         category: category || 'Geral',
-                        unit: unit || 'un'
+                        unit: unit || 'un',
+                        organization_id: adminProfile?.organization_id
                     });
                     existingNames.add(normalizedName);
                 } else {
@@ -127,6 +141,25 @@ const AdminCatalog = () => {
 
     const handleEdit = (item: any) => {
         navigate(`/admin/${type}/editar/${item.id}`);
+    };
+
+    const handleBulkDelete = async () => {
+        if (selectedIds.length === 0) return;
+        if (!window.confirm(`Deseja excluir permanentemente os ${selectedIds.length} itens selecionados?`)) return;
+
+        setLoading(true);
+        try {
+            const table = type === 'materials' ? 'materials' : 'suppliers';
+            const { error } = await supabase.from(table).delete().in('id', selectedIds);
+            if (error) throw error;
+            
+            setSelectedIds([]);
+            fetchData();
+        } catch (error: any) {
+            alert('Erro ao excluir: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const filteredData = data.filter(item =>
@@ -228,11 +261,34 @@ const AdminCatalog = () => {
                 </div>
             </header>
 
+            {selectedIds.length > 0 && (
+                <div className="bulk-actions-bar animate-slide-down">
+                    <div className="selection-info">
+                        <strong>{selectedIds.length}</strong> {selectedIds.length === 1 ? 'item selecionado' : 'itens selecionados'}
+                    </div>
+                    <div className="bulk-btns">
+                        <button className="btn-danger-ghost" onClick={handleBulkDelete}>
+                            <Trash2 size={16} /> Excluir Selecionados
+                        </button>
+                        <button className="btn-text" onClick={() => setSelectedIds([])}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <StandardCard
                 title={type === 'materials' ? 'Lista de Materiais' : 'Lista de Fornecedores'}
                 subtitle={`Total de ${filteredData.length} registros.`}
             >
-                <ModernTable columns={columns} data={filteredData} loading={loading} />
+                <ModernTable 
+                    columns={columns} 
+                    data={filteredData} 
+                    loading={loading}
+                    selectable={true}
+                    selectedIds={selectedIds}
+                    onSelectionChange={setSelectedIds}
+                />
             </StandardCard>
 
             <style>{`
@@ -256,6 +312,40 @@ const AdminCatalog = () => {
                 
                 .supplier-location { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
                 .table-actions-btns { display: flex; gap: 8px; }
+
+                .bulk-actions-bar {
+                    background: var(--bg-card);
+                    border: 1px solid var(--primary);
+                    border-radius: 12px;
+                    padding: 12px 24px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 24px;
+                    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.1);
+                }
+                .selection-info { font-size: 14px; color: var(--text-primary); }
+                .selection-info strong { color: var(--primary); font-size: 16px; }
+                .bulk-btns { display: flex; gap: 12px; align-items: center; }
+                .btn-danger-ghost { 
+                    background: rgba(255, 68, 68, 0.1); 
+                    border: 1px solid #ff4444; 
+                    color: #ff4444; 
+                    padding: 8px 16px; 
+                    border-radius: 8px; 
+                    display: flex; 
+                    align-items: center; 
+                    gap: 8px; 
+                    font-weight: 600; 
+                    cursor: pointer;
+                    font-size: 13px;
+                }
+                .btn-danger-ghost:hover { background: #ff4444; color: white; }
+                .btn-text { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 13px; }
+                .btn-text:hover { color: var(--text-primary); }
+                
+                .animate-slide-down { animation: slideDown 0.3s ease-out; }
+                @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
             `}</style>
         </div>
     );

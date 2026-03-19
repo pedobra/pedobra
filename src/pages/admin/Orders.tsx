@@ -12,19 +12,24 @@ const AdminOrders = () => {
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     useEffect(() => {
         fetchOrders();
+        setSelectedIds([]);
     }, []);
 
     const fetchOrders = async () => {
         setLoading(true);
         try {
-            const { data } = await supabase
+            const { data, error } = await supabase
                 .from('orders')
                 .select('*, sites(*), profiles(*)')
                 .order('created_at', { ascending: false });
-            if (data) setOrders(data);
+            if (error) throw error;
+            setOrders(data || []);
+        } catch (error: any) {
+            console.error('Erro:', error.message);
         } finally {
             setLoading(false);
         }
@@ -44,6 +49,24 @@ const AdminOrders = () => {
         if (!window.confirm('Excluir este pedido?')) return;
         const { error } = await supabase.from('orders').delete().eq('id', id);
         if (!error) fetchOrders();
+    };
+
+    const handleBulkDelete = async () => {
+        if (selectedIds.length === 0) return;
+        if (!window.confirm(`Deseja excluir permanentemente os ${selectedIds.length} pedidos selecionados? Esta ação não pode ser desfeita.`)) return;
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.from('orders').delete().in('id', selectedIds);
+            if (error) throw error;
+            
+            setSelectedIds([]);
+            fetchOrders();
+        } catch (error: any) {
+            alert('Erro ao excluir: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const filteredOrders = orders.filter(order => {
@@ -104,8 +127,35 @@ const AdminOrders = () => {
                 </div>
             </header>
 
-            <StandardCard>
-                <ModernTable columns={columns} data={filteredOrders} loading={loading} />
+            {selectedIds.length > 0 && (
+                <div className="bulk-actions-bar animate-slide-down">
+                    <div className="selection-info">
+                        <strong>{selectedIds.length}</strong> {selectedIds.length === 1 ? 'pedido selecionado' : 'pedidos selecionados'}
+                    </div>
+                    <div className="bulk-btns">
+                        <button className="btn-danger-ghost" onClick={handleBulkDelete}>
+                            <Trash2 size={16} /> Excluir Selecionados
+                        </button>
+                        <button className="btn-text" onClick={() => setSelectedIds([])}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            <StandardCard
+                subtitle={`Total de ${filteredOrders.length} pedidos encontrados.`}
+            >
+                <div className="table-view-container animate-fade">
+                    <ModernTable 
+                        columns={columns} 
+                        data={filteredOrders} 
+                        loading={loading} 
+                        selectable={true}
+                        selectedIds={selectedIds}
+                        onSelectionChange={setSelectedIds}
+                    />
+                </div>
             </StandardCard>
 
             <style>{`

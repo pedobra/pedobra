@@ -11,6 +11,7 @@ const AdminUsers = () => {
     const navigate = useNavigate();
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const { maxWorkers } = useSubscription();
 
     const workersCount = users.filter(u => u.role === 'worker').length;
@@ -18,15 +19,17 @@ const AdminUsers = () => {
 
     useEffect(() => {
         fetchUsers();
+        setSelectedIds([]);
     }, []);
 
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const { data } = await supabase.from('profiles').select('*, sites(name)');
-            if (data) {
-                setUsers(data.filter((u: any) => u.email !== 'master@master.com'));
-            }
+            const { data, error } = await supabase.from('profiles').select('*, sites(name)');
+            if (error) throw error;
+            setUsers(data || []);
+        } catch (error: any) {
+            console.error('Erro:', error.message);
         } finally {
             setLoading(false);
         }
@@ -37,6 +40,24 @@ const AdminUsers = () => {
         if (!window.confirm('Remover este usuário do ecossistema?')) return;
         const { error } = await supabase.from('profiles').delete().eq('id', id);
         if (!error) fetchUsers();
+    };
+
+    const handleBulkDelete = async () => {
+        if (selectedIds.length === 0) return;
+        if (!window.confirm(`Deseja excluir permanentemente os ${selectedIds.length} usuários selecionados? Esta ação não pode ser desfeita.`)) return;
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.from('profiles').delete().in('id', selectedIds);
+            if (error) throw error;
+            
+            setSelectedIds([]);
+            fetchUsers();
+        } catch (error: any) {
+            alert('Erro ao excluir: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const columns = [
@@ -108,11 +129,34 @@ const AdminUsers = () => {
                 </div>
             </header>
 
+            {selectedIds.length > 0 && (
+                <div className="bulk-actions-bar animate-slide-down">
+                    <div className="selection-info">
+                        <strong>{selectedIds.length}</strong> {selectedIds.length === 1 ? 'membro selecionado' : 'membros selecionados'}
+                    </div>
+                    <div className="bulk-btns">
+                        <button className="btn-danger-block" onClick={handleBulkDelete}>
+                            <Trash2 size={16} /> Excluir Selecionados
+                        </button>
+                        <button className="btn-cancel" onClick={() => setSelectedIds([])}>
+                            Cancelar
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <StandardCard 
                 title="Membros da Organização" 
-                subtitle={`Atualmente existem ${users.length} profissionais ativos no sistema.`}
+                subtitle={`Total de ${users.length} membros na organização.`}
             >
-                <ModernTable columns={columns} data={users} loading={loading} />
+                <ModernTable 
+                    columns={columns} 
+                    data={users} 
+                    loading={loading}
+                    selectable={true}
+                    selectedIds={selectedIds}
+                    onSelectionChange={setSelectedIds}
+                />
             </StandardCard>
 
             <style>{`
@@ -128,8 +172,45 @@ const AdminUsers = () => {
                 .role-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 700; border: 1px solid var(--border); }
                 .role-badge.admin { background: rgba(var(--primary-rgb), 0.1); color: var(--primary); border-color: rgba(var(--primary-rgb), 0.2); }
                 .role-badge.worker { background: var(--bg-dark); color: var(--text-secondary); }
+                .role-badge.worker .role-icon { color: var(--text-muted); }
                 
-                .site-link { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-primary); font-weight: 500; }
+                .site-link { display: flex; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 13px; }
+                .site-link svg { color: var(--primary); }
+
+                .bulk-actions-bar {
+                    background: var(--bg-card);
+                    border: 1px solid var(--primary);
+                    border-radius: 12px;
+                    padding: 12px 24px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 24px;
+                    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.1);
+                }
+                .selection-info { font-size: 14px; color: var(--text-primary); }
+                .selection-info strong { color: var(--primary); font-size: 16px; }
+                .bulk-btns { display: flex; gap: 12px; align-items: center; }
+                .btn-danger-block { 
+                    background: rgba(255, 68, 68, 0.1); 
+                    border: 1px solid #ff4444; 
+                    color: #ff4444; 
+                    padding: 8px 16px; 
+                    border-radius: 8px; 
+                    display: flex; 
+                    align-items: center; 
+                    gap: 8px; 
+                    font-weight: 600; 
+                    cursor: pointer;
+                    font-size: 13px;
+                }
+                .btn-danger-block:hover { background: #ff4444; color: white; }
+                .btn-cancel { background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 13px; }
+                .btn-cancel:hover { color: var(--text-primary); }
+                
+                .animate-slide-down { animation: slideDown 0.3s ease-out; }
+                @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
                 .action-btns { display: flex; gap: 8px; justify-content: flex-end; }
                 .icon-btn { background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-muted); padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
                 .icon-btn:hover { color: var(--text-primary); border-color: var(--text-muted); }

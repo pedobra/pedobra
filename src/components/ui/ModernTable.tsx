@@ -1,4 +1,5 @@
 import React from 'react';
+import { Check, Minus } from 'lucide-react';
 
 interface Column<T> {
     header: string;
@@ -11,9 +12,40 @@ interface ModernTableProps<T> {
     loading?: boolean;
     emptyMessage?: string;
     selectable?: boolean;
+    selectedIds?: string[];
+    onSelectionChange?: (ids: string[]) => void;
+    idField?: string;
 }
 
-function ModernTable<T>({ columns, data, loading, emptyMessage = 'Nenhum registro encontrado.', selectable = true }: ModernTableProps<T>) {
+function ModernTable<T>({ 
+    columns, 
+    data, 
+    loading, 
+    emptyMessage = 'Nenhum registro encontrado.', 
+    selectable = false,
+    selectedIds = [],
+    onSelectionChange,
+    idField = 'id'
+}: ModernTableProps<T>) {
+    
+    const handleToggleAll = () => {
+        if (!onSelectionChange) return;
+        if (selectedIds.length === data.length) {
+            onSelectionChange([]);
+        } else {
+            onSelectionChange(data.map((item: any) => item[idField]));
+        }
+    };
+
+    const handleToggleRow = (id: string) => {
+        if (!onSelectionChange) return;
+        if (selectedIds.includes(id)) {
+            onSelectionChange(selectedIds.filter(sid => sid !== id));
+        } else {
+            onSelectionChange([...selectedIds, id]);
+        }
+    };
+
     if (loading) {
         return (
             <div className="modern-table-loading">
@@ -41,6 +73,9 @@ function ModernTable<T>({ columns, data, loading, emptyMessage = 'Nenhum registr
         );
     }
 
+    const isAllSelected = data.length > 0 && selectedIds.length === data.length;
+    const isIndeterminate = selectedIds.length > 0 && selectedIds.length < data.length;
+
     return (
         <div className="modern-table-wrapper">
             <table className="modern-table">
@@ -48,8 +83,12 @@ function ModernTable<T>({ columns, data, loading, emptyMessage = 'Nenhum registr
                     <tr>
                         {selectable && (
                             <th className="checkbox-col">
-                                <div className="checkbox-custom master">
-                                    <div className="checkbox-inner"></div>
+                                <div 
+                                    className={`checkbox-custom ${isAllSelected || isIndeterminate ? 'active' : ''}`}
+                                    onClick={handleToggleAll}
+                                >
+                                    {isAllSelected && <Check size={12} strokeWidth={4} />}
+                                    {isIndeterminate && <Minus size={12} strokeWidth={4} />}
                                 </div>
                             </th>
                         )}
@@ -59,20 +98,28 @@ function ModernTable<T>({ columns, data, loading, emptyMessage = 'Nenhum registr
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((item, rowIdx) => (
-                        <tr key={rowIdx}>
-                            {selectable && (
-                                <td className="checkbox-col">
-                                    <div className="checkbox-custom">
-                                        <div className="checkbox-inner"></div>
-                                    </div>
-                                </td>
-                            )}
-                            {columns.map((col, colIdx) => (
-                                <td key={colIdx}>{col.accessor(item)}</td>
-                            ))}
-                        </tr>
-                    ))}
+                    {data.map((item: any, rowIdx) => {
+                        const id = item[idField];
+                        const isSelected = selectedIds.includes(id);
+
+                        return (
+                            <tr key={id || rowIdx} className={isSelected ? 'selected' : ''}>
+                                {selectable && (
+                                    <td className="checkbox-col">
+                                        <div 
+                                            className={`checkbox-custom ${isSelected ? 'active' : ''}`}
+                                            onClick={() => handleToggleRow(id)}
+                                        >
+                                            {isSelected && <Check size={12} strokeWidth={4} />}
+                                        </div>
+                                    </td>
+                                )}
+                                {columns.map((col, colIdx) => (
+                                    <td key={colIdx}>{col.accessor(item)}</td>
+                                ))}
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
             <style>{`
@@ -102,24 +149,17 @@ function ModernTable<T>({ columns, data, loading, emptyMessage = 'Nenhum registr
 
                 .modern-table tr:last-child td { border-bottom: none; }
                 .modern-table tr:hover td { background: var(--bg-dark); }
+                .modern-table tr.selected td { background: rgba(255,215,0,0.02); }
 
                 .checkbox-col { width: 44px; padding-right: 0 !important; }
                 .checkbox-custom {
                     width: 18px; height: 18px; border: 1.5px solid var(--border-bright); border-radius: 4px;
-                    display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
-                    background: var(--bg-card);
+                    display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+                    background: var(--bg-card); color: var(--bg-card);
                 }
-                .checkbox-custom.master { border-color: var(--text-primary); background: var(--text-primary); }
-                .checkbox-custom.master .checkbox-inner { width: 8px; height: 1.5px; background: var(--bg-card); }
+                .checkbox-custom:hover { border-color: var(--primary); }
+                .checkbox-custom.active { border-color: var(--text-primary); background: var(--text-primary); }
                 
-                /* Selection state mockup */
-                tr:nth-child(4) .checkbox-custom, tr:nth-child(5) .checkbox-custom {
-                    background: var(--text-primary); border-color: var(--text-primary);
-                }
-                tr:nth-child(4) .checkbox-custom::after, tr:nth-child(5) .checkbox-custom::after {
-                    content: '✓'; color: var(--bg-card); font-size: 12px; font-weight: 900;
-                }
-
                 .modern-table-wrapper::-webkit-scrollbar { height: 8px; }
                 .modern-table-wrapper::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 4px; }
             `}</style>
