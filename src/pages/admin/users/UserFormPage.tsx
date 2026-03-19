@@ -96,7 +96,7 @@ const UserFormPage = () => {
                 </button>
                 <div className="header-info">
                     <h1 className="page-title">{id ? 'Editar Membro' : 'Convidar Novo Membro'}</h1>
-                    <p className="page-subtitle">Atribua funções e vincule profissionais a canteiros específicos.</p>
+                    <p className="page-subtitle">Atribua funções e vincule profissionais a obras específicas.</p>
                 </div>
             </header>
 

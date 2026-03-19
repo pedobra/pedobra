@@ -72,7 +72,7 @@ const AdminDashboard = () => {
             header: 'ID', 
             accessor: (o: any) => <span className="text-mono">#{o.id?.slice(0,8)}</span> 
         },
-        { header: 'Canteiro', accessor: (o: any) => <strong>{o.sites?.name}</strong> },
+        { header: 'Obra', accessor: (o: any) => <strong>{o.sites?.name}</strong> },
         { header: 'Solicitante', accessor: (o: any) => o.profiles?.name || 'Sistema' },
         { header: 'Status', accessor: (o: any) => <StatusBadge status={o.status} /> },
         { header: 'Data', accessor: (o: any) => new Date(o.created_at).toLocaleDateString() },

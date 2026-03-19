@@ -222,7 +222,7 @@ const AdminCatalog = () => {
                         </>
                     )}
                     <button className="btn-primary" onClick={() => navigate(`/admin/${type}/novo`)}>
-                        <Plus size={20} /> Novo {type === 'materials' ? 'Material' : 'Fornecedor'}
+                        <Plus size={20} /> {type === 'materials' ? 'Novo Material' : 'Novo Fornecedor'}
                     </button>
                 </div>
             </header>
