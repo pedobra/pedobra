@@ -54,10 +54,11 @@ const AdminObras = () => {
         navigate(`/admin/sites/editar/${obra.id}`);
     };
 
-    const filteredObras = obras.filter(o =>
-        (o.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (o.address || '').toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredObras = obras.filter(o => {
+        const addrText = typeof o.address === 'object' ? o.address?.full : o.address;
+        return (o.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+               (addrText || '').toLowerCase().includes(searchTerm.toLowerCase());
+    });
 
     const columns = [
         {
@@ -67,7 +68,9 @@ const AdminObras = () => {
                     <div className="obra-icon-mini"><Building2 size={14} /></div>
                     <div className="obra-texts">
                         <strong>{obra.name}</strong>
-                        <span className="text-muted-xs">{obra.address}</span>
+                        <span className="text-muted-xs">
+                            {typeof obra.address === 'object' ? obra.address?.full : (obra.address || 'Endereço não informado')}
+                        </span>
                     </div>
                 </div>
             )
@@ -145,7 +148,9 @@ const AdminObras = () => {
                                 </div>
                                 <div className="card-address">
                                     <MapPin size={12} />
-                                    <span>{obra.address || 'Endereço não informado'}</span>
+                                    <span>
+                                        {typeof obra.address === 'object' ? obra.address?.full : (obra.address || 'Endereço não informado')}
+                                    </span>
                                 </div>
                                 <div className="card-budget-info">
                                     <label>ORÇAMENTO TOTAL</label>
