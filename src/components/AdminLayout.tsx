@@ -152,7 +152,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <div className="admin-wrapper" data-theme="light">
+        <div className="admin-wrapper">
             <header className="admin-mobile-header">
                 <div className="brand-small" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Construction size={18} color="var(--primary)" />

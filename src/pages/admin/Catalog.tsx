@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Search, Edit2, Box, Warehouse, MapPin } from 'lucide-react';
+import { Plus, Search, Edit2, Box, Warehouse, MapPin, Upload, Download } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
@@ -34,6 +34,94 @@ const AdminCatalog = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const downloadCSVTemplate = () => {
+        const headers = "Nome;Categoria;Unidade\n";
+        const rows = [
+            "Cimento Portland;Estrutural;saco",
+            "Cabo Flexível 2.5mm;Elétrica;rolo",
+            "Tubo PVC 100mm;Hidráulica;m",
+            "Tinta Acrílica Branca;Acabamento;lata"
+        ].join("\n");
+        const blob = new Blob([headers + rows], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "modelo_importacao_materiais.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const handleCSVImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+            const content = event.target?.result as string;
+            const lines = content.split('\n').map(l => l.trim()).filter(Boolean);
+
+            // Skip header
+            const rows = lines.slice(1);
+            const materialsToImport: any[] = [];
+            let skippedCount = 0;
+            const existingNames = new Set(data.map(m => m.name.toLowerCase().trim()));
+
+            rows.forEach((line) => {
+                const parts = line.split(';').map(s => s.trim());
+                if (parts.length < 1) return;
+
+                const [name, category, unit] = parts;
+                if (!name) return;
+
+                const normalizedName = name.toLowerCase();
+                if (!existingNames.has(normalizedName)) {
+                    materialsToImport.push({
+                        name: name,
+                        category: category || 'Geral',
+                        unit: unit || 'un'
+                    });
+                    existingNames.add(normalizedName);
+                } else {
+                    skippedCount++;
+                }
+            });
+
+            if (materialsToImport.length === 0) {
+                if (skippedCount > 0) {
+                    alert(`Todos os ${skippedCount} materiais do arquivo já estão cadastrados.`);
+                } else {
+                    alert('Nenhum material válido encontrado no arquivo ou formato incorreto.');
+                }
+                e.target.value = '';
+                return;
+            }
+
+            const confirmMsg = skippedCount > 0
+                ? `Deseja importar ${materialsToImport.length} novos materiais? (${skippedCount} duplicados serão ignorados).`
+                : `Deseja importar ${materialsToImport.length} materiais?`;
+
+            if (!window.confirm(confirmMsg)) {
+                e.target.value = '';
+                return;
+            }
+
+            setLoading(true);
+            const { error } = await supabase.from('materials').insert(materialsToImport);
+
+            if (error) {
+                alert('Erro na importação: ' + error.message);
+            } else {
+                alert('Importação concluída com sucesso!');
+                fetchData();
+            }
+            setLoading(false);
+            e.target.value = '';
+        };
+        reader.readAsText(file, 'UTF-8');
     };
 
     const handleEdit = (item: any) => {
@@ -122,6 +210,17 @@ const AdminCatalog = () => {
                             onChange={e => setSearchTerm(e.target.value)} 
                         />
                     </div>
+                    {type === 'materials' && (
+                        <>
+                            <button className="btn-secondary" onClick={downloadCSVTemplate} title="Baixar Modelo CSV">
+                                <Download size={16} /> Modelo
+                            </button>
+                            <label className="btn-secondary" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <Upload size={16} /> Importar Planilha
+                                <input type="file" accept=".csv" onChange={handleCSVImport} style={{ display: 'none' }} />
+                            </label>
+                        </>
+                    )}
                     <button className="btn-primary" onClick={() => navigate(`/admin/${type}/novo`)}>
                         <Plus size={20} /> Novo {type === 'materials' ? 'Material' : 'Fornecedor'}
                     </button>
