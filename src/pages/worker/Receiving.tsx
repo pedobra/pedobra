@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { Package, ChevronLeft, PackageCheck, Send, Archive, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StandardCard from '../../components/ui/StandardCard';
+import { maskCurrency, parseCurrencyToNumber } from '../../lib/masks';
 
 const WorkerReceiving = ({ profile }: { profile: any }) => {
     const navigate = useNavigate();
@@ -48,14 +49,15 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
         setEditingItems((order.items || []).map((item: any) => ({
             ...item,
             received_quantity: item.received_quantity || '',
-            unit_value: item.unit_value || '',
+            unit_value: maskCurrency(item.unit_value || 0),
             supplier_id: item.supplier_id || ''
         })));
     };
 
     const handleItemChange = (index: number, field: string, value: any) => {
         const newItems = [...editingItems];
-        newItems[index] = { ...newItems[index], [field]: value };
+        const finalValue = field === 'unit_value' ? maskCurrency(value) : value;
+        newItems[index] = { ...newItems[index], [field]: finalValue };
         setEditingItems(newItems);
     };
 
@@ -65,7 +67,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
             const finalEditingItems = editingItems.map(i => ({
                 ...i, 
                 received_quantity: parseFloat(i.received_quantity) || 0,
-                unit_value: parseFloat(i.unit_value) || 0
+                unit_value: parseCurrencyToNumber(i.unit_value) || 0
             }));
 
             const isPartial = finalEditingItems.some(i => i.received_quantity < i.quantity);
@@ -185,7 +187,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
                                         </div>
                                         <div className="input-field">
                                             <label>Valor Unit. (R$)</label>
-                                            <input type="number" step="0.01" value={item.unit_value} onChange={e => handleItemChange(idx, 'unit_value', e.target.value)} placeholder="0,00" />
+                                            <input type="text" value={item.unit_value} onChange={e => handleItemChange(idx, 'unit_value', e.target.value)} placeholder="R$ 0,00" />
                                         </div>
                                     </div>
                                     <div className="input-field full">

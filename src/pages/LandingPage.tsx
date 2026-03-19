@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { Construction, ArrowRight } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 import { detectBot } from '../lib/security';
+import { maskCPF_CNPJ } from '../lib/masks';
 
 const LandingPage = () => {
     const [logoClicks, setLogoClicks] = useState(0);
@@ -205,7 +206,7 @@ const LandingPage = () => {
                                     </div>
                                     <div className="input-field">
                                         <label>CPF ou CNPJ</label>
-                                        <input type="text" value={cpfCnpj} onChange={e => setCpfCnpj(e.target.value)} placeholder="000.000.000-00" required />
+                                        <input type="text" value={cpfCnpj} onChange={e => setCpfCnpj(maskCPF_CNPJ(e.target.value))} placeholder="000.000.000-00" required />
                                     </div>
                                 </>
                             )}

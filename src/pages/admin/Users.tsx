@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '../../hooks/useSubscription';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
+import { maskCPF } from '../../lib/masks';
 
 const AdminUsers = () => {
     const navigate = useNavigate();
@@ -61,6 +62,10 @@ const AdminUsers = () => {
             )
         },
         {
+            header: 'CPF',
+            accessor: (user: any) => <span className="text-muted">{maskCPF(user.cpf || '') || '—'}</span>
+        },
+        {
             header: 'Obra Vinculada',
             accessor: (user: any) => (
                 user.sites?.name ? (
@@ -98,7 +103,7 @@ const AdminUsers = () => {
                         disabled={isLimitReached}
                         title={isLimitReached ? "Limite de operários do seu plano atingido" : ""}
                     >
-                        <UserPlus size={20} /> Convidar Membro
+                        <UserPlus size={20} /> Registrar Membro
                     </button>
                 </div>
             </header>

@@ -27,19 +27,43 @@ const AdminObras = () => {
     const fetchObras = async () => {
         setLoading(true);
         try {
-            const { data, error } = await supabase
+            const { data: sites, error: sitesError } = await supabase
                 .from('sites')
                 .select('*')
                 .order('name');
 
-            if (error) throw error;
+            if (sitesError) throw sitesError;
+
+            // Buscamos os pedidos para calcular o valor utilizado real
+            const { data: orders } = await supabase
+                .from('orders')
+                .select('site_id, items')
+                .in('status', ['approved', 'completed', 'partial']);
+
+            const totalsBySite: Record<string, { used: number, count: number }> = {};
             
-            // Mocking some data for the premium feel if actual columns missing
-            const enriched = (data || []).map(o => ({
+            (orders || []).forEach(order => {
+                if (!totalsBySite[order.site_id]) {
+                    totalsBySite[order.site_id] = { used: 0, count: 0 };
+                }
+                
+                totalsBySite[order.site_id].count++;
+                
+                const items = (order.items as any[]) || [];
+                const orderTotal = items.reduce((acc, item) => {
+                    const price = parseFloat(item.price_hint) || 0;
+                    const qty = parseFloat(item.quantity) || 0;
+                    return acc + (price * qty);
+                }, 0);
+                
+                totalsBySite[order.site_id].used += orderTotal;
+            });
+
+            const enriched = (sites || []).map(o => ({
                 ...o,
-                orderCount: Math.floor(Math.random() * 20),
-                budget: o.budget || 50000,
-                usedValue: o.usedValue || 12000
+                orderCount: totalsBySite[o.id]?.count || 0,
+                budget: o.settings?.budget_planned || 0,
+                usedValue: totalsBySite[o.id]?.used || 0
             }));
             
             setObras(enriched);

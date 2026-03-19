@@ -5,6 +5,7 @@ import { useSubscription } from '../../../hooks/useSubscription';
 import { Save, ArrowLeft, Mail, Shield, Building2, Lock, User, CheckCircle } from 'lucide-react';
 import StandardCard from '../../../components/ui/StandardCard';
 import { sanitizeInput, securitySchemas } from '../../../lib/security';
+import { maskCPF } from '../../../lib/masks';
 
 const UserFormPage = () => {
     const { id } = useParams();
@@ -12,19 +13,30 @@ const UserFormPage = () => {
     const { maxWorkers } = useSubscription();
     const [loading, setLoading] = useState(false);
     const [obras, setObras] = useState<any[]>([]);
+    const [adminProfile, setAdminProfile] = useState<any>(null);
 
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
         role: 'worker',
-        site_id: ''
+        site_id: '',
+        cpf: ''
     });
 
     useEffect(() => {
+        fetchAdminProfile();
         fetchObras();
         if (id) fetchUser();
     }, [id]);
+
+    const fetchAdminProfile = async () => {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+            setAdminProfile(data);
+        }
+    };
 
     const fetchObras = async () => {
         const { data } = await supabase.from('sites').select('*').order('name');
@@ -33,7 +45,14 @@ const UserFormPage = () => {
 
     const fetchUser = async () => {
         const { data } = await supabase.from('profiles').select('*').eq('id', id).single();
-        if (data) setFormData({ ...formData, name: data.name, email: data.email, role: data.role, site_id: data.site_id || '' });
+        if (data) setFormData({ 
+            ...formData, 
+            name: data.name, 
+            email: data.email, 
+            role: data.role, 
+            site_id: data.site_id || '',
+            cpf: maskCPF(data.cpf || '')
+        });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -60,7 +79,8 @@ const UserFormPage = () => {
                 const { error } = await supabase.from('profiles').update({
                     name: safeName,
                     role: formData.role,
-                    site_id: formData.role === 'worker' ? formData.site_id : null
+                    site_id: formData.role === 'worker' ? formData.site_id : null,
+                    cpf: formData.cpf
                 }).eq('id', id);
                 if (error) throw error;
             } else {
@@ -85,7 +105,9 @@ const UserFormPage = () => {
                         name: safeName,
                         email: validEmail,
                         role: formData.role,
-                        site_id: formData.role === 'worker' ? formData.site_id : null
+                        site_id: formData.role === 'worker' ? formData.site_id : null,
+                        cpf: formData.cpf,
+                        organization_id: adminProfile?.organization_id
                     });
                     if (profileError) throw profileError;
                 }
@@ -106,7 +128,7 @@ const UserFormPage = () => {
                     <ArrowLeft size={18} /> Voltar
                 </button>
                 <div className="header-info">
-                    <h1 className="page-title">{id ? 'Editar Membro' : 'Convidar Novo Membro'}</h1>
+                    <h1 className="page-title">{id ? 'Editar Membro' : 'Registrar Novo Membro'}</h1>
                     <p className="page-subtitle">Atribua funções e vincule profissionais a obras específicas.</p>
                 </div>
             </header>
@@ -117,6 +139,11 @@ const UserFormPage = () => {
                         <div className="input-group">
                             <label><User size={14} /> Nome Completo</label>
                             <input type="text" required className="form-input" placeholder="Ex: João da Silva" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+                        </div>
+
+                        <div className="input-group">
+                            <label><Shield size={14} /> CPF (Opcional)</label>
+                            <input type="text" className="form-input" placeholder="000.000.000-00" value={formData.cpf} onChange={e => setFormData({...formData, cpf: maskCPF(e.target.value)})} />
                         </div>
 
                         <div className="input-row">
@@ -154,12 +181,28 @@ const UserFormPage = () => {
                         </div>
 
                         {formData.role === 'worker' && (
-                            <div className="input-group site-link animate-fade">
+                            <div className="site-link animate-fade">
                                 <label><Building2 size={14} /> Vincular à Obra</label>
-                                <select required className="form-select" value={formData.site_id} onChange={e => setFormData({...formData, site_id: e.target.value})}>
-                                    <option value="">Selecione uma obra ativa...</option>
-                                    {obras.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                                </select>
+                                <div className="site-selector">
+                                    {obras.length === 0 ? (
+                                        <p className="no-obras">Nenhuma obra ativa encontrada.</p>
+                                    ) : (
+                                        obras.map(o => (
+                                            <div 
+                                                key={o.id} 
+                                                className={`site-card ${formData.site_id === o.id ? 'active' : ''}`}
+                                                onClick={() => setFormData({...formData, site_id: o.id})}
+                                            >
+                                                <Building2 className="site-icon" size={18} />
+                                                <div className="site-info">
+                                                    <strong>{o.name}</strong>
+                                                    <p>{o.address?.city || 'Local não definido'}</p>
+                                                </div>
+                                                {formData.site_id === o.id && <CheckCircle className="check-icon" size={16} />}
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
                             </div>
                         )}
                     </StandardCard>
@@ -170,7 +213,7 @@ const UserFormPage = () => {
                         <ul className="checklist">
                             <li><CheckCircle size={14} color="var(--primary)" /> Perfil isolado por Organização</li>
                             <li><CheckCircle size={14} color="var(--primary)" /> Log de auditoria ativado</li>
-                            <li><CheckCircle size={14} color="var(--primary)" /> {id ? 'Dados atualizados instantaneamente' : 'Convite enviado por e-mail'}</li>
+                            <li><CheckCircle size={14} color="var(--primary)" /> {id ? 'Dados atualizados instantaneamente' : 'Acesso registrado no sistema'}</li>
                         </ul>
                         <button type="submit" className="btn-primary w-full mt-6" disabled={loading}>
                             <Save size={18} /> {loading ? 'Gerando Acesso...' : (id ? 'Salvar Perfil' : 'Finalizar Cadastro')}
@@ -207,11 +250,22 @@ const UserFormPage = () => {
                 .mt-6 { margin-top: 24px; }
                 
                 .site-link { padding-top: 16px; border-top: 1px solid var(--border); }
+                .site-selector { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+                .site-card { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; position: relative; transition: 0.2s; }
+                .site-card:hover { border-color: var(--primary); background: rgba(255,215,0,0.02); }
+                .site-card.active { border-color: var(--primary); background: var(--primary-glow); }
+                .site-icon { color: var(--text-muted); transition: 0.3s; }
+                .site-card.active .site-icon { color: var(--primary); }
+                .site-info strong { font-size: 13px; color: var(--text-primary); display: block; }
+                .site-info p { font-size: 11px; color: var(--text-muted); margin: 0; }
+                .no-obras { font-size: 13px; color: var(--text-muted); padding: 20px; text-align: center; border: 1px dashed var(--border); border-radius: 12px; width: 100%; }
+
                 .animate-fade { animation: fadeIn 0.4s ease-out; }
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
                 @media (max-width: 800px) {
                     .form-grid { grid-template-columns: 1fr; }
+                    .site-selector { grid-template-columns: 1fr; }
                 }
             `}</style>
         </div>

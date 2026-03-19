@@ -5,6 +5,7 @@ import { useSubscription } from '../../../hooks/useSubscription';
 import { Save, ArrowLeft, Building2, MapPin } from 'lucide-react';
 import StandardCard from '../../../components/ui/StandardCard';
 import { sanitizeInput } from '../../../lib/security';
+import { maskCEP, maskCurrency, parseCurrencyToNumber } from '../../../lib/masks';
 
 const SiteFormPage = () => {
     const { id } = useParams();
@@ -29,16 +30,17 @@ const SiteFormPage = () => {
         if (data) {
             setFormData({
                 name: data.name,
-                cep: data.address?.cep || '',
+                cep: maskCEP(data.address?.cep || ''),
                 address: data.address?.full || '',
-                budget: data.settings?.budget_planned?.toString() || '0'
+                budget: maskCurrency(data.settings?.budget_planned || 0)
             });
         }
     };
 
     const handleCEPLookup = async (cep: string) => {
-        const cleanCEP = cep.replace(/\D/g, '');
-        setFormData(prev => ({ ...prev, cep: cleanCEP }));
+        const maskedCEP = maskCEP(cep);
+        const cleanCEP = maskedCEP.replace(/\D/g, '');
+        setFormData(prev => ({ ...prev, cep: maskedCEP }));
 
         if (cleanCEP.length === 8) {
             try {
@@ -83,7 +85,7 @@ const SiteFormPage = () => {
                 cep: sanitizeInput(formData.cep)
             },
             settings: {
-                budget_planned: parseFloat(formData.budget) || 0
+                budget_planned: parseCurrencyToNumber(formData.budget) || 0
             }
         };
 
@@ -134,10 +136,10 @@ const SiteFormPage = () => {
                         <div className="input-field">
                             <label>Orçamento Planejado (R$)</label>
                             <input 
-                                type="number" 
+                                type="text" 
                                 value={formData.budget} 
-                                onChange={e => setFormData({ ...formData, budget: e.target.value })} 
-                                placeholder="0.00" 
+                                onChange={e => setFormData({ ...formData, budget: maskCurrency(e.target.value) })} 
+                                placeholder="R$ 0,00" 
                                 required 
                             />
                         </div>

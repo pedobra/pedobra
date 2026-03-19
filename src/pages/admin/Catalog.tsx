@@ -4,6 +4,7 @@ import { Plus, Search, Edit2, Box, Warehouse, MapPin, Upload, Download } from 'l
 import { useNavigate, useLocation } from 'react-router-dom';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
+import { maskPhone } from '../../lib/masks';
 
 const AdminCatalog = () => {
     const navigate = useNavigate();
@@ -180,8 +181,8 @@ const AdminCatalog = () => {
             accessor: (item: any) => <span>{item.contact_name || '—'}</span>
         },
         {
-            header: 'Telefone',
-            accessor: (item: any) => <span>{item.phone || '—'}</span>
+            header: 'WhatsApp',
+            accessor: (item: any) => <span>{maskPhone(item.whatsapp || '') || '—'}</span>
         },
         {
             header: 'Ações',

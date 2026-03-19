@@ -3,6 +3,7 @@ import { supabase } from '../../lib/supabase';
 import { Building, MapPin, Globe, Save, CheckCircle2, Star, FileText, Package } from 'lucide-react';
 import StandardCard from '../../components/ui/StandardCard';
 import { sanitizeInput, validateFileUpload, generateSecureFileName } from '../../lib/security';
+import { maskCEP, maskCNPJ } from '../../lib/masks';
 
 const AdminSettings = ({ profile }: { profile: any }) => {
     const [loading, setLoading] = useState(false);
@@ -31,7 +32,12 @@ const AdminSettings = ({ profile }: { profile: any }) => {
     const fetchSettings = async () => {
         const { data } = await supabase.from('company_settings').select('*').maybeSingle();
         if (data) {
-            setSettings({ ...settings, ...data });
+            setSettings({ 
+                ...settings, 
+                ...data,
+                cnpj: maskCNPJ(data.cnpj || ''),
+                address_cep: maskCEP(data.address_cep || '')
+            });
             if (data.logo_url && !data.logo_url.startsWith('data:')) {
                 // É um caminho de storage privado, precisamos gerar a Signed URL
                 const { data: signed } = await supabase.storage.from('secure-assets').createSignedUrl(data.logo_url, 3600);
@@ -69,11 +75,19 @@ const AdminSettings = ({ profile }: { profile: any }) => {
     };
 
     const handleCEPBlur = async () => {
-        const cep = settings.address_cep.replace(/\D/g, '');
+        const masked = maskCEP(settings.address_cep);
+        const cep = masked.replace(/\D/g, '');
         if (cep.length === 8) {
             const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`).then(r => r.json());
             if (!res.erro) {
-                setSettings({ ...settings, address_street: res.logradouro, address_neighborhood: res.bairro, address_city: res.localidade, address_state: res.uf });
+                setSettings({ 
+                    ...settings, 
+                    address_cep: masked,
+                    address_street: res.logradouro, 
+                    address_neighborhood: res.bairro, 
+                    address_city: res.localidade, 
+                    address_state: res.uf 
+                });
             }
         }
     };
@@ -132,11 +146,11 @@ const AdminSettings = ({ profile }: { profile: any }) => {
                         <div className="form-row">
                             <div className="form-group flex-1">
                                 <label><Globe size={14} /> CNPJ</label>
-                                <input type="text" className="form-input" value={settings.cnpj} onChange={e => setSettings({...settings, cnpj:e.target.value})} placeholder="00.000.000/0001-00" />
+                                <input type="text" className="form-input" value={settings.cnpj} onChange={e => setSettings({...settings, cnpj: maskCNPJ(e.target.value)})} placeholder="00.000.000/0001-00" />
                             </div>
                             <div className="form-group flex-1">
                                 <label><MapPin size={14} /> CEP</label>
-                                <input type="text" className="form-input" value={settings.address_cep} onChange={e => setSettings({...settings, address_cep:e.target.value})} onBlur={handleCEPBlur} placeholder="00000-000" />
+                                <input type="text" className="form-input" value={settings.address_cep} onChange={e => setSettings({...settings, address_cep: maskCEP(e.target.value)})} onBlur={handleCEPBlur} placeholder="00000-000" />
                             </div>
                         </div>
                         <div className="form-row">

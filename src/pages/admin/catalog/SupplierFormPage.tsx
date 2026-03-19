@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import { Save, ArrowLeft, Truck, Warehouse, MessageCircle, Phone, Loader2 } from 'lucide-react';
 import StandardCard from '../../../components/ui/StandardCard';
+import { maskCEP, maskCNPJ, maskPhone } from '../../../lib/masks';
 
 const SPECIALTY_OPTIONS = [
     'Construção Civil', 'Elétrica', 'Hidráulica / Encanamento', 'Alvenaria / Estrutura',
@@ -46,12 +47,12 @@ const SupplierFormPage = () => {
         if (data) {
             setFormData({
                 name: data.name || '',
-                cnpj: data.cnpj || '',
+                cnpj: maskCNPJ(data.cnpj || ''),
                 contact: data.contact || '',
                 rating: data.rating || 5,
                 contact_name: data.contact_name || '',
-                whatsapp: data.whatsapp || '',
-                address_cep: data.address_cep || '',
+                whatsapp: maskPhone(data.whatsapp || ''),
+                address_cep: maskCEP(data.address_cep || ''),
                 address_street: data.address_street || '',
                 address_number: data.address_number || '',
                 address_neighborhood: data.address_neighborhood || '',
@@ -66,8 +67,9 @@ const SupplierFormPage = () => {
     };
 
     const handleCepLookup = async (cep: string) => {
-        const cleaned = cep.replace(/\D/g, '');
-        setFormData(p => ({ ...p, address_cep: cleaned }));
+        const masked = maskCEP(cep);
+        const cleaned = masked.replace(/\D/g, '');
+        setFormData(p => ({ ...p, address_cep: masked }));
         if (cleaned.length !== 8) return;
         
         setCepLoading(true);
@@ -136,7 +138,7 @@ const SupplierFormPage = () => {
                             <input 
                                 type="text" 
                                 value={formData.cnpj} 
-                                onChange={e => setFormData({ ...formData, cnpj: e.target.value })} 
+                                onChange={e => setFormData({ ...formData, cnpj: maskCNPJ(e.target.value) })} 
                                 placeholder="00.000.000/0001-00" 
                             />
                         </div>
@@ -198,7 +200,7 @@ const SupplierFormPage = () => {
                             <label>WhatsApp Corporativo</label>
                             <div className="input-wrapper">
                                 <Phone size={18} className="input-icon" />
-                                <input type="text" value={formData.whatsapp} onChange={e => setFormData({...formData, whatsapp: e.target.value})} placeholder="11999999999" />
+                                <input type="text" value={formData.whatsapp} onChange={e => setFormData({...formData, whatsapp: maskPhone(e.target.value)})} placeholder="(00) 00000-0000" />
                             </div>
                         </div>
                         <div className="input-field full-width">
