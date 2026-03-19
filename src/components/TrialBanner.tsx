@@ -1,7 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '../hooks/useSubscription';
-import { AlertTriangle, Crown } from 'lucide-react';
+import { AlertTriangle, Crown, ArrowRight } from 'lucide-react';
 
 export const TrialBanner = () => {
+    const navigate = useNavigate();
     const { isTrial, daysRemaining = 0, isExpired, loading } = useSubscription();
 
     if (loading || !isTrial || isExpired) return null;
@@ -10,40 +12,78 @@ export const TrialBanner = () => {
     const isUrgent = (daysRemaining ?? 0) <= 2;
 
     return (
-        <div className={`trial-banner ${isUrgent ? 'urgent' : ''}`} style={{
-            background: isUrgent ? 'var(--status-denied)' : 'var(--primary)',
-            color: 'var(--primary-foreground)',
-            padding: '10px 20px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '12px',
-            fontSize: '14px',
-            fontWeight: '600',
-            zIndex: 1000,
-            position: 'relative'
-        }}>
-            {isUrgent ? <AlertTriangle size={18} /> : <Crown size={18} />}
-            <span>
-                {isUrgent 
-                    ? `Atenção: Seu teste grátis expira em ${daysRemaining} ${daysRemaining === 1 ? 'dia' : 'dias'}.` 
-                    : `Você está no período de teste gratuito. Restam ${daysRemaining} dias.`}
-            </span>
-            <button 
-                onClick={() => window.location.href = '/admin/billing'}
-                style={{
-                    background: 'var(--primary-foreground)',
-                    color: isUrgent ? 'var(--status-denied)' : 'var(--primary)',
-                    border: 'none',
-                    padding: '4px 12px',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '12px',
-                    fontWeight: 'bold'
-                }}
-            >
-                Assinar Plano Premium
-            </button>
+        <div className={`trial-banner-premium ${isUrgent ? 'urgent' : ''}`}>
+            <div className="banner-content">
+                <div className="banner-message">
+                    {isUrgent ? <AlertTriangle size={16} className="text-orange" /> : <Crown size={16} className="text-primary" />}
+                    <span>
+                        {isUrgent 
+                            ? `Atenção: Seu teste grátis expira em ${daysRemaining} ${daysRemaining === 1 ? 'dia' : 'dias'}.` 
+                            : `Você está no período de teste gratuito. Restam ${daysRemaining} dias.`}
+                    </span>
+                </div>
+                <button 
+                    onClick={() => navigate('/admin/plans')}
+                    className="banner-cta"
+                >
+                    Assinar Plano Premium <ArrowRight size={14} />
+                </button>
+            </div>
+
+            <style>{`
+                .trial-banner-premium {
+                    background: var(--bg-glass);
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                    border-bottom: 2px solid ${isUrgent ? '#FF9500' : 'var(--border)'};
+                    padding: 8px 24px;
+                    z-index: 1000;
+                    position: relative;
+                }
+                .banner-content {
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 24px;
+                }
+                .banner-message {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: var(--text-primary);
+                }
+                .text-orange { color: #FF9500; }
+                .text-primary { color: var(--primary); }
+                
+                .banner-cta {
+                    background: var(--primary);
+                    color: var(--primary-foreground);
+                    border: none;
+                    padding: 6px 14px;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 11px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    transition: all 0.2s ease;
+                }
+                .banner-cta:hover {
+                    opacity: 0.9;
+                    transform: translateX(2px);
+                }
+
+                @media (max-width: 768px) {
+                    .banner-content { flex-direction: column; gap: 8px; text-align: center; }
+                    .banner-cta { width: 100%; justify-content: center; }
+                }
+            `}</style>
         </div>
     );
 };
