@@ -243,7 +243,7 @@ const AdminCatalog = () => {
                 .header-actions { display: flex; gap: 12px; align-items: center; }
                 .search-bar-glass {
                    background: var(--bg-dark); border: 1px solid var(--border);
-                   border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 10px; width: 260px;
+                   border-radius: 8px; padding: 0 16px; display: flex; align-items: center; gap: 10px; width: 260px;
                    height: 44px;
                 }
                 .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 13px; }

@@ -181,8 +181,8 @@ const SiteFormPage = () => {
                 .input-wrapper input { padding-left: 48px !important; }
                 
                 .input-field input { 
-                    width: 100%; padding: 14px 16px; background: var(--bg-input); 
-                    border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); 
+                    width: 100%; height: 44px; padding: 0 16px; background: var(--bg-input); 
+                    border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); 
                     font-size: 14px; outline: none; transition: 0.3s;
                 }
                 .input-field input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
@@ -192,9 +192,9 @@ const SiteFormPage = () => {
                     padding-top: 24px; border-top: 1px solid var(--border);
                 }
                 .btn-save {
-                    background: var(--primary); color: var(--bg-card); padding: 12px 28px;
-                    border-radius: 12px; font-weight: 700; border: none; cursor: pointer;
-                    display: flex; align-items: center; gap: 10px; transition: 0.3s;
+                    background: var(--primary); color: var(--bg-card); height: 44px; padding: 0 28px;
+                    border-radius: 8px; font-weight: 700; border: none; cursor: pointer;
+                    display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s;
                 }
                 .btn-save:hover { transform: translateY(-2px); box-shadow: var(--shadow-premium); }
                 

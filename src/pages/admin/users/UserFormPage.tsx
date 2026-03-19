@@ -164,17 +164,14 @@ const UserFormPage = () => {
             <style>{`
                 .user-form-page { display: flex; flex-direction: column; gap: 32px; max-width: 1000px; margin: 0 auto; }
                 .view-header { display: flex; align-items: center; gap: 24px; }
-                .btn-back { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 16px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+                .btn-back { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); height: 44px; padding: 0 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; transition: 0.2s; }
+                .btn-back:hover { border-color: var(--text-primary); color: var(--text-primary); }
                 
                 .form-grid { display: grid; grid-template-columns: 1fr 300px; gap: 24px; }
                 .input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
                 .input-group label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 6px; }
                 .input-row { display: flex; gap: 16px; }
                 .flex-1 { flex: 1; }
-                
-                .form-input, .form-select { background: var(--bg-input); border: 1px solid var(--border); color: var(--text-primary); padding: 14px 16px; border-radius: 12px; outline: none; transition: 0.2s; }
-                .form-input:focus { border-color: var(--primary); }
-                .form-input:disabled { opacity: 0.5; cursor: not-allowed; }
                 
                 .role-selector { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
                 .role-card { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 16px; cursor: pointer; position: relative; transition: 0.3s; }

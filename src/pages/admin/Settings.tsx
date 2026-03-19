@@ -167,10 +167,6 @@ const AdminSettings = () => {
                 .flex-1 { flex: 1; }
                 .flex-3 { flex: 3; }
                 
-                .form-input { background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-primary); padding: 12px 16px; border-radius: 12px; outline: none; transition: 0.2s; }
-                .form-input:focus { border-color: var(--primary); }
-                .form-input[readonly] { opacity: 0.6; cursor: default; }
-
                 .toggle-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 16px; }
                 .toggle-item strong { display: block; font-size: 14px; color: var(--text-primary); }
                 .toggle-item p { font-size: 12px; color: var(--text-muted); margin: 4px 0 0; }
@@ -193,8 +189,6 @@ const AdminSettings = () => {
                 .premium-link { font-weight: 700; color: var(--primary) !important; }
                 
                 .w-full { width: 100%; }
-                .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 700; }
-                .btn-secondary:hover { border-color: var(--text-muted); color: var(--text-primary); }
 
                 @media (max-width: 800px) {
                     .settings-grid { grid-template-columns: 1fr; }

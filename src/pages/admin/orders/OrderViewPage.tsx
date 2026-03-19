@@ -217,8 +217,8 @@ const OrderViewPage = () => {
                 .info-item strong { font-size: 16px; color: var(--text-primary); }
                 
                 .approval-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
-                .btn-approve { background: #34C759; color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-                .btn-deny { background: transparent; border: 1px solid #FF3B30; color: #FF3B30; padding: 14px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+                .btn-approve { background: #34C759; color: white; border: none; height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+                .btn-deny { background: transparent; border: 1px solid #FF3B30; color: #FF3B30; height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
                 
                 .btn-ghost.delete:hover { background: rgba(255,59,48,0.1); color: #FF3B30; border-color: rgba(255,59,48,0.2); }
                 .loading-state, .error-state { padding: 100px; text-align: center; color: var(--text-muted); }

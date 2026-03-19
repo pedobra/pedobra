@@ -170,7 +170,7 @@ const OrderFormPage = () => {
             <style>{`
                 .order-form-page { display: flex; flex-direction: column; gap: 32px; max-width: 1100px; margin: 0 auto; }
                 .view-header { display: flex; align-items: center; gap: 24px; }
-                .btn-back { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); padding: 10px 16px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+                .btn-back { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-muted); height: 44px; padding: 0 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; }
                 .btn-back:hover { color: var(--text-primary); border-color: var(--text-muted); }
                 
                 .form-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
@@ -180,10 +180,10 @@ const OrderFormPage = () => {
                 .btn-toggle { background: transparent; border: none; color: var(--primary); font-size: 12px; cursor: pointer; font-weight: 600; }
                 
                 .builder-inputs { display: flex; gap: 12px; }
-                .form-input, .form-select { background: var(--bg-input); border: 1px solid var(--border); color: var(--text-primary); padding: 12px 16px; border-radius: 10px; outline: none; }
+                .form-input, .form-select { background: var(--bg-input); border: 1px solid var(--border); color: var(--text-primary); height: 44px; padding: 0 16px; border-radius: 8px; outline: none; }
                 .flex-1 { flex: 1; }
                 .qty { width: 90px; text-align: center; }
-                .btn-add { background: var(--primary); color: var(--bg-dark); border: none; padding: 0 16px; border-radius: 10px; cursor: pointer; }
+                .btn-add { background: var(--primary); color: var(--bg-dark); border: none; padding: 0 16px; height: 44px; border-radius: 8px; cursor: pointer; }
                 
                 .items-list { display: flex; flex-direction: column; gap: 12px; }
                 .empty-state { padding: 48px; text-align: center; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 12px; background: rgba(0,0,0,0.1); border-radius: 16px; border: 1px dashed var(--border); }

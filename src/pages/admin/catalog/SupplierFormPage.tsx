@@ -257,12 +257,12 @@ const SupplierFormPage = () => {
                 .input-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
                 .input-wrapper { position: relative; display: flex; align-items: center; }
                 .input-icon { position: absolute; left: 16px; color: var(--text-muted); }
-                .input-field input, .input-field select { width: 100%; padding: 14px 16px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); font-size: 14px; outline: none; }
+                .input-field input, .input-field select { width: 100%; height: 44px; padding: 0 16px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; outline: none; }
                 .input-wrapper input { padding-left: 48px !important; }
                 
                 .custom-toggle { 
-                    width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
-                    padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-input);
+                    width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 10px;
+                    padding: 0 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-input);
                     color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.3s;
                 }
                 .custom-toggle.active { background: var(--primary-glow); border-color: var(--primary); color: var(--primary); }
@@ -271,7 +271,7 @@ const SupplierFormPage = () => {
                 @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
                 .form-actions-sticky { display: flex; justify-content: flex-end; gap: 16px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
-                .btn-save { background: var(--primary); color: var(--bg-card); padding: 12px 28px; border-radius: 12px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+                .btn-save { background: var(--primary); color: var(--bg-card); height: 44px; padding: 0 28px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
             `}</style>
         </div>
     );

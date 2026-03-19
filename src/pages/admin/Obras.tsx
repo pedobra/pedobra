@@ -157,7 +157,7 @@ const AdminObras = () => {
                 .search-bar-saas { 
                     background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 8px; 
                     padding: 0 12px; display: flex; align-items: center; gap: 8px; 
-                    width: 240px; height: 40px; 
+                    width: 240px; height: 44px; 
                 }
                 .search-bar-saas input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; }
 
