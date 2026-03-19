@@ -1,6 +1,5 @@
-import { Crown, CreditCard, Calendar, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { useSubscription } from '../../hooks/useSubscription';
-import StandardCard from '../../components/ui/StandardCard';
 
 const AdminPlans = () => {
     const { isTrial, daysRemaining } = useSubscription();
@@ -14,44 +13,53 @@ const AdminPlans = () => {
                 </div>
             </header>
 
-            <div className="plans-grid">
-                <StandardCard title="Plano Atual" subtitle="Status do seu licenciamento.">
-                    <div className="plan-card">
-                        <div className="plan-header">
-                            <Crown size={32} className="plan-icon" />
-                            <div>
-                                <span className="plan-name">Plano Enterprise</span>
-                                <span className={`plan-status ${isTrial ? 'trial' : 'active'}`}>
-                                    {isTrial ? 'Período de Teste' : 'Assinatura Ativa'}
-                                </span>
-                            </div>
-                        </div>
-                        <div className="plan-details">
-                            <div className="detail-row">
-                                <Calendar size={18} />
-                                <span>Vencimento:</span>
-                                <strong>{isTrial ? `${daysRemaining} dias restantes` : 'Renovação Mensal'}</strong>
-                            </div>
-                            <div className="detail-row">
-                                <CreditCard size={18} />
-                                <span>Método de Pagamento:</span>
-                                <strong>Cartão de Crédito</strong>
-                            </div>
-                        </div>
-                        <button className="btn-primary w-full" style={{ padding: '14px', fontSize: '15px' }}>
-                            Gerenciar Faturamento
-                        </button>
-                    </div>
-                </StandardCard>
+            {isTrial && (
+                <div className="trial-alert">
+                    <span>Você está usando o <strong>Plano de Teste</strong></span>
+                    <span className="trial-badge-orange">{daysRemaining} dias restantes</span>
+                </div>
+            )}
 
-                <StandardCard title="Recursos do Plano" subtitle="O que está incluso na sua assinatura.">
-                    <ul className="features-list">
-                        <li><CheckCircle2 size={16} color="var(--status-approved)" /> Canteiros ilimitados</li>
-                        <li><CheckCircle2 size={16} color="var(--status-approved)" /> Usuários ilimitados</li>
-                        <li><CheckCircle2 size={16} color="var(--status-approved)" /> Pedidos avançados e orçamentação</li>
-                        <li><CheckCircle2 size={16} color="var(--status-approved)" /> Suporte prioritário 24/7</li>
-                    </ul>
-                </StandardCard>
+            <div className="plans-grid">
+                {/* Plano Básico */}
+                <div className="plan-card glass-premium">
+                    <div className="plan-header-new">
+                        <span className="plan-name-new">Plano Básico</span>
+                        <span className="plan-price-new">Valor de R$ 97,00</span>
+                    </div>
+                    <div className="plan-body-new">
+                        <span className="plan-access-title">Terá acesso:</span>
+                        <ul className="features-list">
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> 2 obras</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> 2 dois usuários (Operários)</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> Suporte Via WhatsApp</li>
+                        </ul>
+                    </div>
+                    <button className="btn-primary w-full" style={{ padding: '14px', fontSize: '15px', fontWeight: 700 }}>
+                        ASSINAR AGORA
+                    </button>
+                </div>
+
+                {/* Plano Profissional */}
+                <div className="plan-card glass-premium">
+                    <div className="plan-header-new">
+                        <span className="plan-name-new">Plano Profissional</span>
+                        <span className="plan-price-new">Valor de R$ 147,00</span>
+                    </div>
+                    <div className="plan-body-new">
+                        <span className="plan-access-title">Terá acesso:</span>
+                        <ul className="features-list">
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> Obras Ilimitadas</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> Usuários Ilimitados (Operários)</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> Pedidos Ilimitados</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> Materiais Ilimitados</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> Suporte Via WhatsApp</li>
+                        </ul>
+                    </div>
+                    <button className="btn-primary w-full" style={{ padding: '14px', fontSize: '15px', fontWeight: 700 }}>
+                        ASSINAR AGORA
+                    </button>
+                </div>
             </div>
 
             <style>{`
@@ -60,27 +68,92 @@ const AdminPlans = () => {
                 .page-title { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
                 .page-subtitle { color: var(--text-muted); font-size: 14px; }
                 
+                .trial-alert {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    background: var(--bg-card);
+                    border: 1px solid var(--border);
+                    padding: 16px 24px;
+                    border-radius: 12px;
+                    font-size: 15px;
+                    color: var(--text-primary);
+                }
+                .trial-badge-orange {
+                    background: #FF9500;
+                    color: #FFF;
+                    padding: 6px 14px;
+                    border-radius: 20px;
+                    font-size: 13px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                }
+
                 .plans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
                 
-                .plan-card { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
-                .plan-header { display: flex; align-items: center; gap: 20px; }
-                .plan-icon { color: var(--primary); filter: drop-shadow(0 0 8px var(--primary-glow)); }
-                .plan-name { display: block; font-size: 20px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; }
-                .plan-status { font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; }
-                .plan-status.active { background: rgba(52,199,89,0.1); color: var(--status-approved); }
-                .plan-status.trial { background: rgba(255,149,0,0.1); color: var(--status-pending); }
+                .plan-card { 
+                    display: flex; 
+                    flex-direction: column; 
+                    padding: 32px; 
+                    border-radius: 16px;
+                }
                 
-                .plan-details { display: flex; flex-direction: column; gap: 16px; padding: 24px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-                .detail-row { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--text-secondary); }
-                .detail-row strong { margin-left: auto; color: var(--text-primary); font-weight: 700; }
+                .glass-premium {
+                    background: var(--bg-glass);
+                    backdrop-filter: blur(12px);
+                    -webkit-backdrop-filter: blur(12px);
+                    border: 1px solid color-mix(in srgb, var(--text-primary) 20%, transparent);
+                    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+                }
                 
-                .w-full { width: 100%; justify-content: center; }
+                .glass-premium:hover {
+                    border-color: color-mix(in srgb, var(--text-primary) 40%, transparent);
+                    box-shadow: 0 12px 40px -12px color-mix(in srgb, var(--text-primary) 30%, transparent);
+                    transform: translateY(-4px);
+                }
+
+                .plan-header-new {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                    border-bottom: 1px solid var(--border);
+                    padding-bottom: 24px;
+                }
+                .plan-name-new {
+                    display: block;
+                    font-size: 20px;
+                    font-weight: 800;
+                    color: var(--text-primary);
+                }
+                .plan-price-new {
+                    display: block;
+                    font-size: 32px;
+                    font-weight: 800;
+                    color: var(--text-primary);
+                }
                 
+                .plan-body-new {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 16px;
+                    padding: 24px 0;
+                    flex: 1;
+                }
+                .plan-access-title {
+                    font-size: 14px;
+                    font-weight: 700;
+                    color: var(--text-secondary);
+                    text-transform: uppercase;
+                }
+
                 .features-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; font-size: 15px; color: var(--text-primary); font-weight: 500;}
                 .features-list li { display: flex; align-items: center; gap: 12px; }
                 
+                .w-full { width: 100%; justify-content: center; }
+                
                 @media (max-width: 800px) {
                     .plans-grid { grid-template-columns: 1fr; }
+                    .trial-alert { flex-direction: column; gap: 12px; text-align: center; }
                 }
             `}</style>
         </div>
