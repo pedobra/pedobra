@@ -268,7 +268,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                         <div className="sheet-header">
                             <div className="status-badge-row">
                                 <StatusBadge status={viewingOrder.status} />
-                                <span>#{viewingOrder.id.slice(0, 8)}</span>
+                                <span>#{viewingOrder.id?.slice(0, 8)}</span>
                             </div>
                             <h2>Detalhes do Pedido</h2>
                             <p>Realizado em {new Date(viewingOrder.created_at).toLocaleDateString()}</p>

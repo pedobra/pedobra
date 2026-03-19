@@ -29,7 +29,7 @@ const AdminSettings = () => {
     }, []);
 
     const fetchSettings = async () => {
-        const { data } = await supabase.from('company_settings').select('*').single();
+        const { data } = await supabase.from('company_settings').select('*').maybeSingle();
         if (data) {
             setSettings({ ...settings, ...data });
             if (data.logo_url && !data.logo_url.startsWith('data:')) {

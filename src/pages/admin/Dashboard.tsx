@@ -70,7 +70,7 @@ const AdminDashboard = () => {
     const columns = [
         { 
             header: 'ID', 
-            accessor: (o: any) => <span className="text-mono">#{o.id.slice(0,8)}</span> 
+            accessor: (o: any) => <span className="text-mono">#{o.id?.slice(0,8)}</span> 
         },
         { header: 'Canteiro', accessor: (o: any) => <strong>{o.sites?.name}</strong> },
         { header: 'Solicitante', accessor: (o: any) => o.profiles?.name || 'Sistema' },

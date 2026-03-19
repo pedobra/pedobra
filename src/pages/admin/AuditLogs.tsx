@@ -58,8 +58,8 @@ const AdminAuditLogs = () => {
         { 
             header: 'Ação', 
             accessor: (log: AuditLog) => (
-                <span className={`action-badge ${log.action.toLowerCase()}`}>
-                    {log.action}
+                <span className={`action-badge ${log.action?.toLowerCase() || 'other'}`}>
+                    {log.action || 'Ação'}
                 </span>
             ) 
         },
@@ -67,8 +67,8 @@ const AdminAuditLogs = () => {
             header: 'Entidade', 
             accessor: (log: AuditLog) => (
                 <div className="entity-info">
-                    <strong>{log.entity_type}</strong>
-                    <span className="text-mono-xs">{log.entity_id.slice(0, 8)}</span>
+                    <strong>{log.entity_type || 'N/A'}</strong>
+                    <span className="text-mono-xs">{log.entity_id?.slice(0, 8)}</span>
                 </div>
             ) 
         }
