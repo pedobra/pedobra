@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --primary: #0F172A; /* Slate 900 for buttons/text */
-  --primary-glow: rgba(15, 23, 42, 0.05);
-  --bg-dark: #F9FAFB; /* Slate 50 - cleaner background */
+  --primary: #000000; /* Deep black for primary buttons/accent */
+  --primary-glow: rgba(0, 0, 0, 0.05);
+  --bg-dark: #F9FAFB;
   --bg-card: #FFFFFF;
   --bg-sidebar: #FFFFFF;
   --bg-input: #FFFFFF;
 
-  --text-primary: #111827; /* Gray 900 */
-  --text-secondary: #4B5563; /* Gray 600 */
-  --text-muted: #9CA3AF; /* Gray 400 */
+  --text-primary: #000000; /* Preto */
+  --text-secondary: #333333; /* Cinza 80% */
+  --text-muted: #333333; /* Cinza 80% */
 
   --border: #E5E7EB; /* Gray 200 - consistent crisp borders */
   --border-bright: #D1D5DB; /* Gray 300 */
@@ -35,8 +35,10 @@
   --bg-dark: #F9FAFB;
   --bg-card: #FFFFFF;
   --bg-sidebar: #FFFFFF;
-  --text-primary: #111827;
-  --text-secondary: #4B5563;
+  --bg-input: #FFFFFF;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-muted: #333333;
   --border: #E5E7EB;
 }
 
@@ -289,8 +291,8 @@ h3,
 }
 
 .btn-primary:hover {
-  background: #1E293B;
-  border-color: #1E293B;
+  background: #333333;
+  border-color: #333333;
 }
 
 .btn-secondary {

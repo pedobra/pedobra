@@ -19,7 +19,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label }) => {
         denied: { color: '#EF4444', label: 'Cancelled' },
     };
 
-    const current = config[s] || { color: '#9CA3AF', label: label || status };
+    const current = config[s] || { color: '#333333', label: label || status };
 
     return (
         <div className="status-badge-container">
