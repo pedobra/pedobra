@@ -4,7 +4,7 @@ import { Building, MapPin, Globe, Save, CheckCircle2, Star, FileText, Package } 
 import StandardCard from '../../components/ui/StandardCard';
 import { sanitizeInput, validateFileUpload, generateSecureFileName } from '../../lib/security';
 
-const AdminSettings = () => {
+const AdminSettings = ({ profile }: { profile: any }) => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [settings, setSettings] = useState({
@@ -49,6 +49,7 @@ const AdminSettings = () => {
             // [SEGURANÇA] Sanitizando antes de salvar
             const safeSettings = {
                 ...settings,
+                organization_id: profile.organization_id,
                 company_name: sanitizeInput(settings.company_name),
                 address_street: sanitizeInput(settings.address_street),
                 address_neighborhood: sanitizeInput(settings.address_neighborhood),

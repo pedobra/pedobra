@@ -148,7 +148,7 @@ function App() {
           session && profile?.role === 'admin' ? <AdminLayout><SupplierFormPage /></AdminLayout> : <Navigate to="/" />
         } />
         <Route path="/admin/settings" element={
-          session && profile?.role === 'admin' ? <AdminLayout><AdminSettings /></AdminLayout> : <Navigate to="/" />
+          session && profile?.role === 'admin' ? <AdminLayout><AdminSettings profile={profile} /></AdminLayout> : <Navigate to="/" />
         } />
         <Route path="/admin/plans" element={
           session && profile?.role === 'admin' ? <AdminLayout><AdminPlans /></AdminLayout> : <Navigate to="/" />
