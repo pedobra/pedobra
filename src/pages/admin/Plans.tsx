@@ -1,4 +1,4 @@
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Star } from 'lucide-react';
 import { useSubscription } from '../../hooks/useSubscription';
 
 const AdminPlans = () => {
@@ -41,9 +41,15 @@ const AdminPlans = () => {
                 </div>
 
                 {/* Plano Profissional */}
-                <div className="plan-card glass-premium">
+                <div className="plan-card glass-premium glass-premium-highlight">
+                    <div className="recommended-badge">RECOMENDADO</div>
                     <div className="plan-header-new">
-                        <span className="plan-name-new">Plano Profissional</span>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                            <span className="plan-name-new">Plano Profissional</span>
+                            <span className="best-value-seal">
+                                <Star size={12} fill="currentColor" /> Melhor Custo Benefício
+                            </span>
+                        </div>
                         <span className="plan-price-new">Valor de R$ 147,00</span>
                     </div>
                     <div className="plan-body-new">
@@ -89,7 +95,7 @@ const AdminPlans = () => {
                     text-transform: uppercase;
                 }
 
-                .plans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+                .plans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; padding-top: 12px; }
                 
                 .plan-card { 
                     display: flex; 
@@ -112,10 +118,51 @@ const AdminPlans = () => {
                     transform: translateY(-4px);
                 }
 
+                .glass-premium-highlight {
+                    border: 2px solid var(--text-primary);
+                    position: relative;
+                }
+                
+                .glass-premium-highlight:hover {
+                    border-color: var(--text-primary);
+                }
+
+                .recommended-badge {
+                    position: absolute;
+                    top: -14px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: var(--text-primary);
+                    color: var(--bg-card);
+                    padding: 6px 16px;
+                    border-radius: 20px;
+                    font-size: 12px;
+                    font-weight: 800;
+                    letter-spacing: 1px;
+                    text-transform: uppercase;
+                    box-shadow: 0 4px 12px color-mix(in srgb, var(--text-primary) 30%, transparent);
+                    white-space: nowrap;
+                }
+
+                .best-value-seal {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    background: rgba(52, 199, 89, 0.1);
+                    color: var(--status-approved);
+                    padding: 4px 10px;
+                    border-radius: 8px;
+                    font-size: 11px;
+                    font-weight: 800;
+                    letter-spacing: 0.5px;
+                    text-transform: uppercase;
+                    white-space: nowrap;
+                }
+
                 .plan-header-new {
                     display: flex;
                     flex-direction: column;
-                    gap: 8px;
+                    gap: 12px;
                     border-bottom: 1px solid var(--border);
                     padding-bottom: 24px;
                 }
@@ -152,7 +199,7 @@ const AdminPlans = () => {
                 .w-full { width: 100%; justify-content: center; }
                 
                 @media (max-width: 800px) {
-                    .plans-grid { grid-template-columns: 1fr; }
+                    .plans-grid { grid-template-columns: 1fr; gap: 48px; }
                     .trial-alert { flex-direction: column; gap: 12px; text-align: center; }
                 }
             `}</style>
