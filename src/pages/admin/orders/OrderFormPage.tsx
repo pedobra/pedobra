@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import { ArrowLeft, Plus, ClipboardList, Trash2, Send, Building2, Package } from 'lucide-react';
 import StandardCard from '../../../components/ui/StandardCard';
+import { sanitizeInput } from '../../../lib/security';
 
 const OrderFormPage = () => {
     const { id } = useParams();
@@ -42,8 +43,9 @@ const OrderFormPage = () => {
 
     const addItem = () => {
         if (isCustom) {
-            if (!currentItem.customName) return alert('Descreva o material.');
-            setItems([...items, { material_id: 'custom', quantity: currentItem.quantity, name: `(NOVO) ${currentItem.customName}`, unit: 'un' }]);
+            const safeName = sanitizeInput(currentItem.customName);
+            if (!safeName) return alert('Descreva o material de forma válida (XSS detectado e bloqueado).');
+            setItems([...items, { material_id: 'custom', quantity: currentItem.quantity, name: `(NOVO) ${safeName}`, unit: 'un' }]);
         } else {
             if (!currentItem.material_id) return alert('Selecione um material.');
             const mat = materials.find(m => m.id === currentItem.material_id);

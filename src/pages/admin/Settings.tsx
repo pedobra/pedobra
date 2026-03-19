@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Building, MapPin, Globe, Save, CheckCircle2, Star, FileText, Package } from 'lucide-react';
 import StandardCard from '../../components/ui/StandardCard';
+import { sanitizeInput, validateFileUpload, generateSecureFileName } from '../../lib/security';
 
 const AdminSettings = () => {
     const [loading, setLoading] = useState(false);
@@ -15,10 +16,13 @@ const AdminSettings = () => {
         address_neighborhood: '',
         address_city: '',
         address_state: '',
-        logo_url: '',
+        logo_url: '', // Agora vai guardar o path do arquivo (ex: "uuid.png")
         pdf_show_site_address: true,
         allow_custom_materials_global: false
     });
+    
+    // Novo estado seguro para a Signed URL (URL temporária do Storage Privado)
+    const [signedLogoUrl, setSignedLogoUrl] = useState('');
 
     useEffect(() => {
         fetchSettings();
@@ -26,20 +30,41 @@ const AdminSettings = () => {
 
     const fetchSettings = async () => {
         const { data } = await supabase.from('company_settings').select('*').single();
-        if (data) setSettings({ ...settings, ...data });
+        if (data) {
+            setSettings({ ...settings, ...data });
+            if (data.logo_url && !data.logo_url.startsWith('data:')) {
+                // É um caminho de storage privado, precisamos gerar a Signed URL
+                const { data: signed } = await supabase.storage.from('secure-assets').createSignedUrl(data.logo_url, 3600);
+                if (signed) setSignedLogoUrl(signed.signedUrl);
+            } else if (data.logo_url) {
+                // Compatibilidade legada com Base64
+                setSignedLogoUrl(data.logo_url);
+            }
+        }
     };
 
     const handleSave = async () => {
         setLoading(true);
-        const { error } = await supabase.from('company_settings').upsert({
-            ...settings,
-            updated_at: new Date().toISOString()
-        });
-        if (!error) {
+        try {
+            // [SEGURANÇA] Sanitizando antes de salvar
+            const safeSettings = {
+                ...settings,
+                company_name: sanitizeInput(settings.company_name),
+                address_street: sanitizeInput(settings.address_street),
+                address_neighborhood: sanitizeInput(settings.address_neighborhood),
+                updated_at: new Date().toISOString()
+            };
+
+            const { error } = await supabase.from('company_settings').upsert(safeSettings);
+            if (error) throw error;
+            
             setSuccess(true);
             setTimeout(() => setSuccess(false), 3000);
+        } catch (err: any) {
+            alert('Erro de segurança ou falha de conexão: ' + err.message);
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const handleCEPBlur = async () => {
@@ -52,14 +77,34 @@ const AdminSettings = () => {
         }
     };
 
-    const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleLogoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setSettings({ ...settings, logo_url: reader.result as string });
-            };
-            reader.readAsDataURL(file);
+        if (!file) return;
+
+        try {
+            setLoading(true);
+            // [SEGURANÇA] Validar MIME type e Tamanho máximo (Max 2MB para Logo)
+            validateFileUpload(file, { maxSizeMB: 2 });
+
+            // [SEGURANÇA] Renomeação para UUID impenetrável
+            const securePath = generateSecureFileName(file.name);
+
+            // [SEGURANÇA] Upload para bucket privado
+            const { error: uploadError } = await supabase.storage.from('secure-assets').upload(securePath, file);
+            if (uploadError) throw uploadError;
+
+            // Sucesso: salvamos o path seguro no banco, não o base64
+            setSettings({ ...settings, logo_url: securePath });
+            
+            // Geramos a Signed URL em tempo real para exibir o preview pro usuário
+            const { data } = await supabase.storage.from('secure-assets').createSignedUrl(securePath, 3600);
+            if (data) setSignedLogoUrl(data.signedUrl);
+            
+            alert('Arquivo seguro processado com sucesso. Lembre-se de "Salvar Alterações".');
+        } catch (err: any) {
+            alert('Falha de Segurança no Upload: ' + err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -130,8 +175,8 @@ const AdminSettings = () => {
                     <StandardCard title="Identidade Visual" subtitle="Faça upload do logotipo da empresa.">
                         <div className="logo-upload-container">
                             <div className="logo-preview">
-                                {settings.logo_url ? (
-                                    <img src={settings.logo_url} alt="Logo da Empresa" />
+                                {signedLogoUrl ? (
+                                    <img src={signedLogoUrl} alt="Logo da Empresa" />
                                 ) : (
                                     <div className="logo-placeholder">Sem Logo</div>
                                 )}

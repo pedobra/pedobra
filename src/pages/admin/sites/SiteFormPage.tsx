@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import { Save, ArrowLeft, Building2, MapPin } from 'lucide-react';
 import StandardCard from '../../../components/ui/StandardCard';
+import { sanitizeInput } from '../../../lib/security';
 
 const SiteFormPage = () => {
     const { id } = useParams();
@@ -57,11 +58,16 @@ const SiteFormPage = () => {
         e.preventDefault();
         setLoading(true);
 
+        // [SEGURANÇA] Sanitizando strings vitais contra injeção HTML
+        const safeName = sanitizeInput(formData.name);
+        if (!safeName) return alert("O nome do canteiro é inválido.");
+        const safeAddress = sanitizeInput(formData.address);
+
         const payload = {
-            name: formData.name,
+            name: safeName,
             address: {
-                full: formData.address,
-                cep: formData.cep
+                full: safeAddress,
+                cep: sanitizeInput(formData.cep)
             },
             settings: {
                 budget_planned: parseFloat(formData.budget) || 0

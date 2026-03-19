@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import { Save, ArrowLeft, Mail, Shield, Building2, Lock, User, CheckCircle } from 'lucide-react';
 import StandardCard from '../../../components/ui/StandardCard';
+import { sanitizeInput, securitySchemas } from '../../../lib/security';
 
 const UserFormPage = () => {
     const { id } = useParams();
@@ -37,10 +38,16 @@ const UserFormPage = () => {
         e.preventDefault();
         setLoading(true);
         try {
+            // [SEGURANÇA] Sanitizando e Validando
+            const safeName = sanitizeInput(formData.name);
+            if (!safeName) throw new Error("Nome inválido.");
+            
+            const validEmail = securitySchemas.email.parse(formData.email);
+
             if (id) {
                 // Update profile only (cannot change password/email easily via client)
                 const { error } = await supabase.from('profiles').update({
-                    name: formData.name,
+                    name: safeName,
                     role: formData.role,
                     site_id: formData.role === 'worker' ? formData.site_id : null
                 }).eq('id', id);
@@ -54,9 +61,9 @@ const UserFormPage = () => {
                 );
 
                 const { data: authData, error: authError } = await tempSupabase.auth.signUp({
-                    email: formData.email,
+                    email: validEmail,
                     password: formData.password,
-                    options: { data: { name: formData.name } }
+                    options: { data: { name: safeName } }
                 });
 
                 if (authError) throw authError;
@@ -64,8 +71,8 @@ const UserFormPage = () => {
                 if (authData.user) {
                     const { error: profileError } = await supabase.from('profiles').insert({
                         id: authData.user.id,
-                        name: formData.name,
-                        email: formData.email,
+                        name: safeName,
+                        email: validEmail,
                         role: formData.role,
                         site_id: formData.role === 'worker' ? formData.site_id : null
                     });

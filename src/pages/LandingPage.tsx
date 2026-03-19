@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Construction, ArrowRight } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
+import { detectBot } from '../lib/security';
 
 const LandingPage = () => {
     const [logoClicks, setLogoClicks] = useState(0);
@@ -14,6 +15,7 @@ const LandingPage = () => {
     const [isLogin, setIsLogin] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [honey, setHoney] = useState(''); // Honeypot state
 
     const handleLogoClick = () => {
         const newClicks = logoClicks + 1;
@@ -27,6 +29,10 @@ const LandingPage = () => {
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        // [SEGURANÇA] Bloqueio silencioso de Bots via Honeypot
+        if (detectBot(honey)) return;
+
         setLoading(true);
         try {
             if (showAdminModal) {
@@ -182,6 +188,9 @@ const LandingPage = () => {
                             </h2>
                         </div>
                         <form onSubmit={handleAuth}>
+                            {/* [SEGURANÇA] HONEYPOT INVISÍVEL */}
+                            <input type="text" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" value={honey} onChange={e => setHoney(e.target.value)} name="website_url" aria-hidden="true" />
+                            
                             {(showAdminModal || isSignUp) && (
                                 <div className="input-field">
                                     <label>Seu Nome Completo</label>
