@@ -23,7 +23,7 @@ const AdminSettings = () => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [activeTab, setActiveTab] = useState<'general' | 'permissions' | 'subscription'>('general');
-    const { isTrial, daysRemaining, planId, organizationName } = useSubscription();
+    const { isTrial, daysRemaining, planId, organizationName, organizationId } = useSubscription();
     const [settings, setSettings] = useState({
         company_name: '',
         cnpj: '',
@@ -120,9 +120,11 @@ const AdminSettings = () => {
 
     const handleSubmit = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
+        if (!organizationId) return;
+        
         setLoading(true);
         const { error } = await supabase.from('company_settings').upsert({
-            id: 1,
+            organization_id: organizationId,
             company_name: settings.company_name,
             cnpj: settings.cnpj,
             address_cep: settings.address_cep,

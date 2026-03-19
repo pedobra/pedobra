@@ -7,6 +7,7 @@ export interface SubscriptionInfo {
     isExpired: boolean;
     planId: string;
     organizationName: string;
+    organizationId: string;
 }
 
 export const useSubscription = () => {
@@ -43,7 +44,8 @@ export const useSubscription = () => {
                         daysRemaining: Math.max(0, diffDays),
                         isExpired: diffTime < 0 && org.subscription_status !== 'active',
                         planId: org.plan_id,
-                        organizationName: org.name
+                        organizationName: org.name,
+                        organizationId: org.id
                     });
                 }
             } catch (err) {

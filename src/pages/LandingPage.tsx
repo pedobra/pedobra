@@ -9,6 +9,8 @@ const LandingPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
+    const [companyName, setCompanyName] = useState('');
+    const [cpfCnpj, setCpfCnpj] = useState('');
     const [isLogin, setIsLogin] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -58,12 +60,33 @@ const LandingPage = () => {
                 if (authError) throw authError;
 
                 if (authData.user) {
+                    // 0. Fraud Prevention & IP Fetch
+                    let userIp = '0.0.0.0';
+                    try {
+                        const ipRes = await fetch('https://api.ipify.org?format=json');
+                        const ipData = await ipRes.json();
+                        userIp = ipData.ip;
+                    } catch (e) {
+                        console.error('Cant fetch IP');
+                    }
+
+                    // Check if CPF or IP already exists using RPC (Security Definer)
+                    const { data: isFraud } = await supabase.rpc('check_fraud_existence', { 
+                        p_cpf: cpfCnpj, 
+                        p_ip: userIp 
+                    });
+                    
+                    if (isFraud) {
+                        // If fraud detected, we should ideally delete the auth user, but for now we just block
+                        throw new Error('Limite de teste gratuito atingido para este CPF ou conexão de internet.');
+                    }
+
                     // 1. Create Organization
-                    const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Math.random().toString(36).substring(2, 7);
+                    const slug = companyName.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Math.random().toString(36).substring(2, 7);
                     const { data: orgData, error: orgError } = await supabase
                         .from('organizations')
                         .insert({
-                            name: `${name}'s Construction`,
+                            name: companyName,
                             slug,
                             owner_id: authData.user.id
                         })
@@ -80,7 +103,9 @@ const LandingPage = () => {
                             name,
                             email,
                             role: 'admin',
-                            organization_id: orgData.id
+                            organization_id: orgData.id,
+                            cpf: cpfCnpj,
+                            signup_ip: userIp
                         });
                     if (profileError) throw profileError;
                     
@@ -162,6 +187,18 @@ const LandingPage = () => {
                                     <label>Seu Nome Completo</label>
                                     <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Engenheiro Roberto" required />
                                 </div>
+                            )}
+                            {isSignUp && (
+                                <>
+                                    <div className="input-field">
+                                        <label>Nome da Empresa / Construtora</label>
+                                        <input type="text" value={companyName} onChange={e => setCompanyName(e.target.value)} placeholder="Ex: Roberto Construções Ltda" required />
+                                    </div>
+                                    <div className="input-field">
+                                        <label>CPF ou CNPJ</label>
+                                        <input type="text" value={cpfCnpj} onChange={e => setCpfCnpj(e.target.value)} placeholder="000.000.000-00" required />
+                                    </div>
+                                </>
                             )}
                             <div className="input-field">
                                 <label>E-mail Corporativo</label>
