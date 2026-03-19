@@ -14,12 +14,15 @@ import {
     Activity
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShieldAlert } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
+import { TrialBanner } from './TrialBanner';
+import { useSubscription } from '../hooks/useSubscription';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { isExpired, loading: subLoading } = useSubscription();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [userName, setUserName] = useState('Admin Master');
     // Inicializa do localStorage para sobreviver ao refresh
@@ -119,6 +122,46 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         navigate('/');
     };
 
+    if (subLoading) return null; // Prevents flash of content
+
+    if (isExpired) {
+        return (
+            <div className="expired-overlay glass">
+                <div className="expired-card premium-card animate-fade">
+                    <div className="expired-icon">
+                        <ShieldAlert size={48} color="#ef4444" />
+                    </div>
+                    <h2>Seu período de teste expirou</h2>
+                    <p>Para continuar gerenciando suas obras e acessando seus dados, por favor selecione um plano de assinatura.</p>
+                    <div className="expired-actions">
+                        <button className="btn-primary" onClick={() => window.location.href = '/admin/billing'}>
+                            Ver Planos de Assinatura
+                        </button>
+                        <button className="btn-secondary" onClick={handleLogout}>
+                            Sair do Sistema
+                        </button>
+                    </div>
+                </div>
+                <style>{`
+                    .expired-overlay {
+                        position: fixed; inset: 0; z-index: 9999;
+                        display: flex; align-items: center; justify-content: center;
+                        background: rgba(0,0,0,0.8); backdrop-filter: blur(12px);
+                    }
+                    .expired-card {
+                        max-width: 450px; width: 90%; text-align: center; padding: 40px;
+                        background: var(--bg-sidebar); border: 1px solid var(--border);
+                        border-radius: 32px;
+                    }
+                    .expired-icon { margin-bottom: 24px; }
+                    .expired-card h2 { margin-bottom: 16px; color: var(--text-primary); }
+                    .expired-card p { margin-bottom: 32px; color: var(--text-muted); line-height: 1.6; }
+                    .expired-actions { display: flex; flex-direction: column; gap: 12px; }
+                `}</style>
+            </div>
+        );
+    }
+
     return (
         <div className="admin-wrapper">
             <header className="admin-mobile-header">
@@ -208,6 +251,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             )}
 
             <main className="admin-main-stage">
+                <TrialBanner />
                 <header className="stage-header">
                     {/* Badge de novo pedido — lado esquerdo */}
                     <div className="stage-header-left" style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>

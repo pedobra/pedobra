@@ -10,6 +10,7 @@ const LandingPage = () => {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [isLogin, setIsLogin] = useState(false);
+    const [isSignUp, setIsSignUp] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const handleLogoClick = () => {
@@ -27,6 +28,7 @@ const LandingPage = () => {
         setLoading(true);
         try {
             if (showAdminModal) {
+                // ... (Hidden Admin Logic - Existing)
                 const { data: authData, error: authError } = await supabase.auth.signUp({
                     email,
                     password,
@@ -47,6 +49,45 @@ const LandingPage = () => {
                 alert('Admin Master Criado! Agora faça o login.');
                 setShowAdminModal(false);
                 setIsLogin(true);
+            } else if (isSignUp) {
+                // SAAS Public SignUp Logic
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email,
+                    password,
+                });
+                if (authError) throw authError;
+
+                if (authData.user) {
+                    // 1. Create Organization
+                    const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Math.random().toString(36).substring(2, 7);
+                    const { data: orgData, error: orgError } = await supabase
+                        .from('organizations')
+                        .insert({
+                            name: `${name}'s Construction`,
+                            slug,
+                            owner_id: authData.user.id
+                        })
+                        .select()
+                        .single();
+                    
+                    if (orgError) throw orgError;
+
+                    // 2. Create Profile linked to Org
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .insert({
+                            id: authData.user.id,
+                            name,
+                            email,
+                            role: 'admin',
+                            organization_id: orgData.id
+                        });
+                    if (profileError) throw profileError;
+                    
+                    alert('Conta criada com sucesso! Você iniciou seu teste grátis de 7 dias.');
+                    setIsSignUp(false);
+                    setIsLogin(true);
+                }
             } else {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
@@ -96,33 +137,34 @@ const LandingPage = () => {
                         PedObra é a plataforma premium que transforma a complexidade do canteiro de obras em uma experiência fluida e inteligente.
                     </p>
                     <div className="hero-cta-group">
-                        <button className="btn-primary" onClick={() => setIsLogin(true)}>
-                            Iniciar Agora <ArrowRight size={18} />
+                        <button className="btn-primary" onClick={() => setIsSignUp(true)}>
+                            Iniciar 7 Dias Grátis <ArrowRight size={18} />
                         </button>
                     </div>
                 </div>
             </main>
 
-            {(isLogin || showAdminModal) && (
-                <div className="auth-overlay glass" onClick={() => { setIsLogin(false); setShowAdminModal(false); }}>
+            {(isLogin || isSignUp || showAdminModal) && (
+                <div className="auth-overlay glass" onClick={() => { setIsLogin(false); setIsSignUp(false); setShowAdminModal(false); }}>
                     <div className="auth-card premium-card animate-fade" onClick={e => e.stopPropagation()}>
                         <div className="auth-header">
                             <div className="logo-icon-bg mb-4 mx-auto" style={{ width: 'fit-content' }}>
                                 <Construction size={24} color="var(--bg-dark)" />
                             </div>
                             <h2 className="auth-title">
-                                {showAdminModal ? 'Registro Privado Master' : 'Insira suas credenciais'}
+                                {showAdminModal ? 'Registro Privado Master' : 
+                                 isSignUp ? 'Crie sua conta PedObra' : 'Insira suas credenciais'}
                             </h2>
                         </div>
                         <form onSubmit={handleAuth}>
-                            {showAdminModal && (
+                            {(showAdminModal || isSignUp) && (
                                 <div className="input-field">
-                                    <label>Identificação de Administrador</label>
-                                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Nome Completo" required />
+                                    <label>Seu Nome Completo</label>
+                                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Engenheiro Roberto" required />
                                 </div>
                             )}
                             <div className="input-field">
-                                <label>E-mail</label>
+                                <label>E-mail Corporativo</label>
                                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="exemplo@obra.com" required />
                             </div>
                             <div className="input-field">
@@ -130,8 +172,21 @@ const LandingPage = () => {
                                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
                             </div>
                             <button className="btn-primary w-full mt-4" disabled={loading}>
-                                {loading ? 'Sincronizando...' : (showAdminModal ? 'Criar Acesso Master' : 'Acessar Sistema')}
+                                {loading ? 'Processando...' : (
+                                    showAdminModal ? 'Criar Acesso Master' : 
+                                    isSignUp ? 'Iniciar Teste Grátis' : 'Acessar Sistema'
+                                )}
                             </button>
+                            
+                            {!showAdminModal && (
+                                <div className="auth-footer" style={{ marginTop: '20px', textAlign: 'center', fontSize: '14px' }}>
+                                    {isLogin ? (
+                                        <p>Ainda não tem conta? <button type="button" onClick={() => { setIsLogin(false); setIsSignUp(true); }} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer' }}>Experimente Grátis</button></p>
+                                    ) : (
+                                        <p>Já possui cadastro? <button type="button" onClick={() => { setIsSignUp(false); setIsLogin(true); }} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 'bold', cursor: 'pointer' }}>Fazer Login</button></p>
+                                    )}
+                                </div>
+                            )}
                         </form>
                     </div>
                 </div>
