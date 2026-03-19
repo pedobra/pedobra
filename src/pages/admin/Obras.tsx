@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Plus, MapPin, Search, Edit2, Trash2, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSubscription } from '../../hooks/useSubscription';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
 import StatusBadge from '../../components/ui/StatusBadge';
@@ -15,6 +16,9 @@ const AdminObras = () => {
     const [loading, setLoading] = useState(true);
     const [viewMode] = useState<'table' | 'cards'>('table');
     const [searchTerm, setSearchTerm] = useState('');
+    const { maxSites } = useSubscription();
+
+    const isLimitReached = maxSites ? obras.length >= maxSites : false;
 
     useEffect(() => {
         fetchObras();
@@ -109,7 +113,15 @@ const AdminObras = () => {
                         <Search size={16} color="var(--text-muted)" />
                         <input type="text" placeholder="Buscar obras..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                     </div>
-                    <button className="btn-primary" onClick={() => navigate('/admin/sites/novo')}>
+                    {isLimitReached && (
+                        <span className="limit-warning">Limite do plano atingido ({obras.length}/{maxSites})</span>
+                    )}
+                    <button 
+                        className="btn-primary" 
+                        onClick={() => navigate('/admin/sites/novo')}
+                        disabled={isLimitReached}
+                        title={isLimitReached ? "Limite de obras do seu plano atingido" : ""}
+                    >
                         Nova Obra
                     </button>
                 </div>
@@ -192,7 +204,25 @@ const AdminObras = () => {
                 }
                 .add-site-card-saas:hover { border-color: var(--text-muted); background: var(--bg-dark); color: var(--text-primary); }
 
+
                 .table-actions-btns { display: flex; gap: 8px; }
+
+                .limit-warning {
+                    font-size: 11px;
+                    font-weight: 700;
+                    color: var(--status-denied);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    background: rgba(var(--status-denied-rgb), 0.1);
+                    padding: 4px 12px;
+                    border-radius: 6px;
+                }
+
+                button:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                    filter: grayscale(1);
+                }
             `}</style>
         </div>
     );

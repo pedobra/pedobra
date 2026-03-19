@@ -8,6 +8,8 @@ export interface SubscriptionInfo {
     planId: string;
     organizationName: string;
     organizationId: string;
+    maxSites: number;
+    maxWorkers: number;
 }
 
 export const useSubscription = () => {
@@ -39,13 +41,24 @@ export const useSubscription = () => {
                     const diffTime = end.getTime() - now.getTime();
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                     
+                    // Definir limites por plano
+                    const limits = {
+                        trial: { maxSites: 1, maxWorkers: 1 },
+                        basic: { maxSites: 2, maxWorkers: 2 },
+                        pro: { maxSites: Infinity, maxWorkers: Infinity }
+                    };
+
+                    const currentLimits = limits[org.plan_id as keyof typeof limits] || limits.trial;
+
                     setSubInfo({
                         isTrial: org.plan_id === 'trial',
                         daysRemaining: Math.max(0, diffDays),
                         isExpired: diffTime < 0 && org.subscription_status !== 'active',
                         planId: org.plan_id,
                         organizationName: org.name,
-                        organizationId: org.id
+                        organizationId: org.id,
+                        maxSites: currentLimits.maxSites,
+                        maxWorkers: currentLimits.maxWorkers
                     });
                 }
             } catch (err) {

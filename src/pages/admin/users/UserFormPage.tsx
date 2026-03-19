@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
+import { useSubscription } from '../../../hooks/useSubscription';
 import { Save, ArrowLeft, Mail, Shield, Building2, Lock, User, CheckCircle } from 'lucide-react';
 import StandardCard from '../../../components/ui/StandardCard';
 import { sanitizeInput, securitySchemas } from '../../../lib/security';
@@ -8,6 +9,7 @@ import { sanitizeInput, securitySchemas } from '../../../lib/security';
 const UserFormPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { maxWorkers } = useSubscription();
     const [loading, setLoading] = useState(false);
     const [obras, setObras] = useState<any[]>([]);
 
@@ -38,6 +40,15 @@ const UserFormPage = () => {
         e.preventDefault();
         setLoading(true);
         try {
+            if (!id && formData.role === 'worker') {
+                // Check limits for new worker
+                const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'worker');
+
+                if (count !== null && count >= (maxWorkers || 1)) {
+                    throw new Error(`Limite de operários do seu plano atingido (${count}/${maxWorkers}). Faça upgrade para adicionar mais.`);
+                }
+            }
+
             // [SEGURANÇA] Sanitizando e Validando
             const safeName = sanitizeInput(formData.name);
             if (!safeName) throw new Error("Nome inválido.");

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { UserPlus, Trash2, Mail, Shield, User, Edit2, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSubscription } from '../../hooks/useSubscription';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
 
@@ -9,6 +10,10 @@ const AdminUsers = () => {
     const navigate = useNavigate();
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const { maxWorkers } = useSubscription();
+
+    const workersCount = users.filter(u => u.role === 'worker').length;
+    const isLimitReached = maxWorkers ? workersCount >= maxWorkers : false;
 
     useEffect(() => {
         fetchUsers();
@@ -84,7 +89,15 @@ const AdminUsers = () => {
                     <p className="page-subtitle">Controle de acessos, funções e vínculos operacionais.</p>
                 </div>
                 <div className="header-actions">
-                    <button className="btn-primary" onClick={() => navigate('/admin/users/novo')}>
+                    {isLimitReached && (
+                        <span className="limit-warning">Limite de Operários atingido ({workersCount}/{maxWorkers})</span>
+                    )}
+                    <button 
+                        className="btn-primary" 
+                        onClick={() => navigate('/admin/users/novo')}
+                        disabled={isLimitReached}
+                        title={isLimitReached ? "Limite de operários do seu plano atingido" : ""}
+                    >
                         <UserPlus size={20} /> Convidar Membro
                     </button>
                 </div>
@@ -116,6 +129,24 @@ const AdminUsers = () => {
                 .icon-btn { background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-muted); padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
                 .icon-btn:hover { color: var(--text-primary); border-color: var(--text-muted); }
                 .icon-btn.delete:hover { background: rgba(255,59,48,0.1); color: var(--status-denied); border-color: rgba(255,59,48,0.2); }
+
+                .limit-warning {
+                    font-size: 11px;
+                    font-weight: 700;
+                    color: var(--status-denied);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    background: rgba(var(--status-denied-rgb), 0.1);
+                    padding: 4px 12px;
+                    border-radius: 6px;
+                    margin-right: 12px;
+                }
+
+                button:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                    filter: grayscale(1);
+                }
             `}</style>
         </div>
     );

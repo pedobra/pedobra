@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
+import { useSubscription } from '../../../hooks/useSubscription';
 import { Save, ArrowLeft, Building2, MapPin } from 'lucide-react';
 import StandardCard from '../../../components/ui/StandardCard';
 import { sanitizeInput } from '../../../lib/security';
@@ -8,6 +9,7 @@ import { sanitizeInput } from '../../../lib/security';
 const SiteFormPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { maxSites } = useSubscription();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -57,6 +59,17 @@ const SiteFormPage = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
+
+        if (!id) {
+            // Check limits for new site
+            const { count } = await supabase.from('sites').select('*', { count: 'exact', head: true });
+            
+            if (count !== null && count >= (maxSites || 1)) {
+                alert(`Limite de obras do seu plano atingido (${count}/${maxSites}). Faça upgrade para adicionar mais.`);
+                setLoading(false);
+                return;
+            }
+        }
 
         // [SEGURANÇA] Sanitizando strings vitais contra injeção HTML
         const safeName = sanitizeInput(formData.name);
