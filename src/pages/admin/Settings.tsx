@@ -160,11 +160,18 @@ const AdminSettings = () => {
                         </div>
                     </StandardCard>
 
-                    <StandardCard title="Preferências de Exportação" subtitle="Controle como os arquivos PDF são gerados.">
-                         <div className="toggle-item">
+                    <StandardCard title="Preferências de Pedidos" subtitle="Controle como as solicitações são feitas em campo.">
+                         <div className="toggle-item" style={{ marginBottom: '16px' }}>
+                            <div>
+                                <strong>Permitir itens fora do catálogo</strong>
+                                <p>Habilita o botão "+ Outro Item" para que o operário solicite materiais não cadastrados.</p>
+                            </div>
+                            <input type="checkbox" className="ios-toggle" checked={settings.allow_custom_materials_global} onChange={e => setSettings({...settings, allow_custom_materials_global: e.target.checked})} />
+                        </div>
+                        <div className="toggle-item">
                             <div>
                                 <strong>Exibir endereço da obra nos pedidos</strong>
-                                <p>Inclui o endereço completo do canteiro no cabeçalho dos PDFs.</p>
+                                <p>Inclui o endereço completo da obra no cabeçalho dos PDFs.</p>
                             </div>
                             <input type="checkbox" className="ios-toggle" checked={settings.pdf_show_site_address} onChange={e => setSettings({...settings, pdf_show_site_address: e.target.checked})} />
                         </div>

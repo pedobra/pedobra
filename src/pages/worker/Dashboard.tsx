@@ -23,6 +23,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
     const [viewingOrder, setViewingOrder] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [allowCustom, setAllowCustom] = useState(false);
 
     const [items, setItems] = useState<any[]>([]);
     const [currentItem, setCurrentItem] = useState({
@@ -38,8 +39,14 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
         if (profile?.site_id) {
             fetchOrders();
             fetchMaterials();
+            fetchSettings();
         }
     }, [profile]);
+
+    const fetchSettings = async () => {
+        const { data } = await supabase.from('company_settings').select('allow_custom_materials_global').maybeSingle();
+        if (data) setAllowCustom(data.allow_custom_materials_global);
+    };
 
     const fetchOrders = async () => {
         const { data } = await supabase
@@ -201,15 +208,17 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                             {m.name}
                                         </button>
                                     ))}
-                                    <button 
-                                        className={`mat-chip outline ${isCustom ? 'active' : ''}`}
-                                        onClick={() => {
-                                            setIsCustom(true);
-                                            setCurrentItem({ ...currentItem, material_id: '', name: '' });
-                                        }}
-                                    >
-                                        + Outro item
-                                    </button>
+                                    {allowCustom && (
+                                        <button 
+                                            className={`mat-chip outline ${isCustom ? 'active' : ''}`}
+                                            onClick={() => {
+                                                setIsCustom(true);
+                                                setCurrentItem({ ...currentItem, material_id: '', name: '' });
+                                            }}
+                                        >
+                                            + Outro item
+                                        </button>
+                                    )}
                                 </div>
 
                                 {isCustom && (
