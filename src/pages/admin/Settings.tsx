@@ -23,7 +23,7 @@ const AdminSettings = () => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [activeTab, setActiveTab] = useState<'general' | 'permissions' | 'subscription'>('general');
-    const { isTrial, daysRemaining, planId, organizationName, loading: subLoading } = useSubscription();
+    const { isTrial, daysRemaining, planId, organizationName } = useSubscription();
     const [settings, setSettings] = useState({
         company_name: '',
         cnpj: '',

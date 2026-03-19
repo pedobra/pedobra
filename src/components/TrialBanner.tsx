@@ -1,14 +1,13 @@
-import React from 'react';
 import { useSubscription } from '../hooks/useSubscription';
 import { AlertTriangle, Crown } from 'lucide-react';
 
 export const TrialBanner = () => {
-    const { isTrial, daysRemaining, isExpired, loading } = useSubscription();
+    const { isTrial, daysRemaining = 0, isExpired, loading } = useSubscription();
 
     if (loading || !isTrial || isExpired) return null;
 
     // Show warning if 2 days or less
-    const isUrgent = daysRemaining <= 2;
+    const isUrgent = (daysRemaining ?? 0) <= 2;
 
     return (
         <div className={`trial-banner ${isUrgent ? 'urgent' : ''}`} style={{
