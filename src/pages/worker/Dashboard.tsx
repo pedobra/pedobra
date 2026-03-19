@@ -336,7 +336,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .order-materials .more { color: var(--primary); margin-left: 4px; }
                 
                 .modal-overlay-worker { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.8); display: flex; align-items: flex-end; }
-                .worker-sheet { width: 100%; background: var(--bg-card); border-radius: 32px 32px 0 0; padding: 24px; padding-top: 12px; border: 1px solid var(--border); border-bottom: none; display: flex; flex-direction: column; max-height: 92vh; }
+                .worker-sheet { width: 100%; background: var(--bg-card); border-radius: 32px 32px 0 0; padding: 24px; padding-top: 12px; border: 1px solid var(--border); border-bottom: none; display: flex; flex-direction: column; max-height: 85vh; }
                 .sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 20px; margin: 0 auto 20px; }
                 .sheet-header h2 { font-size: 20px; font-weight: 850; margin-bottom: 4px; }
                 .sheet-header p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
@@ -355,7 +355,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .worker-input.qty { width: 80px; text-align: center; }
                 .btn-add-item { background: var(--text-primary); color: var(--bg-dark); border: none; border-radius: 12px; padding: 0 16px; font-weight: 800; font-size: 13px; }
                 
-                .added-items-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; max-height: 120px; overflow-y: auto; }
+                .added-items-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; min-height: 0; max-height: 420px; overflow-y: auto; }
                 .added-item { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; color: var(--primary); }
                 .added-item button { color: var(--status-denied); background: transparent; border: none; font-size: 14px; padding: 4px; font-weight: bold; }
                 
