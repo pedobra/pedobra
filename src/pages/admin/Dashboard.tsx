@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
-import { TrendingUp, Clock, PackageCheck, Search, Building2, Eye } from 'lucide-react';
+import { TrendingUp, PackageCheck, Search, Building2, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
@@ -74,74 +74,92 @@ const AdminDashboard = () => {
             <header className="dashboard-header">
                 <div className="header-info">
                     <h1 className="page-title">Dashboard</h1>
-                    <p className="page-subtitle">Visão geral das operações em seus canteiros.</p>
+                    <p className="page-subtitle">Welcome back, here's what's happening today.</p>
                 </div>
                 <div className="header-actions">
-                    <div className="search-bar-glass">
+                    <div className="search-bar-saas">
                         <Search size={16} color="var(--text-muted)" />
                         <input 
                             type="text" 
-                            placeholder="Buscar pedido ou obra..." 
+                            placeholder="Search..." 
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                         />
                     </div>
+                    <button className="btn-primary" onClick={() => navigate('/admin/orders/novo')}>
+                        New order
+                    </button>
                 </div>
             </header>
 
             <div className="stats-layout">
-                <div className="stat-card-premium">
-                    <div className="stat-icon-bg"><PackageCheck size={24} color="var(--primary)" /></div>
+                <div className="stat-card-saas">
+                    <div className="stat-icon-bg"><PackageCheck size={20} color="var(--primary)" /></div>
                     <div className="stat-data">
-                        <label>Pedidos Ativos</label>
+                        <label>Active Orders</label>
                         <strong>{stats.active}</strong>
                     </div>
                 </div>
-                <div className="stat-card-premium">
-                    <div className="stat-icon-bg"><TrendingUp size={24} color="#10b981" /></div>
+                <div className="stat-card-saas">
+                    <div className="stat-icon-bg"><TrendingUp size={20} color="#10b981" /></div>
                     <div className="stat-data">
-                        <label>Total Gasto (Mês)</label>
+                        <label>Monthly Spending</label>
                         <strong>R$ {stats.totalValue.toLocaleString()}</strong>
                     </div>
                 </div>
-                <div className="stat-card-premium">
-                    <div className="stat-icon-bg"><Building2 size={24} color="#3b82f6" /></div>
+                <div className="stat-card-saas">
+                    <div className="stat-icon-bg"><Building2 size={20} color="#3b82f6" /></div>
                     <div className="stat-data">
-                        <label>Canteiros</label>
+                        <label>Total Sites</label>
                         <strong>{stats.sitesCount}</strong>
                     </div>
                 </div>
             </div>
 
             <StandardCard
-                title="Últimos Pedidos"
-                subtitle="Acompanhe o fluxo de suprimentos em tempo real."
-                icon={<Clock size={20} color="var(--primary)" />}
+                title="Recent Orders"
+                subtitle="Track and manage the latest material requests."
             >
                 <ModernTable columns={columns} data={filteredOrders.slice(0, 10)} loading={loading} />
             </StandardCard>
 
             <style>{`
                 .dashboard-container { display: flex; flex-direction: column; gap: 32px; }
-                .dashboard-header { display: flex; justify-content: space-between; align-items: flex-end; }
-                .page-title { font-size: 28px; font-weight: 850; margin-bottom: 4px; letter-spacing: -0.5px; }
-                .page-subtitle { color: var(--text-muted); font-size: 14px; }
+                .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+                .page-title { font-size: 32px; font-weight: 700; color: #111827; letter-spacing: -0.02em; }
+                .page-subtitle { color: #6B7280; font-size: 14px; margin-top: 4px; }
                 
-                .header-actions { display: flex; gap: 12px; }
-                .search-bar-glass { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 10px; width: 260px; height: 44px; }
-                .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 13px; }
+                .header-actions { display: flex; align-items: center; gap: 12px; }
+                .search-bar-saas { 
+                    background: #FFF; border: 1.5px solid #E5E7EB; border-radius: 8px; 
+                    padding: 0 12px; display: flex; align-items: center; gap: 8px; 
+                    width: 240px; height: 40px; transition: border-color 0.2s;
+                }
+                .search-bar-saas:focus-within { border-color: #9CA3AF; }
+                .search-bar-saas input { background: transparent; border: none; color: #111827; outline: none; width: 100%; font-size: 14px; }
+                .search-bar-saas input::placeholder { color: #9CA3AF; }
                 
-                .stats-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-                .stat-card-premium { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; align-items: center; gap: 20px; }
-                .stat-icon-bg { width: 56px; height: 56px; border-radius: 16px; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; }
-                .stat-data { display: flex; flex-direction: column; gap: 4px; }
-                .stat-data label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-                .stat-data strong { font-size: 24px; font-weight: 850; color: var(--text-primary); }
+                .stats-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+                .stat-card-saas { 
+                    background: #FFF; border: 1px solid #E5E7EB; border-radius: 12px; 
+                    padding: 20px; display: flex; align-items: center; gap: 16px;
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+                }
+                .stat-icon-bg { 
+                    width: 40px; height: 40px; border-radius: 10px; background: #F9FAFB; 
+                    display: flex; align-items: center; justify-content: center; border: 1px solid #F3F4F6;
+                }
+                .stat-data { display: flex; flex-direction: column; gap: 2px; }
+                .stat-data label { font-size: 12px; font-weight: 500; color: #6B7280; }
+                .stat-data strong { font-size: 24px; font-weight: 700; color: #111827; }
 
-                @media (max-width: 768px) {
+                .text-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; color: #6B7280; }
+
+                @media (max-width: 1024px) {
                     .stats-layout { grid-template-columns: 1fr; }
-                    .dashboard-header { flex-direction: column; align-items: flex-start; gap: 16px; }
-                    .search-bar-glass { width: 100%; }
+                    .dashboard-header { flex-direction: column; align-items: flex-start; gap: 20px; }
+                    .header-actions { width: 100%; }
+                    .search-bar-saas { flex: 1; }
                 }
             `}</style>
         </div>

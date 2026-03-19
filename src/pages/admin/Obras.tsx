@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, MapPin, Search, List, LayoutGrid, Edit2, Trash2, Building2 } from 'lucide-react';
+import { Plus, MapPin, Search, Edit2, Trash2, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
@@ -13,7 +13,7 @@ const AdminObras = () => {
     const navigate = useNavigate();
     const [obras, setObras] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
-    const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
+    const [viewMode] = useState<'table' | 'cards'>('table');
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
@@ -99,26 +99,18 @@ const AdminObras = () => {
 
     return (
         <div className="obras-view animate-fade">
-            <header className="view-header">
+            <header className="dashboard-header">
                 <div className="header-info">
-                    <h1 className="page-title">Gestão de Canteiros</h1>
-                    <p className="page-subtitle">Acompanhe o status físico e financeiro de suas obras ativas.</p>
+                    <h1 className="page-title">Construction Sites</h1>
+                    <p className="page-subtitle">Track and manage all your active construction projects.</p>
                 </div>
                 <div className="header-actions">
-                    <div className="view-toggle-glass">
-                        <button className={viewMode === 'table' ? 'active' : ''} onClick={() => setViewMode('table')}>
-                            <List size={18} />
-                        </button>
-                        <button className={viewMode === 'cards' ? 'active' : ''} onClick={() => setViewMode('cards')}>
-                            <LayoutGrid size={18} />
-                        </button>
-                    </div>
-                    <div className="search-bar-glass">
+                    <div className="search-bar-saas">
                         <Search size={16} color="var(--text-muted)" />
-                        <input type="text" placeholder="Pesquisar obra..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                        <input type="text" placeholder="Search sites..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                     </div>
                     <button className="btn-primary" onClick={() => navigate('/admin/sites/novo')}>
-                        <Plus size={20} /> Nova Obra
+                        New site
                     </button>
                 </div>
             </header>
@@ -127,9 +119,9 @@ const AdminObras = () => {
                 {viewMode === 'table' ? (
                     <ModernTable columns={columns} data={filteredObras} loading={loading} />
                 ) : (
-                    <div className="obras-grid-reduced">
+                    <div className="obras-grid-saas">
                         {filteredObras.map(obra => (
-                            <div key={obra.id} className="obra-card-small clickable-card" onClick={() => handleEdit(obra)}>
+                            <div key={obra.id} className="obra-card-saas clickable-card" onClick={() => handleEdit(obra)}>
                                 <div className="card-top">
                                     <h3>{obra.name}</h3>
                                     <div className="card-actions-mini" onClick={e => e.stopPropagation()}>
@@ -137,81 +129,73 @@ const AdminObras = () => {
                                     </div>
                                 </div>
                                 <div className="card-mid">
-                                    <StatusBadge status="active" label={`${obra.orderCount} Pedidos`} />
+                                    <StatusBadge status="active" label={`${obra.orderCount} Orders`} />
                                 </div>
                                 <div className="card-address">
                                     <MapPin size={12} />
-                                    <span>{obra.address || 'Não informado'}</span>
+                                    <span>{obra.address || 'No address provided'}</span>
                                 </div>
                                 <div className="card-budget-info">
-                                    <label>ORÇAMENTO</label>
+                                    <label>TOTAL BUDGET</label>
                                     <strong>{fmtBRL(obra.budget)}</strong>
                                 </div>
                             </div>
                         ))}
-                        <div className="add-obra-card-small" onClick={() => navigate('/admin/sites/novo')}>
+                        <div className="add-site-card-saas" onClick={() => navigate('/admin/sites/novo')}>
                             <Plus size={24} />
-                            <span>Adicionar Obra</span>
+                            <span>Add new site</span>
                         </div>
                     </div>
                 )}
             </StandardCard>
 
             <style>{`
-        .obras-view { display: flex; flex-direction: column; gap: 24px; }
-        .view-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
-        .page-title { font-size: 28px; font-weight: 850; margin-bottom: 4px; letter-spacing: -0.5px; }
-        .page-subtitle { color: var(--text-muted); font-size: 14px; }
-        
-        .header-actions { display: flex; gap: 12px; align-items: center; }
-        .view-toggle-glass { 
-            background: var(--bg-dark); border: 1px solid var(--border); 
-            border-radius: 12px; display: flex; padding: 4px; gap: 4px;
-        }
-        .view-toggle-glass button {
-            background: transparent; border: none; color: var(--text-muted); 
-            width: 36px; height: 36px; border-radius: 8px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-        .view-toggle-glass button.active { background: var(--bg-card); color: var(--primary); }
+                .obras-view { display: flex; flex-direction: column; gap: 32px; }
+                .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+                .page-title { font-size: 32px; font-weight: 700; color: #111827; letter-spacing: -0.02em; }
+                .page-subtitle { color: #6B7280; font-size: 14px; margin-top: 4px; }
+                
+                .header-actions { display: flex; align-items: center; gap: 12px; }
+                .search-bar-saas { 
+                    background: #FFF; border: 1.5px solid #E5E7EB; border-radius: 8px; 
+                    padding: 0 12px; display: flex; align-items: center; gap: 8px; 
+                    width: 240px; height: 40px; 
+                }
+                .search-bar-saas input { background: transparent; border: none; color: #111827; outline: none; width: 100%; font-size: 14px; }
 
-        .search-bar-glass {
-           background: var(--bg-dark); border: 1px solid var(--border);
-           border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 10px; width: 260px;
-           height: 44px;
-        }
-        .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 13px; }
+                .obra-identity { display: flex; align-items: center; gap: 12px; }
+                .obra-icon-mini { width: 32px; height: 32px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #111827; }
+                .obra-texts { display: flex; flex-direction: column; }
+                .text-muted-xs { font-size: 11px; color: #6B7280; }
 
-        .obra-identity { display: flex; align-items: center; gap: 14px; }
-        .obra-icon-mini { width: 36px; height: 36px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary); }
-        .obra-texts { display: flex; flex-direction: column; }
-        .text-muted-xs { font-size: 11px; color: var(--text-muted); }
+                .budget-stack { display: flex; flex-direction: column; }
+                .money-main { font-size: 14px; font-weight: 600; color: #111827; }
+                .money-sub { font-size: 11px; color: #6B7280; }
 
-        .budget-stack { display: flex; flex-direction: column; }
-        .money-main { font-size: 14px; font-weight: 700; color: var(--text-primary); }
-        .money-sub { font-size: 11px; color: var(--text-muted); }
+                .obras-grid-saas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; padding: 24px; }
+                .obra-card-saas { 
+                    padding: 20px; border-radius: 12px; border: 1px solid #E5E7EB; 
+                    background: #FFF; display: flex; flex-direction: column; gap: 16px;
+                    box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: 0.2s;
+                }
+                .obra-card-saas:hover { border-color: #D1D5DB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+                
+                .obra-card-saas h3 { font-size: 16px; margin: 0; font-weight: 600; color: #111827; }
+                .card-address { display: flex; align-items: center; gap: 8px; color: #6B7280; font-size: 12px; }
+                
+                .card-budget-info { border-top: 1px solid #F3F4F6; padding-top: 16px; display: flex; flex-direction: column; gap: 4px; }
+                .card-budget-info label { font-size: 10px; font-weight: 600; color: #9CA3AF; letter-spacing: 0.05em; }
+                .card-budget-info strong { font-size: 16px; color: #111827; }
 
-        .obras-grid-reduced { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .obra-card-small { 
-            padding: 24px; border-radius: 20px; border: 1px solid var(--border); 
-            transition: 0.2s; background: var(--bg-card); display: flex; flex-direction: column; gap: 16px;
-        }
-        .clickable-card { cursor: pointer; }
-        .obra-card-small:hover { border-color: var(--primary); transform: translateY(-4px); }
-        
-        .obra-card-small h3 { font-size: 18px; margin: 0; font-weight: 800; }
-        .card-address { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 12px; }
-        .card-address span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
-        .card-budget-info { border-top: 1px solid var(--border); pt: 16px; display: flex; flex-direction: column; gap: 4px; }
-        .card-budget-info label { font-size: 10px; font-weight: 800; color: var(--text-muted); }
-        .card-budget-info strong { font-size: 15px; }
+                .add-site-card-saas { 
+                    border: 2px dashed #E5E7EB; border-radius: 12px; display: flex; flex-direction: column; 
+                    align-items: center; justify-content: center; gap: 12px; cursor: pointer; 
+                    color: #6B7280; min-height: 180px; transition: 0.2s;
+                }
+                .add-site-card-saas:hover { border-color: #9CA3AF; background: #F9FAFB; color: #111827; }
 
-        .add-obra-card-small { border: 2px dashed var(--border); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; color: var(--text-muted); min-height: 200px; }
-        .add-obra-card-small:hover { border-color: var(--primary); color: var(--primary); }
-
-        .table-actions-btns { display: flex; gap: 8px; }
-      `}</style>
+                .table-actions-btns { display: flex; gap: 8px; }
+            `}</style>
         </div>
     );
 };

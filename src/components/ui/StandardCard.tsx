@@ -30,22 +30,22 @@ const StandardCard: React.FC<StandardCardProps> = ({ title, children, subtitle, 
                 .standard-card {
                     background: var(--bg-card);
                     border: 1px solid var(--border);
-                    border-radius: 20px;
+                    border-radius: 12px;
                     overflow: hidden;
                     margin-bottom: 24px;
-                    transition: border-color var(--transition-speed);
+                    box-shadow: var(--shadow-sm);
                 }
                 .standard-card-header {
-                    padding: 24px 32px;
+                    padding: 20px 24px;
                     border-bottom: 1px solid var(--border);
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
                 }
                 .standard-card-titles h3 {
-                    font-size: 18px;
+                    font-size: 16px;
                     margin: 0;
-                    font-weight: 700;
+                    font-weight: 600;
                     color: var(--text-primary);
                 }
                 .standard-card-titles p {
@@ -54,7 +54,11 @@ const StandardCard: React.FC<StandardCardProps> = ({ title, children, subtitle, 
                     margin: 4px 0 0 0;
                 }
                 .standard-card-content {
-                    padding: 32px;
+                    padding: 0; /* Remove default padding to allow table to be edge-to-edge if needed */
+                }
+                /* Add padding back for non-table content */
+                .standard-card-content > :not(.modern-table-wrapper) {
+                    padding: 24px;
                 }
             `}</style>
         </div>

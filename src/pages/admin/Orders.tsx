@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Search, Trash2, FileDown, Edit2 } from 'lucide-react';
+import { Search, Trash2, FileDown, Edit2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
@@ -88,46 +88,55 @@ const AdminOrders = () => {
 
     return (
         <div className="orders-view animate-fade">
-            <header className="view-header">
+            <header className="dashboard-header">
                 <div className="header-info">
-                    <h1 className="page-title">Gestão de Pedidos</h1>
-                    <p className="page-subtitle">Acompanhe e autorize solicitações de materiais em tempo real.</p>
+                    <h1 className="page-title">Orders</h1>
+                    <p className="page-subtitle">Manage and authorize material requests from your construction sites.</p>
                 </div>
                 <div className="header-actions">
-                    <div className="search-bar-glass">
-                        <Search size={18} color="var(--text-muted)" />
-                        <input type="text" placeholder="Buscar por REF ou Obra..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                    <div className="search-bar-saas">
+                        <Search size={16} color="var(--text-muted)" />
+                        <input type="text" placeholder="Search orders..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                     </div>
                     <button className="btn-primary" onClick={() => navigate('/admin/orders/novo')}>
-                        <Plus size={20} /> Novo Pedido
+                        New order
                     </button>
                 </div>
             </header>
 
-            <StandardCard 
-                title="Fluxo de Materiais" 
-                subtitle={`Exibindo ${filteredOrders.length} pedidos registrados no ecossistema.`}
-            >
+            <StandardCard>
                 <ModernTable columns={columns} data={filteredOrders} loading={loading} />
             </StandardCard>
 
             <style>{`
                 .orders-view { display: flex; flex-direction: column; gap: 32px; }
-                .view-header { display: flex; justify-content: space-between; align-items: flex-end; }
-                .page-title { font-size: 28px; font-weight: 850; margin-bottom: 6px; letter-spacing: -0.5px; }
-                .page-subtitle { color: var(--text-muted); font-size: 14px; }
+                .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+                .page-title { font-size: 32px; font-weight: 700; color: #111827; letter-spacing: -0.02em; }
+                .page-subtitle { color: #6B7280; font-size: 14px; margin-top: 4px; }
                 
-                .header-actions { display: flex; gap: 16px; align-items: center; }
-                .search-bar-glass { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 12px; width: 280px; height: 44px; }
-                .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 13px; }
+                .header-actions { display: flex; align-items: center; gap: 12px; }
+                .search-bar-saas { 
+                    background: #FFF; border: 1.5px solid #E5E7EB; border-radius: 8px; 
+                    padding: 0 12px; display: flex; align-items: center; gap: 8px; 
+                    width: 240px; height: 40px; 
+                }
+                .search-bar-saas input { background: transparent; border: none; color: #111827; outline: none; width: 100%; font-size: 14px; }
+
+                .ref-badge { 
+                    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; 
+                    background: #F3F4F6; padding: 2px 6px; border-radius: 4px; color: #374151; 
+                    font-size: 11px; font-weight: 600; 
+                }
+                .items-count { font-size: 13px; color: #6B7280; }
                 
-                .ref-badge { font-family: monospace; background: rgba(var(--primary-rgb), 0.05); padding: 4px 8px; border-radius: 6px; color: var(--primary); font-weight: 700; border: 1px solid rgba(var(--primary-rgb), 0.2); }
-                .items-count { font-size: 12px; color: var(--text-muted); font-weight: 600; }
-                
-                .action-btns { display: flex; gap: 8px; justify-content: flex-end; }
-                .icon-btn { background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-muted); padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-                .icon-btn:hover { color: var(--text-primary); border-color: var(--text-muted); }
-                .icon-btn.delete:hover { background: rgba(255,59,48,0.1); color: #FF3B30; border-color: rgba(255,59,48,0.2); }
+                .action-btns { display: flex; gap: 6px; justify-content: flex-end; }
+                .icon-btn { 
+                    background: #FFF; border: 1px solid #E5E7EB; color: #6B7280; 
+                    padding: 6px; border-radius: 6px; cursor: pointer; transition: 0.2s; 
+                    display: flex; align-items: center; justify-content: center;
+                }
+                .icon-btn:hover { color: #111827; border-color: #D1D5DB; background: #F9FAFB; }
+                .icon-btn.delete:hover { background: #FEF2F2; color: #EF4444; border-color: #FEE2E2; }
             `}</style>
         </div>
     );

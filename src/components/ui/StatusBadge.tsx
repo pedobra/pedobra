@@ -11,15 +11,15 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label }) => {
     const s = status.toLowerCase();
     
     const config: Record<string, { color: string; label: string }> = {
-        active: { color: '#22C55E', label: 'Ativo' },
-        approved: { color: '#22C55E', label: 'Aprovado' },
-        pending: { color: '#F59E0B', label: 'Pendente' },
-        delayed: { color: '#7C3AED', label: 'Atrasado' },
-        cancelled: { color: '#EF4444', label: 'Cancelado' },
-        denied: { color: '#EF4444', label: 'Recusado' },
+        active: { color: '#10B981', label: 'Active' },
+        approved: { color: '#10B981', label: 'Active' },
+        pending: { color: '#F59E0B', label: 'Pending' },
+        delayed: { color: '#EF4444', label: 'Delayed' },
+        cancelled: { color: '#EF4444', label: 'Cancelled' },
+        denied: { color: '#EF4444', label: 'Cancelled' },
     };
 
-    const current = config[s] || { color: '#868E96', label: label || status };
+    const current = config[s] || { color: '#9CA3AF', label: label || status };
 
     return (
         <div className="status-badge-container">
@@ -29,11 +29,11 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label }) => {
                 .status-badge-container {
                     display: inline-flex;
                     align-items: center;
-                    gap: 8px;
-                    padding: 4px 12px;
-                    background: var(--bg-dark);
+                    gap: 6px;
+                    padding: 2px 10px;
+                    background: #F9FAFB;
                     border: 1px solid var(--border);
-                    border-radius: 100px;
+                    border-radius: 6px;
                     width: fit-content;
                 }
                 .status-dot {
@@ -43,7 +43,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label }) => {
                 }
                 .status-text {
                     font-size: 12px;
-                    font-weight: 600;
+                    font-weight: 500;
                     color: var(--text-secondary);
                 }
             `}</style>
