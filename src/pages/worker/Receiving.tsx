@@ -227,7 +227,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
                 .receiving-card-premium:active { border-color: var(--primary); }
                 .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
                 .ref-info { display: flex; flex-direction: column; gap: 4px; }
-                .ref-text { font-family: monospace; font-weight: 700; color: var(--primary); font-size: 14px; }
+                .ref-text { font-family: var(--font-main); font-weight: 700; color: var(--primary); font-size: 14px; }
                 .badge-items { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
                 .icon-arrow { color: var(--border); }
                 .card-footer { padding-top: 12px; border-top: 1px solid var(--border); }
@@ -244,7 +244,7 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
                 .receiving-item-box { background: var(--bg-dark); padding: 16px; border-radius: 16px; border: 1px solid var(--border); }
                 .item-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
                 .item-title-row strong { font-size: 14px; }
-                .req-qty { font-size: 12px; color: var(--primary); font-family: monospace; font-weight: 700; }
+                .req-qty { font-size: 12px; color: var(--primary); font-family: var(--font-main); font-weight: 700; }
                 
                 .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
                 .input-field { display: flex; flex-direction: column; gap: 4px; }

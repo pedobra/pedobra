@@ -163,7 +163,7 @@ const AdminDashboard = () => {
                 .stat-data label { font-size: 12px; font-weight: 500; color: var(--text-muted); }
                 .stat-data strong { font-size: 24px; font-weight: 700; color: var(--text-primary); }
 
-                .text-mono { font-family: ui-monospace, monospace; font-size: 13px; color: var(--text-muted); }
+                .text-mono { font-family: var(--font-main); font-size: 13px; color: var(--text-muted); }
                 
                 @media (max-width: 1200px) {
                     .stats-layout { grid-template-columns: repeat(3, 1fr); }

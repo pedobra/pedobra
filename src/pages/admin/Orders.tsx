@@ -121,7 +121,7 @@ const AdminOrders = () => {
                 .search-bar-saas input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; }
 
                 .ref-badge { 
-                    font-family: ui-monospace, monospace; 
+                    font-family: var(--font-main); 
                     background: var(--bg-dark); padding: 2px 6px; border-radius: 4px; color: var(--text-secondary); 
                     font-size: 11px; font-weight: 600; 
                 }

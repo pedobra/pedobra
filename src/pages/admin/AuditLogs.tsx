@@ -114,7 +114,7 @@ const AdminAuditLogs = () => {
                 .action-badge.delete { background: rgba(239, 68, 68, 0.1); color: var(--status-denied); }
 
                 .entity-info { display: flex; flex-direction: column; gap: 2px; }
-                .text-mono-xs { font-size: 10px; font-family: monospace; color: var(--text-muted); }
+                .text-mono-xs { font-size: 10px; font-family: var(--font-main); color: var(--text-muted); }
             `}</style>
         </div>
     );
