@@ -164,7 +164,7 @@ const OrderViewPage = () => {
                 <div className="side-info">
                     <StandardCard title="Dados da Solicitação" subtitle="Informações de suporte.">
                         <div className="info-item">
-                            <label><Building2 size={12} /> Canteiro</label>
+                            <label><Building2 size={12} /> Obra</label>
                             <strong>{order.sites?.name}</strong>
                         </div>
                         <div className="info-item">

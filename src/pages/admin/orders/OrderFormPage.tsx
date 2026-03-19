@@ -92,7 +92,7 @@ const OrderFormPage = () => {
                 </button>
                 <div className="header-info">
                     <h1 className="page-title">{id ? 'Editar Pedido' : 'Novo Pedido de Insumos'}</h1>
-                    <p className="page-subtitle">Configure o destino e os itens necessários para o canteiro.</p>
+                    <p className="page-subtitle">Configure o destino e os itens necessários para a obra.</p>
                 </div>
             </header>
 

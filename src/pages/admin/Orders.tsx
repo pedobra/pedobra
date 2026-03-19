@@ -90,16 +90,16 @@ const AdminOrders = () => {
         <div className="orders-view animate-fade">
             <header className="dashboard-header">
                 <div className="header-info">
-                    <h1 className="page-title">Orders</h1>
-                    <p className="page-subtitle">Manage and authorize material requests from your construction sites.</p>
+                    <h1 className="page-title">Gestão de Pedidos</h1>
+                    <p className="page-subtitle">Gerencie e autorize as solicitações de materiais de suas obras.</p>
                 </div>
                 <div className="header-actions">
                     <div className="search-bar-saas">
                         <Search size={16} color="var(--text-muted)" />
-                        <input type="text" placeholder="Search orders..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                        <input type="text" placeholder="Buscar pedidos..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                     </div>
                     <button className="btn-primary" onClick={() => navigate('/admin/orders/novo')}>
-                        New order
+                        Novo Pedido
                     </button>
                 </div>
             </header>
