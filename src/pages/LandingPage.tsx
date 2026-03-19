@@ -323,12 +323,20 @@ const LandingPage = () => {
         .auth-overlay {
           position: fixed;
           top: 0; left: 0; right: 0; bottom: 0;
-          display: flex; align-items: center; justify-content: center;
+          display: flex; align-items: flex-start; justify-content: center;
           z-index: 1000;
           background: rgba(0,0,0,0.6);
           backdrop-filter: blur(8px);
+          overflow-y: auto;
+          padding: 40px 20px;
         }
-        .auth-card { width: 440px; padding: 48px; border: 1px solid var(--border); background: var(--bg-card); }
+        .auth-card { 
+          width: 440px; 
+          padding: 48px; 
+          border: 1px solid var(--border); 
+          background: var(--bg-card);
+          margin: auto 0;
+        }
         .auth-title { text-align: center; margin-bottom: 32px; font-size: 24px; color: var(--text-primary); }
         .input-field { margin-bottom: 24px; }
         .input-field label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;}
