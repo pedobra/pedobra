@@ -11,15 +11,15 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label }) => {
     const s = status.toLowerCase();
     
     const config: Record<string, { color: string; label: string }> = {
-        active: { color: '#10B981', label: 'Active' },
-        approved: { color: '#10B981', label: 'Active' },
-        pending: { color: '#F59E0B', label: 'Pending' },
-        delayed: { color: '#EF4444', label: 'Delayed' },
-        cancelled: { color: '#EF4444', label: 'Cancelled' },
-        denied: { color: '#EF4444', label: 'Cancelled' },
+        active: { color: 'var(--status-approved)', label: 'Active' },
+        approved: { color: 'var(--status-approved)', label: 'Active' },
+        pending: { color: 'var(--status-pending)', label: 'Pending' },
+        delayed: { color: 'var(--status-denied)', label: 'Delayed' },
+        cancelled: { color: 'var(--status-denied)', label: 'Cancelled' },
+        denied: { color: 'var(--status-denied)', label: 'Cancelled' },
     };
 
-    const current = config[s] || { color: '#333333', label: label || status };
+    const current = config[s] || { color: 'var(--text-muted)', label: label || status };
 
     return (
         <div className="status-badge-container">

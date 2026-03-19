@@ -109,9 +109,9 @@ const AdminAuditLogs = () => {
                     font-weight: 700;
                     text-transform: uppercase;
                 }
-                .action-badge.create { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
-                .action-badge.update { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
-                .action-badge.delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+                .action-badge.create { background: rgba(34, 197, 94, 0.1); color: var(--status-approved); }
+                .action-badge.update { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
+                .action-badge.delete { background: rgba(239, 68, 68, 0.1); color: var(--status-denied); }
 
                 .entity-info { display: flex; flex-direction: column; gap: 2px; }
                 .text-mono-xs { font-size: 10px; font-family: monospace; color: var(--text-muted); }

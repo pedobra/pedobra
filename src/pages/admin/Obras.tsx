@@ -86,7 +86,7 @@ const AdminObras = () => {
             accessor: (obra: any) => (
                 <div className="table-actions-btns">
                     <button className="icon-btn" onClick={() => navigate(`/admin/sites/editar/${obra.id}`)} title="Editar"><Edit2 size={16} /></button>
-                    <button className="icon-btn" style={{ color: '#ef4444' }} onClick={async () => {
+                    <button className="icon-btn" style={{ color: 'var(--status-denied)' }} onClick={async () => {
                         if (confirm('Remover canteiro?')) {
                             await supabase.from('sites').delete().eq('id', obra.id);
                             fetchObras();

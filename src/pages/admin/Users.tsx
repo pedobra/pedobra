@@ -115,7 +115,7 @@ const AdminUsers = () => {
                 .action-btns { display: flex; gap: 8px; justify-content: flex-end; }
                 .icon-btn { background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-muted); padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
                 .icon-btn:hover { color: var(--text-primary); border-color: var(--text-muted); }
-                .icon-btn.delete:hover { background: rgba(255,59,48,0.1); color: #FF3B30; border-color: rgba(255,59,48,0.2); }
+                .icon-btn.delete:hover { background: rgba(255,59,48,0.1); color: var(--status-denied); border-color: rgba(255,59,48,0.2); }
             `}</style>
         </div>
     );

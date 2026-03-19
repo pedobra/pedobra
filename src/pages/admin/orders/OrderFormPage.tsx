@@ -193,7 +193,7 @@ const OrderFormPage = () => {
                 .item-meta { display: flex; align-items: center; gap: 16px; }
                 .qty-tag { background: var(--primary-glow); color: var(--primary); padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 700; font-family: monospace; }
                 .btn-remove { background: transparent; border: none; color: var(--text-muted); cursor: pointer; }
-                .btn-remove:hover { color: #FF3B30; }
+                .btn-remove:hover { color: var(--status-denied); }
                 
                 .form-group { display: flex; flex-direction: column; gap: 8px; }
                 .form-group label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: flex; align-items: center; gap: 6px; }

@@ -122,7 +122,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="expired-overlay">
                 <div className="expired-card premium-card animate-fade">
                     <div className="expired-icon">
-                        <ShieldAlert size={48} color="#ef4444" />
+                        <ShieldAlert size={48} color="var(--status-denied)" />
                     </div>
                     <h2>Seu período de teste expirou</h2>
                     <p>Para continuar gerenciando suas obras e acessando seus dados, por favor selecione um plano de assinatura.</p>
@@ -165,7 +165,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         <button
                             className="notif-badge-mobile"
                             onClick={() => { setHasNotification(false); localStorage.removeItem('pedobra_notif'); }}
-                            style={{ background: 'var(--status-pending)', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '10px', color: '#FFF' }}
+                            style={{ background: 'var(--status-pending)', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '10px', color: 'var(--primary-foreground)' }}
                         >
                             Novo Pedido
                         </button>
@@ -179,7 +179,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             <aside className={`sidebar-glass ${mobileMenuOpen ? 'mobile-open' : ''} ${isCollapsed ? 'collapsed' : ''}`}>
                 <div className="sidebar-brand">
                     <div className="brand-logo">
-                        <Construction size={20} color="#FFF" />
+                        <Construction size={20} color="var(--primary-foreground)" />
                     </div>
                     {!isCollapsed && (
                         <div className="brand-text">

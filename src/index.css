@@ -19,6 +19,11 @@
   --status-active: #10B981;
   --status-pending: #F59E0B;
   --status-cancelled: #EF4444;
+  --status-approved: var(--status-active);
+  --status-denied: var(--status-cancelled);
+  --status-partial: var(--status-pending);
+  
+  --primary-foreground: #FFFFFF;
 
   --font-main: 'Inter', system-ui, -apple-system, sans-serif;
   --font-display: 'Inter', system-ui, sans-serif;
@@ -40,6 +45,10 @@
   --text-secondary: #333333;
   --text-muted: #333333;
   --border: #E5E7EB;
+  --status-approved: var(--status-active);
+  --status-denied: var(--status-cancelled);
+  --status-partial: var(--status-pending);
+  --primary-foreground: #FFFFFF;
 }
 
 [data-theme="dark"] {
@@ -61,6 +70,9 @@
   --status-approved: #22C55E;
   --status-pending: #F59E0B;
   --status-denied: #EF4444;
+  --status-partial: #F59E0B;
+  
+  --primary-foreground: #000000;
 
   --shadow-premium: 0 20px 50px -12px rgba(0, 0, 0, 0.7);
 }

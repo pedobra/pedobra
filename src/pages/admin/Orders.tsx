@@ -134,7 +134,7 @@ const AdminOrders = () => {
                     display: flex; align-items: center; justify-content: center;
                 }
                 .icon-btn:hover { color: var(--text-primary); border-color: var(--border-bright); background: var(--bg-dark); }
-                .icon-btn.delete:hover { background: #FEF2F2; color: #EF4444; border-color: #FEE2E2; }
+                .icon-btn.delete:hover { background: #FEF2F2; color: var(--status-denied); border-color: #FEE2E2; }
             `}</style>
         </div>
     );

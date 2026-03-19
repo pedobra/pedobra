@@ -11,8 +11,8 @@ export const TrialBanner = () => {
 
     return (
         <div className={`trial-banner ${isUrgent ? 'urgent' : ''}`} style={{
-            background: isUrgent ? '#ef4444' : 'var(--primary)',
-            color: 'white',
+            background: isUrgent ? 'var(--status-denied)' : 'var(--primary)',
+            color: 'var(--primary-foreground)',
             padding: '10px 20px',
             display: 'flex',
             alignItems: 'center',
@@ -32,8 +32,8 @@ export const TrialBanner = () => {
             <button 
                 onClick={() => window.location.href = '/admin/billing'}
                 style={{
-                    background: 'white',
-                    color: isUrgent ? '#ef4444' : 'var(--primary)',
+                    background: 'var(--primary-foreground)',
+                    color: isUrgent ? 'var(--status-denied)' : 'var(--primary)',
                     border: 'none',
                     padding: '4px 12px',
                     borderRadius: '4px',

@@ -67,8 +67,8 @@ const AdminPlans = () => {
                 .plan-icon { color: var(--primary); filter: drop-shadow(0 0 8px var(--primary-glow)); }
                 .plan-name { display: block; font-size: 20px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; }
                 .plan-status { font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; }
-                .plan-status.active { background: rgba(52,199,89,0.1); color: #34C759; }
-                .plan-status.trial { background: rgba(255,149,0,0.1); color: #FF9500; }
+                .plan-status.active { background: rgba(52,199,89,0.1); color: var(--status-approved); }
+                .plan-status.trial { background: rgba(255,149,0,0.1); color: var(--status-pending); }
                 
                 .plan-details { display: flex; flex-direction: column; gap: 16px; padding: 24px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
                 .detail-row { display: flex; align-items: center; gap: 12px; font-size: 15px; color: var(--text-secondary); }

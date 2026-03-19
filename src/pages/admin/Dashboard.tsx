@@ -60,10 +60,10 @@ const AdminDashboard = () => {
 
     const statCards = [
         { key: null, label: 'Fluxo Total', value: stats.total, icon: <TrendingUp size={20} color="var(--primary)" /> },
-        { key: 'new', label: 'Pendentes', value: stats.new, icon: <Clock size={20} color="#f39c12" /> },
+        { key: 'new', label: 'Pendentes', value: stats.new, icon: <Clock size={20} color="var(--status-pending)" /> },
         { key: 'approved', label: 'Aprovados', value: stats.approved, icon: <CheckCircle size={20} color="var(--status-approved)" /> },
-        { key: 'partial', label: 'Rec. Parcial', value: stats.partial, icon: <AlertTriangle size={20} color="#e67e22" /> },
-        { key: 'completed', label: 'Concluídos', value: stats.completed, icon: <PackageCheck size={20} color="#1abc9c" /> },
+        { key: 'partial', label: 'Rec. Parcial', value: stats.partial, icon: <AlertTriangle size={20} color="var(--status-partial)" /> },
+        { key: 'completed', label: 'Concluídos', value: stats.completed, icon: <PackageCheck size={20} color="var(--status-approved)" /> },
         { key: 'denied', label: 'Negados', value: stats.denied, icon: <XCircle size={20} color="var(--status-denied)" /> },
     ];
 

@@ -305,7 +305,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .user-info-text { display: flex; flex-direction: column; }
                 .user-info-text strong { font-size: 14px; font-weight: 800; color: var(--text-primary); }
                 .user-info-text span { font-size: 11px; color: var(--text-muted); font-weight: 600; }
-                .logout-mini { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); padding: 8px; border-radius: 10px; }
+                .logout-mini { background: rgba(239, 68, 68, 0.1); color: var(--status-denied); border: 1px solid rgba(239, 68, 68, 0.2); padding: 8px; border-radius: 10px; }
                 
                 .app-content { max-width: 600px; margin: 0 auto; }
                 .action-hub { margin-bottom: 32px; }
@@ -348,7 +348,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 
                 .added-items-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; max-height: 120px; overflow-y: auto; }
                 .added-item { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; color: var(--primary); }
-                .added-item button { color: #ef4444; background: transparent; border: none; }
+                .added-item button { color: var(--status-denied); background: transparent; border: none; font-size: 14px; padding: 4px; font-weight: bold; }
                 
                 .worker-textarea { width: 100%; min-height: 80px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; color: var(--text-primary); outline: none; font-size: 14px; margin-top: 12px; resize: none; }
                 

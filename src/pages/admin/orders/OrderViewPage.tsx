@@ -204,7 +204,7 @@ const OrderViewPage = () => {
                 .pending { color: var(--status-pending); font-weight: 700; }
                 .done { color: var(--status-approved); }
                 
-                .price-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(39,174,96,0.1); color: #27ae60; padding: 4px 10px; border-radius: 8px; font-weight: 700; font-family: monospace; }
+                .price-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(39,174,96,0.1); color: var(--status-approved); padding: 4px 10px; border-radius: 8px; font-weight: 700; font-family: monospace; }
                 .sup { font-size: 10px; opacity: 0.7; font-weight: 400; margin-left: 4px; }
                 
                 .complementary-box { background: var(--bg-card); border: 2px solid var(--border); border-left: 4px solid var(--primary); border-radius: 16px; padding: 24px; margin-top: 24px; }
@@ -217,10 +217,10 @@ const OrderViewPage = () => {
                 .info-item strong { font-size: 16px; color: var(--text-primary); }
                 
                 .approval-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
-                .btn-approve { background: #34C759; color: white; border: none; height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-                .btn-deny { background: transparent; border: 1px solid #FF3B30; color: #FF3B30; height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+                .btn-approve { background: var(--status-approved); color: white; border: none; height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+                .btn-deny { background: transparent; border: 1px solid var(--status-denied); color: var(--status-denied); height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
                 
-                .btn-ghost.delete:hover { background: rgba(255,59,48,0.1); color: #FF3B30; border-color: rgba(255,59,48,0.2); }
+                .btn-ghost.delete:hover { background: rgba(255,59,48,0.1); color: var(--status-denied); border-color: rgba(255,59,48,0.2); }
                 .loading-state, .error-state { padding: 100px; text-align: center; color: var(--text-muted); }
             `}</style>
         </div>
