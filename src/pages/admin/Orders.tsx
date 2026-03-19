@@ -111,31 +111,29 @@ const AdminOrders = () => {
             <style>{`
                 .orders-view { display: flex; flex-direction: column; gap: 32px; }
                 .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-                .page-title { font-size: 32px; font-weight: 700; color: #111827; letter-spacing: -0.02em; }
-                .page-subtitle { color: #6B7280; font-size: 14px; margin-top: 4px; }
                 
                 .header-actions { display: flex; align-items: center; gap: 12px; }
                 .search-bar-saas { 
-                    background: #FFF; border: 1.5px solid #E5E7EB; border-radius: 8px; 
+                    background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 8px; 
                     padding: 0 12px; display: flex; align-items: center; gap: 8px; 
                     width: 240px; height: 40px; 
                 }
-                .search-bar-saas input { background: transparent; border: none; color: #111827; outline: none; width: 100%; font-size: 14px; }
+                .search-bar-saas input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; }
 
                 .ref-badge { 
-                    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; 
-                    background: #F3F4F6; padding: 2px 6px; border-radius: 4px; color: #374151; 
+                    font-family: ui-monospace, monospace; 
+                    background: var(--bg-dark); padding: 2px 6px; border-radius: 4px; color: var(--text-secondary); 
                     font-size: 11px; font-weight: 600; 
                 }
-                .items-count { font-size: 13px; color: #6B7280; }
+                .items-count { font-size: 13px; color: var(--text-muted); }
                 
                 .action-btns { display: flex; gap: 6px; justify-content: flex-end; }
                 .icon-btn { 
-                    background: #FFF; border: 1px solid #E5E7EB; color: #6B7280; 
+                    background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); 
                     padding: 6px; border-radius: 6px; cursor: pointer; transition: 0.2s; 
                     display: flex; align-items: center; justify-content: center;
                 }
-                .icon-btn:hover { color: #111827; border-color: #D1D5DB; background: #F9FAFB; }
+                .icon-btn:hover { color: var(--text-primary); border-color: var(--border-bright); background: var(--bg-dark); }
                 .icon-btn.delete:hover { background: #FEF2F2; color: #EF4444; border-color: #FEE2E2; }
             `}</style>
         </div>

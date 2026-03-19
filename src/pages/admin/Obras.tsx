@@ -152,47 +152,45 @@ const AdminObras = () => {
             <style>{`
                 .obras-view { display: flex; flex-direction: column; gap: 32px; }
                 .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-                .page-title { font-size: 32px; font-weight: 700; color: #111827; letter-spacing: -0.02em; }
-                .page-subtitle { color: #6B7280; font-size: 14px; margin-top: 4px; }
                 
                 .header-actions { display: flex; align-items: center; gap: 12px; }
                 .search-bar-saas { 
-                    background: #FFF; border: 1.5px solid #E5E7EB; border-radius: 8px; 
+                    background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 8px; 
                     padding: 0 12px; display: flex; align-items: center; gap: 8px; 
                     width: 240px; height: 40px; 
                 }
-                .search-bar-saas input { background: transparent; border: none; color: #111827; outline: none; width: 100%; font-size: 14px; }
+                .search-bar-saas input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; }
 
                 .obra-identity { display: flex; align-items: center; gap: 12px; }
-                .obra-icon-mini { width: 32px; height: 32px; background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #111827; }
+                .obra-icon-mini { width: 32px; height: 32px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-primary); }
                 .obra-texts { display: flex; flex-direction: column; }
-                .text-muted-xs { font-size: 11px; color: #6B7280; }
+                .text-muted-xs { font-size: 11px; color: var(--text-muted); }
 
                 .budget-stack { display: flex; flex-direction: column; }
-                .money-main { font-size: 14px; font-weight: 600; color: #111827; }
-                .money-sub { font-size: 11px; color: #6B7280; }
+                .money-main { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+                .money-sub { font-size: 11px; color: var(--text-muted); }
 
                 .obras-grid-saas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; padding: 24px; }
                 .obra-card-saas { 
-                    padding: 20px; border-radius: 12px; border: 1px solid #E5E7EB; 
-                    background: #FFF; display: flex; flex-direction: column; gap: 16px;
-                    box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: 0.2s;
+                    padding: 20px; border-radius: 12px; border: 1px solid var(--border); 
+                    background: var(--bg-card); display: flex; flex-direction: column; gap: 16px;
+                    box-shadow: var(--shadow-sm); transition: 0.2s;
                 }
-                .obra-card-saas:hover { border-color: #D1D5DB; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+                .obra-card-saas:hover { border-color: var(--border-bright); box-shadow: var(--shadow-premium); }
                 
-                .obra-card-saas h3 { font-size: 16px; margin: 0; font-weight: 600; color: #111827; }
-                .card-address { display: flex; align-items: center; gap: 8px; color: #6B7280; font-size: 12px; }
+                .obra-card-saas h3 { font-size: 16px; margin: 0; font-weight: 600; color: var(--text-primary); }
+                .card-address { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 12px; }
                 
-                .card-budget-info { border-top: 1px solid #F3F4F6; padding-top: 16px; display: flex; flex-direction: column; gap: 4px; }
-                .card-budget-info label { font-size: 10px; font-weight: 600; color: #9CA3AF; letter-spacing: 0.05em; }
-                .card-budget-info strong { font-size: 16px; color: #111827; }
+                .card-budget-info { border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-direction: column; gap: 4px; }
+                .card-budget-info label { font-size: 10px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.05em; }
+                .card-budget-info strong { font-size: 16px; color: var(--text-primary); }
 
                 .add-site-card-saas { 
-                    border: 2px dashed #E5E7EB; border-radius: 12px; display: flex; flex-direction: column; 
+                    border: 2px dashed var(--border); border-radius: 12px; display: flex; flex-direction: column; 
                     align-items: center; justify-content: center; gap: 12px; cursor: pointer; 
-                    color: #6B7280; min-height: 180px; transition: 0.2s;
+                    color: var(--text-muted); min-height: 180px; transition: 0.2s;
                 }
-                .add-site-card-saas:hover { border-color: #9CA3AF; background: #F9FAFB; color: #111827; }
+                .add-site-card-saas:hover { border-color: var(--text-muted); background: var(--bg-dark); color: var(--text-primary); }
 
                 .table-actions-btns { display: flex; gap: 8px; }
             `}</style>

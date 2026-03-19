@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-
 import {
     LayoutDashboard,
     Users,
@@ -12,35 +11,33 @@ import {
     ChevronLeft,
     User,
     ClipboardList,
-    Activity
+    Activity,
+    Menu,
+    X,
+    ShieldAlert
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { Menu, X, ShieldAlert } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import { TrialBanner } from './TrialBanner';
 import { useSubscription } from '../hooks/useSubscription';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();
-    // location not used but hook kept for future URL-based active states if needed
-
     const { isExpired, loading: subLoading } = useSubscription();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [isCollapsed, setIsCollapsed] = useState(false); // Default to expanded for better first impression
+    const [isCollapsed, setIsCollapsed] = useState(false);
     const [userName, setUserName] = useState('Admin Master');
-    // Inicializa do localStorage para sobreviver ao refresh
     const [hasNotification, setHasNotification] = useState(
         () => localStorage.getItem('pedobra_notif') === 'true'
     );
 
-    // lastCheckRef também persistido — evita re-detectar pedidos antigos após refresh
     const lastCheckRef = useRef<string>(
         localStorage.getItem('pedobra_last_check') || new Date().toISOString()
     );
 
     const triggerNotification = () => {
         setHasNotification(true);
-        localStorage.setItem('pedobra_notif', 'true'); // persiste o badge
+        localStorage.setItem('pedobra_notif', 'true');
         if (navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 500]);
         if ('Notification' in window && Notification.permission === 'granted') {
             new Notification('📦 Novo Pedido — PedObra', {
@@ -59,7 +56,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
         const checkOrders = async () => {
             const since = lastCheckRef.current;
-            // Avança o baseline com buffer de 2s para diferença de relógio servidor/cliente
             const nextSince = new Date(Date.now() - 2000).toISOString();
 
             const { data, error } = await supabase
@@ -68,23 +64,17 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 .gt('created_at', since);
 
             if (!error) {
-                // persiste o timestamp para sobreviver ao refresh
                 localStorage.setItem('pedobra_last_check', nextSince);
                 lastCheckRef.current = nextSince;
-                const newCount = data?.length ?? 0;
-                if (newCount > 0) {
+                if (data && data.length > 0) {
                     triggerNotification();
                 }
             }
         };
 
-        // 1. Verificação imediata ao abrir o painel
         checkOrders();
+        const poll = setInterval(checkOrders, 30000); // 30s is enough for polling
 
-        // 2. Polling a cada 10 segundos
-        const poll = setInterval(checkOrders, 10000);
-
-        // 3. Verifica imediatamente ao voltar para a aba (resolve throttling de background)
         const handleVisibility = () => {
             if (document.visibilityState === 'visible') {
                 checkOrders();
@@ -92,7 +82,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         };
         document.addEventListener('visibilitychange', handleVisibility);
 
-        // 4. Realtime como fast-path
         const channel = supabase
             .channel('admin-new-orders')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, () => {
@@ -125,11 +114,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         navigate('/');
     };
 
-    if (subLoading) return null; // Prevents flash of content
+    if (subLoading) return null;
 
     if (isExpired) {
         return (
-            <div className="expired-overlay glass">
+            <div className="expired-overlay">
                 <div className="expired-card premium-card animate-fade">
                     <div className="expired-icon">
                         <ShieldAlert size={48} color="#ef4444" />
@@ -156,9 +145,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         background: var(--bg-sidebar); border: 1px solid var(--border);
                         border-radius: 32px;
                     }
-                    .expired-icon { margin-bottom: 24px; }
-                    .expired-card h2 { margin-bottom: 16px; color: var(--text-primary); }
-                    .expired-card p { margin-bottom: 32px; color: var(--text-muted); line-height: 1.6; }
                     .expired-actions { display: flex; flex-direction: column; gap: 12px; }
                 `}</style>
             </div>
@@ -168,7 +154,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className="admin-wrapper" data-theme="light">
             <header className="admin-mobile-header">
-                <div className="brand-small">
+                <div className="brand-small" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Construction size={18} color="var(--primary)" />
                     <strong>PedObra</strong>
                 </div>
@@ -178,13 +164,12 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         <button
                             className="notif-badge-mobile"
                             onClick={() => { setHasNotification(false); localStorage.removeItem('pedobra_notif'); }}
-                            title="Novo pedido — toque para dispensar"
+                            style={{ background: 'var(--status-pending)', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '10px', color: '#FFF' }}
                         >
-                            <span className="notif-dot" />
-                            <span className="notif-label">Novo Pedido</span>
+                            Novo Pedido
                         </button>
                     )}
-                    <button className="menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                    <button className="menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ background: 'transparent', border: 'none' }}>
                         {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
                 </div>
@@ -196,7 +181,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         <Construction size={20} color="#FFF" />
                     </div>
                     {!isCollapsed && (
-                        <div className="brand-text animate-fade-fast">
+                        <div className="brand-text">
                             <strong>PedObra</strong>
                             <span>Admin</span>
                         </div>
@@ -245,14 +230,14 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                     <div className="header-left">
                         <ThemeToggle />
                         {hasNotification && (
-                            <div className="header-notif">Novo Pedido disponível</div>
+                            <div className="header-notif" style={{ fontSize: '12px', color: 'var(--status-pending)', fontWeight: '600' }}>Novo Pedido disponível</div>
                         )}
                     </div>
                     <div className="header-right">
-                        <div className="user-pill">
-                            <div className="user-avatar"><User size={14} /></div>
-                            <div className="user-name">{userName}</div>
-                            <button className="btn-logout" onClick={handleLogout}><LogOut size={14} /></button>
+                        <div className="user-pill" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px 12px', border: '1px solid var(--border)', borderRadius: '100px' }}>
+                            <div className="user-avatar" style={{ width: '24px', height: '24px', background: 'var(--bg-dark)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><User size={14} /></div>
+                            <div className="user-name" style={{ fontSize: '13px', fontWeight: '600' }}>{userName}</div>
+                            <button onClick={handleLogout} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><LogOut size={14} /></button>
                         </div>
                     </div>
                 </header>
@@ -260,47 +245,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                     {children}
                 </div>
             </main>
-
-            <style>{`
-                .admin-wrapper { display: flex; min-height: 100vh; background: var(--bg-dark); }
-                
-                .sidebar-glass { 
-                    width: var(--sidebar-width); background: #FFF; border-right: 1px solid var(--border);
-                    display: flex; flex-direction: column; padding: 24px 16px; transition: 0.2s;
-                }
-                .sidebar-glass.collapsed { width: var(--sidebar-collapsed-width); }
-
-                .sidebar-brand { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; position: relative; }
-                .brand-logo { width: 32px; height: 32px; background: #0F172A; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #FFF; }
-                .brand-text strong { display: block; font-size: 16px; font-weight: 700; }
-                .brand-text span { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
-                .sidebar-toggle-btn { position: absolute; right: -28px; top: 4px; background: #FFF; border: 1px solid var(--border); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); }
-
-                .sidebar-menu label { font-size: 10px; font-weight: 700; color: var(--text-muted); margin: 24px 12px 8px; text-transform: uppercase; }
-                .menu-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; }
-                .menu-item:hover { background: #F9FAFB; color: var(--text-primary); }
-                .menu-item.active { background: #F3F4F6; color: var(--text-primary); font-weight: 600; }
-
-                .admin-main-content { flex: 1; display: flex; flex-direction: column; }
-                .admin-header { height: 64px; background: #FFF; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; }
-                
-                .user-pill { display: flex; align-items: center; gap: 10px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 100px; }
-                .user-avatar { width: 24px; height: 24px; background: #F3F4F6; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-secondary); }
-                .user-name { font-size: 13px; font-weight: 600; }
-                .btn-logout { background: transparent; border: none; color: var(--text-muted); cursor: pointer; }
-                .btn-logout:hover { color: #EF4444; }
-
-                .admin-page-content { flex: 1; padding: 40px 48px; max-width: 1600px; width: 100%; margin: 0 auto; }
-                
-                @media (max-width: 1024px) {
-                    .admin-wrapper { flex-direction: column; }
-                    .admin-mobile-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; background: #FFF; border-bottom: 1px solid var(--border); height: 64px; }
-                    .sidebar-glass { position: fixed; top: 64px; left: 0; right: 0; bottom: 0; width: 100%; z-index: 1000; transform: translateX(-100%); transition: 0.3s; }
-                    .sidebar-glass.mobile-open { transform: translateX(0); }
-                    .admin-header { display: none; }
-                    .admin-page-content { padding: 24px 16px; }
-                }
-            `}</style>
         </div>
     );
 };

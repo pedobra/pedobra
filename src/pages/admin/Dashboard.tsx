@@ -126,35 +126,32 @@ const AdminDashboard = () => {
             <style>{`
                 .dashboard-container { display: flex; flex-direction: column; gap: 32px; }
                 .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-                .page-title { font-size: 32px; font-weight: 700; color: #111827; letter-spacing: -0.02em; }
-                .page-subtitle { color: #6B7280; font-size: 14px; margin-top: 4px; }
                 
                 .header-actions { display: flex; align-items: center; gap: 12px; }
                 .search-bar-saas { 
-                    background: #FFF; border: 1.5px solid #E5E7EB; border-radius: 8px; 
+                    background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 8px; 
                     padding: 0 12px; display: flex; align-items: center; gap: 8px; 
                     width: 240px; height: 40px; transition: border-color 0.2s;
                 }
-                .search-bar-saas:focus-within { border-color: #9CA3AF; }
-                .search-bar-saas input { background: transparent; border: none; color: #111827; outline: none; width: 100%; font-size: 14px; }
-                .search-bar-saas input::placeholder { color: #9CA3AF; }
+                .search-bar-saas:focus-within { border-color: var(--text-muted); }
+                .search-bar-saas input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; }
                 
                 .stats-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
                 .stat-card-saas { 
-                    background: #FFF; border: 1px solid #E5E7EB; border-radius: 12px; 
+                    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; 
                     padding: 20px; display: flex; align-items: center; gap: 16px;
-                    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+                    box-shadow: var(--shadow-sm);
                 }
                 .stat-icon-bg { 
-                    width: 40px; height: 40px; border-radius: 10px; background: #F9FAFB; 
-                    display: flex; align-items: center; justify-content: center; border: 1px solid #F3F4F6;
+                    width: 40px; height: 40px; border-radius: 10px; background: var(--bg-dark); 
+                    display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);
                 }
                 .stat-data { display: flex; flex-direction: column; gap: 2px; }
-                .stat-data label { font-size: 12px; font-weight: 500; color: #6B7280; }
-                .stat-data strong { font-size: 24px; font-weight: 700; color: #111827; }
+                .stat-data label { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+                .stat-data strong { font-size: 24px; font-weight: 700; color: var(--text-primary); }
 
-                .text-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; color: #6B7280; }
-
+                .text-mono { font-family: ui-monospace, monospace; font-size: 13px; color: var(--text-muted); }
+                
                 @media (max-width: 1024px) {
                     .stats-layout { grid-template-columns: 1fr; }
                     .dashboard-header { flex-direction: column; align-items: flex-start; gap: 20px; }

@@ -31,7 +31,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label }) => {
                     align-items: center;
                     gap: 6px;
                     padding: 2px 10px;
-                    background: #F9FAFB;
+                    background: var(--bg-dark);
                     border: 1px solid var(--border);
                     border-radius: 6px;
                     width: fit-content;

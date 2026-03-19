@@ -76,11 +76,11 @@ function ModernTable<T>({ columns, data, loading, emptyMessage = 'Nenhum registr
                 </tbody>
             </table>
             <style>{`
-                .modern-table-wrapper { width: 100%; overflow-x: auto; background: #FFF; border-radius: 12px; border: 1px solid var(--border); }
+                .modern-table-wrapper { width: 100%; overflow-x: auto; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); }
                 .modern-table { width: 100%; border-collapse: collapse; text-align: left; table-layout: auto; }
                 
                 .modern-table th {
-                    background: #F9FAFB;
+                    background: var(--bg-dark);
                     padding: 14px 20px;
                     border-bottom: 1px solid var(--border);
                     color: var(--text-secondary);
@@ -101,23 +101,23 @@ function ModernTable<T>({ columns, data, loading, emptyMessage = 'Nenhum registr
                 }
 
                 .modern-table tr:last-child td { border-bottom: none; }
-                .modern-table tr:hover td { background: #F9FAFB; }
+                .modern-table tr:hover td { background: var(--bg-dark); }
 
                 .checkbox-col { width: 44px; padding-right: 0 !important; }
                 .checkbox-custom {
                     width: 18px; height: 18px; border: 1.5px solid var(--border-bright); border-radius: 4px;
                     display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;
-                    background: #FFF;
+                    background: var(--bg-card);
                 }
                 .checkbox-custom.master { border-color: var(--text-primary); background: var(--text-primary); }
-                .checkbox-custom.master .checkbox-inner { width: 8px; height: 1.5px; background: #FFF; }
+                .checkbox-custom.master .checkbox-inner { width: 8px; height: 1.5px; background: var(--bg-card); }
                 
                 /* Selection state mockup */
                 tr:nth-child(4) .checkbox-custom, tr:nth-child(5) .checkbox-custom {
                     background: var(--text-primary); border-color: var(--text-primary);
                 }
                 tr:nth-child(4) .checkbox-custom::after, tr:nth-child(5) .checkbox-custom::after {
-                    content: '✓'; color: #FFF; font-size: 12px; font-weight: 900;
+                    content: '✓'; color: var(--bg-card); font-size: 12px; font-weight: 900;
                 }
 
                 .modern-table-wrapper::-webkit-scrollbar { height: 8px; }
