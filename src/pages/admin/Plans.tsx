@@ -44,7 +44,7 @@ const AdminPlans = () => {
                 <div className="plan-card glass-premium glass-premium-highlight">
                     <div className="recommended-badge">RECOMENDADO</div>
                     <div className="plan-header-new">
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
                             <span className="plan-name-new">Plano Profissional</span>
                             <span className="best-value-seal">
                                 <Star size={12} fill="currentColor" /> Melhor Custo Benefício
@@ -162,9 +162,11 @@ const AdminPlans = () => {
                 .plan-header-new {
                     display: flex;
                     flex-direction: column;
+                    align-items: center;
                     gap: 12px;
                     border-bottom: 1px solid var(--border);
                     padding-bottom: 24px;
+                    text-align: center;
                 }
                 .plan-name-new {
                     display: block;
