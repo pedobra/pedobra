@@ -2,6 +2,7 @@
 
 :root {
   --primary: #000000; /* Deep black for primary buttons/accent */
+  --primary-hover: #333333;
   --primary-glow: rgba(0, 0, 0, 0.05);
   --bg-dark: #F9FAFB;
   --bg-card: #FFFFFF;
@@ -53,6 +54,7 @@
 
 [data-theme="dark"] {
   --primary: #FFFFFF;
+  --primary-hover: #E2E8F0;
   --primary-glow: rgba(255, 255, 255, 0.1);
   --bg-dark: #000000;
   --bg-card: #0A0A0B;
@@ -188,12 +190,12 @@ h3,
 .brand-logo {
   width: 32px;
   height: 32px;
-  background: #0F172A;
+  background: var(--primary);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFF;
+  color: var(--primary-foreground);
   flex-shrink: 0;
 }
 
@@ -285,8 +287,8 @@ h3,
 }
 
 .btn-primary {
-  background: #0F172A;
-  color: #FFFFFF;
+  background: var(--primary);
+  color: var(--primary-foreground);
   height: 44px;
   padding: 0 18px;
   font-weight: 600;
@@ -297,14 +299,14 @@ h3,
   justify-content: center;
   gap: 8px;
   transition: all 0.2s ease;
-  border: 1px solid #0F172A;
+  border: 1px solid var(--primary);
   cursor: pointer;
   white-space: nowrap;
 }
 
 .btn-primary:hover {
-  background: #333333;
-  border-color: #333333;
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
 }
 
 .btn-secondary {
