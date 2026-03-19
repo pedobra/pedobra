@@ -87,7 +87,7 @@ const AdminObras = () => {
                 <div className="table-actions-btns">
                     <button className="icon-btn" onClick={() => navigate(`/admin/sites/editar/${obra.id}`)} title="Editar"><Edit2 size={16} /></button>
                     <button className="icon-btn" style={{ color: 'var(--status-denied)' }} onClick={async () => {
-                        if (confirm('Remover canteiro?')) {
+                        if (confirm('Remover obra?')) {
                             await supabase.from('sites').delete().eq('id', obra.id);
                             fetchObras();
                         }
@@ -101,16 +101,16 @@ const AdminObras = () => {
         <div className="obras-view animate-fade">
             <header className="dashboard-header">
                 <div className="header-info">
-                    <h1 className="page-title">Construction Sites</h1>
-                    <p className="page-subtitle">Track and manage all your active construction projects.</p>
+                    <h1 className="page-title">Gestão de Obras</h1>
+                    <p className="page-subtitle">Gerencie e acompanhe o progresso de todas as obras ativas.</p>
                 </div>
                 <div className="header-actions">
                     <div className="search-bar-saas">
                         <Search size={16} color="var(--text-muted)" />
-                        <input type="text" placeholder="Search sites..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                        <input type="text" placeholder="Buscar obras..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                     </div>
                     <button className="btn-primary" onClick={() => navigate('/admin/sites/novo')}>
-                        New site
+                        Nova Obra
                     </button>
                 </div>
             </header>
@@ -129,21 +129,21 @@ const AdminObras = () => {
                                     </div>
                                 </div>
                                 <div className="card-mid">
-                                    <StatusBadge status="active" label={`${obra.orderCount} Orders`} />
+                                    <StatusBadge status="active" label={`${obra.orderCount} Pedidos`} />
                                 </div>
                                 <div className="card-address">
                                     <MapPin size={12} />
-                                    <span>{obra.address || 'No address provided'}</span>
+                                    <span>{obra.address || 'Endereço não informado'}</span>
                                 </div>
                                 <div className="card-budget-info">
-                                    <label>TOTAL BUDGET</label>
+                                    <label>ORÇAMENTO TOTAL</label>
                                     <strong>{fmtBRL(obra.budget)}</strong>
                                 </div>
                             </div>
                         ))}
                         <div className="add-site-card-saas" onClick={() => navigate('/admin/sites/novo')}>
                             <Plus size={24} />
-                            <span>Add new site</span>
+                            <span>Adicionar nova obra</span>
                         </div>
                     </div>
                 )}

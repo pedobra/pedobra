@@ -200,7 +200,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
                     {!isCollapsed && <label>RECURSOS</label>}
                     <NavLink to="/admin/sites" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Construction size={20} /> {!isCollapsed && <span>Canteiros</span>}
+                        <Construction size={20} /> {!isCollapsed && <span>Obras</span>}
                     </NavLink>
                     <NavLink to="/admin/orders" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
                         <ClipboardList size={20} /> {!isCollapsed && <span>Pedidos</span>}

@@ -60,7 +60,7 @@ const SiteFormPage = () => {
 
         // [SEGURANÇA] Sanitizando strings vitais contra injeção HTML
         const safeName = sanitizeInput(formData.name);
-        if (!safeName) return alert("O nome do canteiro é inválido.");
+        if (!safeName) return alert("O nome da obra é inválido.");
         const safeAddress = sanitizeInput(formData.address);
 
         const payload = {
@@ -90,10 +90,10 @@ const SiteFormPage = () => {
         <div className="site-form-view">
             <div className="view-header">
                 <button className="btn-back" onClick={() => navigate('/admin/sites')}>
-                    <ArrowLeft size={18} /> Painel de Canteiros
+                    <ArrowLeft size={18} /> Painel de Obras
                 </button>
                 <div className="header-titles">
-                    <h1 className="page-title">{id ? 'Editar Canteiro' : 'Novo Canteiro de Obra'}</h1>
+                    <h1 className="page-title">{id ? 'Editar Obra' : 'Nova Obra'}</h1>
                     <p className="page-subtitle">Configure os detalhes técnicos e financeiros da unidade.</p>
                 </div>
             </div>
@@ -105,7 +105,7 @@ const SiteFormPage = () => {
                 >
                     <div className="form-grid">
                         <div className="input-field full-width">
-                            <label>Nome do Canteiro</label>
+                            <label>Nome da Obra</label>
                             <div className="input-wrapper">
                                 <Building2 size={18} className="input-icon" />
                                 <input 
