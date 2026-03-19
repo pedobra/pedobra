@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Activity, Calendar, ArrowUpDown, CheckCircle2, XCircle, Package, Clock, User } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
 
 interface AuditLog {
     id: string;
-    action_type: string;
+    action: string;
     entity_type: string;
     entity_id: string;
-    user_id: string;
-    details: any;
+    old_data: any;
+    new_data: any;
     created_at: string;
-    user_email?: string;
-    user_name?: string;
+    profiles?: {
+        name: string;
+    };
 }
 
 const AdminAuditLogs = () => {
@@ -31,129 +32,90 @@ const AdminAuditLogs = () => {
                 .from('audit_logs')
                 .select(`
                     *,
-                    profiles:user_id (
-                        email,
-                        name
-                    )
+                    profiles:user_id (name)
                 `)
                 .order('created_at', { ascending: false })
                 .limit(100);
 
             if (error) throw error;
-            
-            const formattedLogs = data.map(log => ({
-                ...log,
-                user_email: log.profiles?.email,
-                user_name: log.profiles?.name
-            }));
-            
-            setLogs(formattedLogs);
+            setLogs(data || []);
         } catch (error: any) {
-            console.error('Error fetching logs:', error.message);
+            console.error('Erro ao buscar logs:', error.message);
         } finally {
             setLoading(false);
         }
     };
 
     const columns = [
-        {
-            header: 'Data/Hora',
-            accessor: (log: AuditLog) => (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <span style={{ fontWeight: 600 }}>{new Date(log.created_at).toLocaleDateString()}</span>
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                        {new Date(log.created_at).toLocaleTimeString()}
-                    </span>
-                </div>
-            )
+        { 
+            header: 'Data', 
+            accessor: (log: AuditLog) => new Date(log.created_at).toLocaleString('pt-BR') 
         },
-        {
-            header: 'Usuário',
-            accessor: (log: AuditLog) => (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ 
-                        width: '24px', 
-                        height: '24px', 
-                        borderRadius: '50%', 
-                        background: 'var(--bg-dark)',
-                        border: '1px solid var(--border)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '10px',
-                        fontWeight: 700,
-                        color: 'var(--primary)'
-                    }}>
-                        {(log.user_name || log.user_email || '?')[0].toUpperCase()}
-                    </div>
-                    <span>{log.user_name || log.user_email || 'Sistema'}</span>
-                </div>
-            )
+        { 
+            header: 'Usuário', 
+            accessor: (log: AuditLog) => log.profiles?.name || 'Sistema' 
         },
-        {
-            header: 'Ação',
+        { 
+            header: 'Ação', 
             accessor: (log: AuditLog) => (
-                <div style={{
-                    padding: '4px 8px',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                    background: log.action_type === 'DELETE' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(59, 130, 246, 0.1)',
-                    color: log.action_type === 'DELETE' ? '#ef4444' : '#3b82f6',
-                    border: `1px solid ${log.action_type === 'DELETE' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(59, 130, 246, 0.2)'}`,
-                    display: 'inline-block'
-                }}>
-                    {log.action_type}
-                </div>
-            )
-        },
-        {
-            header: 'Entidade',
-            accessor: (log: AuditLog) => (
-                <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)' }}>
-                    {log.entity_type}
+                <span className={`action-badge ${log.action.toLowerCase()}`}>
+                    {log.action}
                 </span>
-            )
+            ) 
         },
-        {
-            header: 'Detalhes',
+        { 
+            header: 'Entidade', 
             accessor: (log: AuditLog) => (
-                <div style={{ maxWidth: '300px' }}>
-                    <div style={{ 
-                        background: 'rgba(0,0,0,0.05)', 
-                        padding: '8px', 
-                        borderRadius: '6px', 
-                        fontSize: '11px',
-                        overflowX: 'auto',
-                        fontFamily: 'monospace',
-                        whiteSpace: 'nowrap'
-                    }}>
-                        {JSON.stringify(log.details)}
-                    </div>
+                <div className="entity-info">
+                    <strong>{log.entity_type}</strong>
+                    <span className="text-mono-xs">{log.entity_id.slice(0, 8)}</span>
                 </div>
-            )
+            ) 
         }
     ];
 
     return (
-        <div className="animate-fade" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ marginBottom: '8px' }}>
-                <h1 style={{ fontSize: '28px', fontWeight: 800, margin: 0 }}>Logs de Auditoria</h1>
-                <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '4px' }}>
-                    Rastreie todas as alterações importantes feitas no sistema.
-                </p>
-            </div>
+        <div className="audit-logs-view animate-fade">
+            <header className="view-header">
+                <div className="header-info">
+                    <h1 className="page-title">Logs do Sistema</h1>
+                    <p className="page-subtitle">Rastreabilidade completa de todas as ações realizadas na plataforma.</p>
+                </div>
+            </header>
 
-            <StandardCard icon={<Activity size={20} color="var(--primary)" />} title="Histórico de Ações" subtitle="Últimas 100 atividades registradas.">
+            <StandardCard
+                title="Histórico de Atividades"
+                subtitle="Exibindo as últimas 100 ações registradas."
+                icon={<Activity size={20} color="var(--primary)" />}
+            >
                 <ModernTable 
                     columns={columns} 
                     data={logs} 
                     loading={loading}
-                    emptyMessage="Nenhum log encontrado."
+                    emptyMessage="Nenhum log de auditoria encontrado."
                 />
             </StandardCard>
+
+            <style>{`
+                .audit-logs-view { display: flex; flex-direction: column; gap: 24px; }
+                .view-header { margin-bottom: 32px; }
+                .page-title { font-size: 28px; font-weight: 850; margin-bottom: 6px; letter-spacing: -0.5px; }
+                .page-subtitle { color: var(--text-muted); font-size: 14px; }
+
+                .action-badge {
+                    padding: 4px 10px;
+                    border-radius: 6px;
+                    font-size: 11px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                }
+                .action-badge.create { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+                .action-badge.update { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+                .action-badge.delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+                .entity-info { display: flex; flex-direction: column; gap: 2px; }
+                .text-mono-xs { font-size: 10px; font-family: monospace; color: var(--text-muted); }
+            `}</style>
         </div>
     );
 };

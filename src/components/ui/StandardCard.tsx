@@ -4,16 +4,20 @@ interface StandardCardProps {
     title?: string;
     children: React.ReactNode;
     subtitle?: string;
+    icon?: React.ReactNode;
     actions?: React.ReactNode;
 }
 
-const StandardCard: React.FC<StandardCardProps> = ({ title, children, subtitle, actions }) => {
+const StandardCard: React.FC<StandardCardProps> = ({ title, children, subtitle, icon, actions }) => {
     return (
         <div className="standard-card animate-fade">
             {(title || actions) && (
                 <div className="standard-card-header">
                     <div className="standard-card-titles">
-                        {title && <h3>{title}</h3>}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            {icon && <div className="standard-card-icon">{icon}</div>}
+                            {title && <h3>{title}</h3>}
+                        </div>
                         {subtitle && <p>{subtitle}</p>}
                     </div>
                     {actions && <div className="standard-card-actions">{actions}</div>}

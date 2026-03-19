@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
 import { Save, ArrowLeft, Building2, MapPin } from 'lucide-react';
@@ -22,7 +22,7 @@ const SiteFormPage = () => {
     }, [id]);
 
     const fetchSite = async () => {
-        const { data, error } = await supabase.from('sites').select('*').eq('id', id).single();
+        const { data } = await supabase.from('sites').select('*').eq('id', id).single();
         if (data) {
             setFormData({
                 name: data.name,

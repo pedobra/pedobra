@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Building, MapPin, Globe, Save, CheckCircle2, Crown, CreditCard, Star, FileText, Package, Calendar } from 'lucide-react';
 import { useSubscription } from '../../hooks/useSubscription';
@@ -7,7 +7,7 @@ import StandardCard from '../../components/ui/StandardCard';
 const AdminSettings = () => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    const { isTrial, daysRemaining, planId, organizationName } = useSubscription();
+    const { isTrial, daysRemaining } = useSubscription();
     const [settings, setSettings] = useState({
         company_name: '',
         cnpj: '',

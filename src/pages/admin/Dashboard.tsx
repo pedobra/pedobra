@@ -1,211 +1,147 @@
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
-import { TrendingUp, Clock, PackageCheck, AlertTriangle, CheckCircle, XCircle, Search, Building2, Calendar, FileDown } from 'lucide-react';
+import { TrendingUp, Clock, PackageCheck, Search, Building2, Eye } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
 import StatusBadge from '../../components/ui/StatusBadge';
 
-const STATUS_LABELS: Record<string, string> = {
-    new: 'Pendente',
-    approved: 'Aprovado',
-    denied: 'Negado',
-    partial: 'Rec. Parcial',
-    completed: 'Concluído',
-    pending: 'Pendente',
-};
-
 const AdminDashboard = () => {
+    const navigate = useNavigate();
     const [orders, setOrders] = useState<any[]>([]);
     const [sites, setSites] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [statusFilter, setStatusFilter] = useState<string | null>(null);
-    const [siteFilter, setSiteFilter] = useState<string>('');
-    const [dateFrom, setDateFrom] = useState('');
-    const [dateTo, setDateTo] = useState('');
-    const navigate = useNavigate();
 
-    const getOrderRef = (order: any) => {
-        if (!order || !order.created_at) return 'N/A';
-        const d = new Date(order.created_at);
-        const dd = String(d.getDate()).padStart(2, '0');
-        const mm = String(d.getMonth() + 1).padStart(2, '0');
-        const seq = String(order.seq_number || 0).padStart(4, '0');
-        return `${dd}${mm}_${seq}`;
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const [ordersRes, sitesRes] = await Promise.all([
+                    supabase.from('orders').select('*, sites(name), profiles(name)').order('created_at', { ascending: false }),
+                    supabase.from('sites').select('*').order('name')
+                ]);
+
+                if (ordersRes.error) throw ordersRes.error;
+                if (sitesRes.error) throw sitesRes.error;
+
+                setOrders(ordersRes.data || []);
+                setSites(sitesRes.data || []);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const filteredOrders = useMemo(() => {
+        return orders.filter(o => 
+            (o.sites?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (o.id || '').toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [orders, searchTerm]);
 
     const stats = useMemo(() => {
-        const base = siteFilter ? orders.filter(o => o.site_id === siteFilter) : orders;
-        return base.reduce((acc, curr: any) => {
-            // Simplified logic: use the status directly
-            const effectiveStatus = curr.status;
-            acc.total++;
-            if (effectiveStatus === 'new' || effectiveStatus === 'pending') acc.new++;
-            else if (effectiveStatus === 'approved') acc.approved++;
-            else if (effectiveStatus === 'denied') acc.denied++;
-            else if (effectiveStatus === 'partial') acc.partial++;
-            else if (effectiveStatus === 'completed') acc.completed++;
-            return acc;
-        }, { total: 0, new: 0, approved: 0, denied: 0, partial: 0, completed: 0 });
-    }, [orders, siteFilter]);
+        const active = orders.filter(o => o.status === 'pending' || o.status === 'approved').length;
+        const totalValue = orders.reduce((acc, o) => acc + (o.total_value || 0), 0);
+        return { active, totalValue, sitesCount: sites.length };
+    }, [orders, sites]);
 
-    useEffect(() => { fetchDashboardData(); }, []);
-
-    const fetchDashboardData = async () => {
-        const [{ data: ordersData }, { data: sitesData }] = await Promise.all([
-            supabase.from('orders').select('*, sites(name, address), profiles(name)').order('created_at', { ascending: false }),
-            supabase.from('sites').select('id, name').order('name'),
-        ]);
-
-        if (ordersData) setOrders(ordersData);
-        if (sitesData) setSites(sitesData);
-        setLoading(false);
-    };
-
-    const exportPDF = () => {
-        const tableData = filteredOrders.map(o => [
-            getOrderRef(o), o.sites?.name || 'N/A', o.profiles?.name || 'N/A',
-            STATUS_LABELS[o.status] || o.status, new Date(o.created_at).toLocaleDateString()
-        ]);
-        // generateOrderPDF usually takes a single order, but we can call a general export if needed.
-        // For now, let's just use the existing generateOrderPDF logic but for a list or standard export.
-        console.log('Exporting...', tableData);
-        alert('Relatório exportado com sucesso (ver console).');
-    };
-
-    const filteredOrders = orders.filter(order => {
-        if (statusFilter && order.status !== statusFilter) return false;
-        if (siteFilter && order.site_id !== siteFilter) return false;
-        if (dateFrom && new Date(order.created_at) < new Date(dateFrom)) return false;
-        if (dateTo && new Date(order.created_at) > new Date(dateTo)) return false;
-        const term = searchTerm.toLowerCase();
-        return !term ||
-            getOrderRef(order).toLowerCase().includes(term) ||
-            (order.sites?.name || '').toLowerCase().includes(term) ||
-            (order.profiles?.name || '').toLowerCase().includes(term);
-    });
-
-    const statCards = [
-        { key: null, label: 'Fluxo Total', value: stats.total, icon: <TrendingUp size={18} />, color: 'primary' },
-        { key: 'new', label: 'Pendentes', value: stats.new, icon: <Clock size={18} />, color: 'yellow' },
-        { key: 'approved', label: 'Aprovados', value: stats.approved, icon: <CheckCircle size={18} />, color: 'green' },
-        { key: 'partial', label: 'Rec. Parcial', value: stats.partial, icon: <AlertTriangle size={18} />, color: 'orange' },
-        { key: 'completed', label: 'Concluídos', value: stats.completed, icon: <PackageCheck size={18} />, color: 'teal' },
-        { key: 'denied', label: 'Negados', value: stats.denied, icon: <XCircle size={18} />, color: 'red' },
+    const columns = [
+        { 
+            header: 'ID', 
+            accessor: (o: any) => <span className="text-mono">#{o.id.slice(0,8)}</span> 
+        },
+        { header: 'Canteiro', accessor: (o: any) => <strong>{o.sites?.name}</strong> },
+        { header: 'Solicitante', accessor: (o: any) => o.profiles?.name || 'Sistema' },
+        { header: 'Status', accessor: (o: any) => <StatusBadge status={o.status} /> },
+        { header: 'Data', accessor: (o: any) => new Date(o.created_at).toLocaleDateString() },
+        {
+            header: 'Ações',
+            accessor: (o: any) => (
+                <button className="icon-btn" onClick={() => navigate(`/admin/pedidos/visualizar/${o.id}`)}>
+                    <Eye size={16} />
+                </button>
+            )
+        }
     ];
 
-    if (loading) return <div className="loading-screen">Carregando Inteligência...</div>;
-
     return (
-        <div className="dashboard-container">
+        <div className="dashboard-container animate-fade">
             <header className="dashboard-header">
-                <div className="header-titles">
-                    <h1 className="page-title">Painel Estratégico</h1>
-                    <p className="page-subtitle">Gestão centralizada e visão panorâmica das operações.</p>
+                <div className="header-info">
+                    <h1 className="page-title">Dashboard</h1>
+                    <p className="page-subtitle">Visão geral das operações em seus canteiros.</p>
                 </div>
                 <div className="header-actions">
                     <div className="search-bar-glass">
                         <Search size={16} color="var(--text-muted)" />
-                        <input type="text" placeholder="Filtrar pedidos..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                        <input 
+                            type="text" 
+                            placeholder="Buscar pedido ou obra..." 
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
                     </div>
-                    <button className="btn-primary" onClick={exportPDF}>
-                         <FileDown size={16} /> Exportar
-                    </button>
                 </div>
             </header>
 
             <div className="stats-layout">
-                {statCards.map(card => (
-                    <div 
-                        key={String(card.key)} 
-                        className={`stat-card-premium ${statusFilter === card.key ? 'active' : ''}`}
-                        onClick={() => setStatusFilter(statusFilter === card.key ? null : card.key)}
-                    >
-                        <div className="card-header">
-                            <span className="label">{card.label}</span>
-                            <span className={`icon ${card.color}`}>{card.icon}</span>
-                        </div>
-                        <div className="value">{card.value}</div>
-                        {card.key === null && <div className="glow" />}
-                    </div>
-                ))}
-            </div>
-
-            <StandardCard 
-                title="Últimas Movimentações" 
-                subtitle="Acompanhamento em tempo real dos pedidos de materiais."
-            >
-                <div className="table-filters">
-                    <div className="site-select">
-                        <Building2 size={14} color="var(--text-muted)" />
-                        <select value={siteFilter} onChange={e => setSiteFilter(e.target.value)}>
-                            <option value="">Todas as Obras</option>
-                            {sites.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                        </select>
-                    </div>
-                    <div className="date-range">
-                        <Calendar size={14} color="var(--text-muted)" />
-                        <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
-                        <span>→</span>
-                        <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} />
+                <div className="stat-card-premium">
+                    <div className="stat-icon-bg"><PackageCheck size={24} color="var(--primary)" /></div>
+                    <div className="stat-data">
+                        <label>Pedidos Ativos</label>
+                        <strong>{stats.active}</strong>
                     </div>
                 </div>
+                <div className="stat-card-premium">
+                    <div className="stat-icon-bg"><TrendingUp size={24} color="#10b981" /></div>
+                    <div className="stat-data">
+                        <label>Total Gasto (Mês)</label>
+                        <strong>R$ {stats.totalValue.toLocaleString()}</strong>
+                    </div>
+                </div>
+                <div className="stat-card-premium">
+                    <div className="stat-icon-bg"><Building2 size={24} color="#3b82f6" /></div>
+                    <div className="stat-data">
+                        <label>Canteiros</label>
+                        <strong>{stats.sitesCount}</strong>
+                    </div>
+                </div>
+            </div>
 
-                <ModernTable headers={['IDENTIFICADOR', 'CANTEIRO', 'REQUISITANTE', 'STATUS', 'DATA']}>
-                    {filteredOrders.map(order => (
-                        <tr key={order.id} className="clickable-row" onClick={() => navigate(`/admin/pedidos/visualizar/${order.id}`)}>
-                            <td><span className="id-tag">#{getOrderRef(order)}</span></td>
-                            <td><strong>{order.sites?.name}</strong></td>
-                            <td>{order.profiles?.name}</td>
-                            <td><StatusBadge status={order.status} /></td>
-                            <td>{new Date(order.created_at).toLocaleDateString()}</td>
-                        </tr>
-                    ))}
-                </ModernTable>
+            <StandardCard
+                title="Últimos Pedidos"
+                subtitle="Acompanhe o fluxo de suprimentos em tempo real."
+                icon={<Clock size={20} color="var(--primary)" />}
+            >
+                <ModernTable columns={columns} data={filteredOrders.slice(0, 10)} loading={loading} />
             </StandardCard>
 
             <style>{`
                 .dashboard-container { display: flex; flex-direction: column; gap: 32px; }
                 .dashboard-header { display: flex; justify-content: space-between; align-items: flex-end; }
-                .page-title { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+                .page-title { font-size: 28px; font-weight: 850; margin-bottom: 4px; letter-spacing: -0.5px; }
                 .page-subtitle { color: var(--text-muted); font-size: 14px; }
                 
                 .header-actions { display: flex; gap: 12px; }
-                .search-bar-glass { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 12px; padding: 0 12px; display: flex; align-items: center; gap: 8px; width: 240px; }
-                .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; height: 40px; font-size: 13px; width: 100%; }
+                .search-bar-glass { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 10px; width: 260px; height: 44px; }
+                .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 13px; }
                 
-                .stats-layout { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
-                .stat-card-premium { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 20px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
-                .stat-card-premium:hover { border-color: var(--primary); transform: translateY(-2px); }
-                .stat-card-premium.active { border-color: var(--primary); background: var(--primary-glow); }
-                
-                .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-                .card-header .label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-                .card-header .icon.primary { color: var(--primary); }
-                .card-header .icon.yellow { color: #FFCC00; }
-                .card-header .icon.green  { color: #34C759; }
-                .card-header .icon.orange { color: #FF9500; }
-                .card-header .icon.teal   { color: #00BFFF; }
-                .card-header .icon.red    { color: #FF3B30; }
-                
-                .stat-card-premium .value { font-size: 32px; font-weight: 800; color: var(--text-primary); }
-                .glow { position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; background: var(--primary-glow); filter: blur(30px); opacity: 0.5; }
-                
-                .table-filters { display: flex; gap: 16px; margin-bottom: 24px; align-items: center; }
-                .site-select, .date-range { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; display: flex; align-items: center; gap: 8px; height: 38px; }
-                .site-select select, .date-range input { background: transparent; border: none; color: var(--text-primary); font-size: 13px; outline: none; }
-                .date-range span { color: var(--text-muted); font-size: 12px; }
-                
-                .id-tag { font-family: monospace; background: var(--bg-dark); padding: 4px 8px; border-radius: 6px; color: var(--primary); font-weight: 700; border: 1px solid var(--border); }
-                .loading-screen { height: 60vh; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary); }
+                .stats-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+                .stat-card-premium { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; display: flex; align-items: center; gap: 20px; }
+                .stat-icon-bg { width: 56px; height: 56px; border-radius: 16px; background: var(--bg-dark); display: flex; align-items: center; justify-content: center; }
+                .stat-data { display: flex; flex-direction: column; gap: 4px; }
+                .stat-data label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+                .stat-data strong { font-size: 24px; font-weight: 850; color: var(--text-primary); }
 
-                @media (max-width: 1024px) {
-                    .stats-layout { grid-template-columns: repeat(3, 1fr); }
-                }
-                @media (max-width: 640px) {
-                    .stats-layout { grid-template-columns: repeat(2, 1fr); }
-                    .dashboard-header { flex-direction: column; align-items: flex-start; }
-                    .table-filters { flex-direction: column; align-items: stretch; }
+                @media (max-width: 768px) {
+                    .stats-layout { grid-template-columns: 1fr; }
+                    .dashboard-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+                    .search-bar-glass { width: 100%; }
                 }
             `}</style>
         </div>

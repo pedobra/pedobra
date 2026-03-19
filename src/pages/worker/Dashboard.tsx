@@ -9,8 +9,7 @@ import {
     FileText,
     Send,
     Trash2,
-    Search,
-    Clock
+    Search
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StandardCard from '../../components/ui/StandardCard';
