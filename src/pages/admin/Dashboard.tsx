@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
-import { TrendingUp, PackageCheck, Search, Building2, Eye } from 'lucide-react';
+import { TrendingUp, PackageCheck, Search, Eye, Clock, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
@@ -9,24 +9,21 @@ import StatusBadge from '../../components/ui/StatusBadge';
 const AdminDashboard = () => {
     const navigate = useNavigate();
     const [orders, setOrders] = useState<any[]>([]);
-    const [sites, setSites] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const [ordersRes, sitesRes] = await Promise.all([
-                    supabase.from('orders').select('*, sites(name), profiles(name)').order('created_at', { ascending: false }),
-                    supabase.from('sites').select('*').order('name')
-                ]);
+                const { data, error } = await supabase
+                    .from('orders')
+                    .select('*, sites(name), profiles(name)')
+                    .order('created_at', { ascending: false });
 
-                if (ordersRes.error) throw ordersRes.error;
-                if (sitesRes.error) throw sitesRes.error;
-
-                setOrders(ordersRes.data || []);
-                setSites(sitesRes.data || []);
+                if (error) throw error;
+                setOrders(data || []);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -38,17 +35,37 @@ const AdminDashboard = () => {
     }, []);
 
     const filteredOrders = useMemo(() => {
-        return orders.filter(o => 
-            (o.sites?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (o.id || '').toLowerCase().includes(searchTerm.toLowerCase())
-        );
-    }, [orders, searchTerm]);
+        return orders.filter(o => {
+            const matchesSearch = (o.sites?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                  (o.id || '').toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesStatus = statusFilter ? 
+                (statusFilter === 'new' ? (o.status === 'new' || o.status === 'pending') : o.status === statusFilter) 
+                : true;
+            return matchesSearch && matchesStatus;
+        });
+    }, [orders, searchTerm, statusFilter]);
 
     const stats = useMemo(() => {
-        const active = orders.filter(o => o.status === 'pending' || o.status === 'approved').length;
-        const totalValue = orders.reduce((acc, o) => acc + (o.total_value || 0), 0);
-        return { active, totalValue, sitesCount: sites.length };
-    }, [orders, sites]);
+        return orders.reduce((acc, curr: any) => {
+            acc.total++;
+            const st = curr.status as string;
+            if (st === 'new' || st === 'pending') acc.new++;
+            else if (st === 'approved') acc.approved++;
+            else if (st === 'denied') acc.denied++;
+            else if (st === 'partial') acc.partial++;
+            else if (st === 'completed') acc.completed++;
+            return acc;
+        }, { total: 0, new: 0, approved: 0, denied: 0, partial: 0, completed: 0 });
+    }, [orders]);
+
+    const statCards = [
+        { key: null, label: 'Fluxo Total', value: stats.total, icon: <TrendingUp size={20} color="var(--primary)" /> },
+        { key: 'new', label: 'Pendentes', value: stats.new, icon: <Clock size={20} color="#f39c12" /> },
+        { key: 'approved', label: 'Aprovados', value: stats.approved, icon: <CheckCircle size={20} color="var(--status-approved)" /> },
+        { key: 'partial', label: 'Rec. Parcial', value: stats.partial, icon: <AlertTriangle size={20} color="#e67e22" /> },
+        { key: 'completed', label: 'Concluídos', value: stats.completed, icon: <PackageCheck size={20} color="#1abc9c" /> },
+        { key: 'denied', label: 'Negados', value: stats.denied, icon: <XCircle size={20} color="var(--status-denied)" /> },
+    ];
 
     const columns = [
         { 
@@ -73,52 +90,45 @@ const AdminDashboard = () => {
         <div className="dashboard-container animate-fade">
             <header className="dashboard-header">
                 <div className="header-info">
-                    <h1 className="page-title">Dashboard</h1>
-                    <p className="page-subtitle">Welcome back, here's what's happening today.</p>
+                    <h1 className="page-title">Painel Estratégico</h1>
+                    <p className="page-subtitle">Visão panorâmica de todas as operações em tempo real.</p>
                 </div>
                 <div className="header-actions">
                     <div className="search-bar-saas">
                         <Search size={16} color="var(--text-muted)" />
                         <input 
                             type="text" 
-                            placeholder="Search..." 
+                            placeholder="Buscar pedidos..." 
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                         />
                     </div>
                     <button className="btn-primary" onClick={() => navigate('/admin/orders/novo')}>
-                        New order
+                        Novo Pedido
                     </button>
                 </div>
             </header>
 
             <div className="stats-layout">
-                <div className="stat-card-saas">
-                    <div className="stat-icon-bg"><PackageCheck size={20} color="var(--primary)" /></div>
-                    <div className="stat-data">
-                        <label>Active Orders</label>
-                        <strong>{stats.active}</strong>
+                {statCards.map(card => (
+                    <div 
+                        key={String(card.key)} 
+                        className={`stat-card-saas ${statusFilter === card.key ? 'active-filter' : ''}`}
+                        onClick={() => setStatusFilter(statusFilter === card.key ? null : card.key)}
+                        style={{ cursor: 'pointer', flexDirection: 'column', alignItems: 'flex-start', padding: '16px', gap: '12px' }}
+                    >
+                        <div className="stat-icon-bg" style={{ width: 34, height: 34 }}>{card.icon}</div>
+                        <div className="stat-data">
+                            <label style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{card.label}</label>
+                            <strong>{card.value}</strong>
+                        </div>
                     </div>
-                </div>
-                <div className="stat-card-saas">
-                    <div className="stat-icon-bg"><TrendingUp size={20} color="#10b981" /></div>
-                    <div className="stat-data">
-                        <label>Monthly Spending</label>
-                        <strong>R$ {stats.totalValue.toLocaleString()}</strong>
-                    </div>
-                </div>
-                <div className="stat-card-saas">
-                    <div className="stat-icon-bg"><Building2 size={20} color="#3b82f6" /></div>
-                    <div className="stat-data">
-                        <label>Total Sites</label>
-                        <strong>{stats.sitesCount}</strong>
-                    </div>
-                </div>
+                ))}
             </div>
 
             <StandardCard
-                title="Recent Orders"
-                subtitle="Track and manage the latest material requests."
+                title="Movimentações Recentes"
+                subtitle="Acompanhe e gerencie as últimas solicitações do sistema."
             >
                 <ModernTable columns={columns} data={filteredOrders.slice(0, 10)} loading={loading} />
             </StandardCard>
@@ -136,12 +146,15 @@ const AdminDashboard = () => {
                 .search-bar-saas:focus-within { border-color: var(--text-muted); }
                 .search-bar-saas input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; }
                 
-                .stats-layout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+                .stats-layout { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
                 .stat-card-saas { 
                     background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; 
                     padding: 20px; display: flex; align-items: center; gap: 16px;
-                    box-shadow: var(--shadow-sm);
+                    box-shadow: var(--shadow-sm); position: relative; transition: 0.2s;
                 }
+                .stat-card-saas:hover { border-color: var(--border-bright); transform: translateY(-2px); }
+                .stat-card-saas.active-filter { box-shadow: 0 0 0 2px var(--primary); border-color: var(--primary); }
+                
                 .stat-icon-bg { 
                     width: 40px; height: 40px; border-radius: 10px; background: var(--bg-dark); 
                     display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);
@@ -152,11 +165,16 @@ const AdminDashboard = () => {
 
                 .text-mono { font-family: ui-monospace, monospace; font-size: 13px; color: var(--text-muted); }
                 
+                @media (max-width: 1200px) {
+                    .stats-layout { grid-template-columns: repeat(3, 1fr); }
+                }
                 @media (max-width: 1024px) {
-                    .stats-layout { grid-template-columns: 1fr; }
                     .dashboard-header { flex-direction: column; align-items: flex-start; gap: 20px; }
                     .header-actions { width: 100%; }
                     .search-bar-saas { flex: 1; }
+                }
+                @media (max-width: 768px) {
+                    .stats-layout { grid-template-columns: repeat(2, 1fr); gap: 12px; }
                 }
             `}</style>
         </div>
