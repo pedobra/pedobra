@@ -2,56 +2,55 @@
 
 :root {
   --primary: #000000;
-  --primary-glow: rgba(0, 0, 0, 0.1);
-  --bg-dark: #F9F6EF;
-  /* Starlight background */
+  --primary-glow: rgba(0, 0, 0, 0.05);
+  --bg-dark: #F8F9FA; /* Deeper off-white for premium feel */
   --bg-card: #FFFFFF;
   --bg-sidebar: #FFFFFF;
-  --bg-input: #F2F2F7;
+  --bg-input: #F1F3F5;
 
-  --text-primary: #000000;
-  /* Jet Black text */
-  --text-secondary: #3A3A3C;
-  --text-muted: #636366;
+  --text-primary: #1A1A1A;
+  --text-secondary: #495057;
+  --text-muted: #868E96;
 
-  --border: rgba(0, 0, 0, 0.08);
-  --border-bright: rgba(0, 0, 0, 0.15);
-  --bg-glass: rgba(249, 246, 239, 0.8);
+  --border: rgba(0, 0, 0, 0.06);
+  --border-bright: rgba(0, 0, 0, 0.12);
+  --bg-glass: rgba(255, 255, 255, 0.8);
 
-  --status-approved: #28a745;
-  --status-pending: #F4C325;
-  --status-denied: #dc3545;
+  --status-approved: #22C55E;
+  --status-pending: #F59E0B;
+  --status-denied: #EF4444;
 
   --font-main: 'Plus Jakarta Sans', sans-serif;
   --font-display: 'Outfit', sans-serif;
 
-  --shadow-premium: 0 4px 20px -5px rgba(0, 0, 0, 0.08);
+  --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+  
+  --sidebar-width: 280px;
+  --sidebar-collapsed-width: 80px;
+  --transition-speed: 0.3s;
 }
 
 [data-theme="dark"] {
-  --primary: #F9F6EF;
-  /* Starlight primary */
-  --primary-glow: rgba(249, 246, 239, 0.15);
+  --primary: #FFFFFF;
+  --primary-glow: rgba(255, 255, 255, 0.1);
   --bg-dark: #000000;
-  /* Jet Black background */
   --bg-card: #0A0A0B;
   --bg-sidebar: #050505;
   --bg-input: #121214;
 
-  --text-primary: #F9F6EF;
-  /* Starlight text */
-  --text-secondary: #B0B0B5;
-  --text-muted: #7C7C80;
+  --text-primary: #F8F9FA;
+  --text-secondary: #ADB5BD;
+  --text-muted: #6C757D;
 
-  --border: rgba(255, 255, 255, 0.1);
-  --border-bright: rgba(255, 255, 255, 0.2);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-bright: rgba(255, 255, 255, 0.15);
   --bg-glass: rgba(0, 0, 0, 0.7);
 
-  --status-approved: #34C759;
-  --status-pending: #F9F6EF;
-  --status-denied: #FF3B30;
+  --status-approved: #22C55E;
+  --status-pending: #F59E0B;
+  --status-denied: #EF4444;
 
-  --shadow-premium: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+  --shadow-premium: 0 20px 50px -12px rgba(0, 0, 0, 0.7);
 }
 
 * {

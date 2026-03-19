@@ -12,6 +12,12 @@ import AdminSettings from './pages/admin/Settings';
 import AdminAuditLogs from './pages/admin/AuditLogs';
 import WorkerDashboard from './pages/worker/Dashboard';
 import WorkerReceiving from './pages/worker/Receiving';
+import SiteFormPage from './pages/admin/sites/SiteFormPage';
+import MaterialFormPage from './pages/admin/catalog/MaterialFormPage';
+import SupplierFormPage from './pages/admin/catalog/SupplierFormPage';
+import OrderFormPage from './pages/admin/orders/OrderFormPage';
+import OrderViewPage from './pages/admin/orders/OrderViewPage';
+import UserFormPage from './pages/admin/users/UserFormPage';
 
 function App() {
   const [session, setSession] = useState<any>(null);
@@ -92,20 +98,53 @@ function App() {
         <Route path="/admin" element={
           session && profile?.role === 'admin' ? <AdminLayout><AdminDashboard /></AdminLayout> : <Navigate to="/" />
         } />
-        <Route path="/admin/users" element={
+        <Route path="/admin/usuarios" element={
           session && profile?.role === 'admin' ? <AdminLayout><AdminUsers /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/admin/usuarios/novo" element={
+          session && profile?.role === 'admin' ? <AdminLayout><UserFormPage /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/admin/usuarios/editar/:id" element={
+          session && profile?.role === 'admin' ? <AdminLayout><UserFormPage /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/admin/pedidos" element={
+          session && profile?.role === 'admin' ? <AdminLayout><AdminOrders /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/admin/pedidos/novo" element={
+          session && profile?.role === 'admin' ? <AdminLayout><OrderFormPage /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/admin/pedidos/editar/:id" element={
+          session && profile?.role === 'admin' ? <AdminLayout><OrderFormPage /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/admin/pedidos/visualizar/:id" element={
+          session && profile?.role === 'admin' ? <AdminLayout><OrderViewPage /></AdminLayout> : <Navigate to="/" />
         } />
         <Route path="/admin/obras" element={
           session && profile?.role === 'admin' ? <AdminLayout><AdminObras /></AdminLayout> : <Navigate to="/" />
         } />
-        <Route path="/admin/orders" element={
-          session && profile?.role === 'admin' ? <AdminLayout><AdminOrders /></AdminLayout> : <Navigate to="/" />
+        <Route path="/admin/obras/novo" element={
+          session && profile?.role === 'admin' ? <AdminLayout><SiteFormPage /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/admin/obras/editar/:id" element={
+          session && profile?.role === 'admin' ? <AdminLayout><SiteFormPage /></AdminLayout> : <Navigate to="/" />
         } />
         <Route path="/admin/materials" element={
           session && profile?.role === 'admin' ? <AdminLayout><AdminCatalog /></AdminLayout> : <Navigate to="/" />
         } />
+        <Route path="/admin/materiais/novo" element={
+          session && profile?.role === 'admin' ? <AdminLayout><MaterialFormPage /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/admin/materiais/editar/:id" element={
+          session && profile?.role === 'admin' ? <AdminLayout><MaterialFormPage /></AdminLayout> : <Navigate to="/" />
+        } />
         <Route path="/admin/suppliers" element={
           session && profile?.role === 'admin' ? <AdminLayout><AdminCatalog /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/admin/fornecedores/novo" element={
+          session && profile?.role === 'admin' ? <AdminLayout><SupplierFormPage /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/admin/fornecedores/editar/:id" element={
+          session && profile?.role === 'admin' ? <AdminLayout><SupplierFormPage /></AdminLayout> : <Navigate to="/" />
         } />
         <Route path="/admin/settings" element={
           session && profile?.role === 'admin' ? <AdminLayout><AdminSettings /></AdminLayout> : <Navigate to="/" />

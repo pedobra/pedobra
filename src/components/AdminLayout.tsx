@@ -24,6 +24,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const location = useLocation();
     const { isExpired, loading: subLoading } = useSubscription();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [isCollapsed, setIsCollapsed] = useState(true);
     const [userName, setUserName] = useState('Admin Master');
     // Inicializa do localStorage para sobreviver ao refresh
     const [hasNotification, setHasNotification] = useState(
@@ -187,48 +188,54 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 </div>
             </header>
 
-            <aside className={`sidebar-glass ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+            <aside 
+                className={`sidebar-glass ${mobileMenuOpen ? 'mobile-open' : ''} ${isCollapsed ? 'collapsed' : ''}`}
+                onMouseEnter={() => setIsCollapsed(false)}
+                onMouseLeave={() => setIsCollapsed(true)}
+            >
                 <div className="sidebar-brand">
                     <div className="brand-logo">
                         <Construction size={20} color="var(--bg-dark)" />
                     </div>
-                    <div className="brand-text">
-                        <strong>PedObra</strong>
-                        <span>Painel Administrativo</span>
-                    </div>
+                    {!isCollapsed && (
+                        <div className="brand-text animate-fade-fast">
+                            <strong>PedObra</strong>
+                            <span>Painel Administrativo</span>
+                        </div>
+                    )}
                 </div>
 
                 <nav className="sidebar-menu">
-                    <label>PLATAFORMA</label>
-                    <NavLink to="/admin" end className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                    {!isCollapsed && <label className="animate-fade-fast">PLATAFORMA</label>}
+                    <NavLink to="/admin" end title={isCollapsed ? "Painel Master" : ""} className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
                         <LayoutDashboard size={20} />
-                        <span>Painel Master</span>
-                        {location.pathname === '/admin' && <ChevronRight size={14} className="active-indicator" />}
+                        {!isCollapsed && <span className="animate-fade-fast">Painel Master</span>}
+                        {location.pathname === '/admin' && !isCollapsed && <ChevronRight size={14} className="active-indicator" />}
                     </NavLink>
 
-                    <label>RECURSOS</label>
-                    <NavLink to="/admin/obras" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Construction size={20} /> <span>Canteiros de Obra</span>
+                    {!isCollapsed && <label className="animate-fade-fast">RECURSOS</label>}
+                    <NavLink to="/admin/obras" title={isCollapsed ? "Canteiros de Obra" : ""} className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                        <Construction size={20} /> {!isCollapsed && <span className="animate-fade-fast">Canteiros de Obra</span>}
                     </NavLink>
-                    <NavLink to="/admin/orders" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <ClipboardList size={20} /> <span>Pedidos</span>
+                    <NavLink to="/admin/orders" title={isCollapsed ? "Pedidos" : ""} className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                        <ClipboardList size={20} /> {!isCollapsed && <span className="animate-fade-fast">Pedidos</span>}
                     </NavLink>
-                    <NavLink to="/admin/materials" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Package size={20} /> <span>Materiais</span>
+                    <NavLink to="/admin/materials" title={isCollapsed ? "Materiais" : ""} className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                        <Package size={20} /> {!isCollapsed && <span className="animate-fade-fast">Materiais</span>}
                     </NavLink>
-                    <NavLink to="/admin/suppliers" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Truck size={20} /> <span>Parceiros</span>
+                    <NavLink to="/admin/suppliers" title={isCollapsed ? "Parceiros" : ""} className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                        <Truck size={20} /> {!isCollapsed && <span className="animate-fade-fast">Parceiros</span>}
                     </NavLink>
 
-                    <label>SISTEMA</label>
-                    <NavLink to="/admin/users" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Users size={20} /> <span>Gestão de Equipe</span>
+                    {!isCollapsed && <label className="animate-fade-fast">SISTEMA</label>}
+                    <NavLink to="/admin/users" title={isCollapsed ? "Gestão de Equipe" : ""} className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                        <Users size={20} /> {!isCollapsed && <span className="animate-fade-fast">Gestão de Equipe</span>}
                     </NavLink>
-                    <NavLink to="/admin/settings" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Settings size={20} /> <span>Configurações</span>
+                    <NavLink to="/admin/settings" title={isCollapsed ? "Configurações" : ""} className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                        <Settings size={20} /> {!isCollapsed && <span className="animate-fade-fast">Configurações</span>}
                     </NavLink>
-                    <NavLink to="/admin/audit-logs" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Activity size={20} /> <span>Controle de Logs</span>
+                    <NavLink to="/admin/audit-logs" title={isCollapsed ? "Controle de Logs" : ""} className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                        <Activity size={20} /> {!isCollapsed && <span className="animate-fade-fast">Controle de Logs</span>}
                     </NavLink>
 
                     {/* Botão Sair — apenas mobile */}
@@ -250,7 +257,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 />
             )}
 
-            <main className="admin-main-stage">
+            <main className={`admin-main-stage ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
                 <TrialBanner />
                 <header className="stage-header">
                     {/* Badge de novo pedido — lado esquerdo */}
@@ -298,7 +305,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           gap: 16px;
         }
         .sidebar-glass {
-          width: 280px;
+          width: var(--sidebar-width);
           background: var(--bg-sidebar);
           border: 1px solid var(--border);
           border-radius: 24px;
@@ -308,14 +315,24 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           height: calc(100vh - 32px);
           position: sticky;
           top: 16px;
+          transition: width var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+          z-index: 100;
         }
+
+        .sidebar-glass.collapsed {
+          width: var(--sidebar-collapsed-width);
+          padding: 32px 12px;
+        }
+
         .sidebar-brand {
           display: flex; align-items: center; gap: 12px; margin-bottom: 48px; padding: 0 12px;
+          min-height: 40px;
         }
         .brand-logo {
           background: var(--primary); padding: 8px; border-radius: 12px;
+          flex-shrink: 0;
         }
-        .brand-text { display: flex; flex-direction: column; }
+        .brand-text { display: flex; flex-direction: column; white-space: nowrap; }
         .brand-text strong { font-size: 18px; letter-spacing: -0.5px; }
         .brand-text span { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
@@ -336,9 +353,10 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           display: flex; align-items: center; gap: 14px; padding: 14px 16px;
           color: var(--text-secondary); text-decoration: none; border-radius: 16px;
           transition: 0.3s; font-size: 14px; font-weight: 500; margin-bottom: 4px;
+          white-space: nowrap;
         }
-        .menu-item:hover { background: rgba(255,255,255,0.03); color: white; }
-        .menu-item.active { background: var(--bg-card); color: var(--primary); border: 1px solid var(--border); }
+        .menu-item:hover { background: var(--bg-dark); color: var(--primary); }
+        .menu-item.active { background: var(--bg-dark); color: var(--primary); border: 1px solid var(--border); }
         .active-indicator { margin-left: auto; }
         /* Esconde o botão Sair no desktop */
         .menu-item-exit { display: none; }
@@ -445,11 +463,16 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
           position: relative;
           display: flex;
           flex-direction: column;
+          transition: margin var(--transition-speed) ease;
         }
         .stage-inner {
            flex: 1;
            overflow-y: auto;
-           padding: 48px;
+           padding: 40px;
+        }
+        
+        .animate-fade-fast {
+          animation: fadeIn 0.15s ease-out forwards;
         }
         /* Admin Mobile Support */
         .admin-mobile-header { display: none; }

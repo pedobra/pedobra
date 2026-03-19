@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Plus, MapPin, Search, Building2, LayoutGrid, List, Edit2, Trash2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import ModernTable from '../../components/ui/ModernTable';
+import StandardCard from '../../components/ui/StandardCard';
+import StatusBadge from '../../components/ui/StatusBadge';
 
 
 const fmtBRL = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0);
 
 const AdminObras = () => {
+    const navigate = useNavigate();
     const [obras, setObras] = useState<any[]>([]);
     const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
-    const [showModal, setShowModal] = useState(false);
-    const [editingObra, setEditingObra] = useState<any | null>(null);
     const [loading, setLoading] = useState(false);
-    const [formData, setFormData] = useState({ name: '', cep: '', address: '', budget: '' });
     const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
@@ -69,320 +71,168 @@ const AdminObras = () => {
         }
     };
 
-    const handleOpenCreate = () => {
-        setEditingObra(null);
-        setFormData({ name: '', cep: '', address: '', budget: '' });
-        setShowModal(true);
-    };
-
     const handleEdit = (obra: any) => {
-        setEditingObra(obra);
-        setFormData({
-            name: obra.name,
-            cep: obra.address?.cep || '',
-            address: obra.address?.full || '',
-            budget: obra.settings?.budget_planned?.toString() || '0'
-        });
-        setShowModal(true);
+        navigate(`/admin/obras/editar/${obra.id}`);
     };
 
-    const handleDeleteObra = async (id: string) => {
-        if (!confirm('Tem certeza que deseja remover este canteiro?')) return;
-
-        setLoading(true);
-        const { error } = await supabase.from('sites').delete().eq('id', id);
-        if (error) alert(error.message);
-        else fetchObras();
-        setLoading(false);
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-
-        const payload = {
-            name: formData.name,
-            address: {
-                full: formData.address,
-                cep: formData.cep
-            },
-            settings: {
-                budget_planned: parseFloat(formData.budget) || 0
-            }
-        };
-
-        const { error } = editingObra
-            ? await supabase.from('sites').update(payload).eq('id', editingObra.id)
-            : await supabase.from('sites').insert(payload);
-
-        if (error) alert(error.message);
-        else {
-            setShowModal(false);
-            fetchObras();
-            setFormData({ name: '', cep: '', address: '', budget: '' });
-            setEditingObra(null);
-        }
-        setLoading(false);
-    };
-
+    const filteredObras = obras.filter(o =>
+        (o.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (o.address?.full || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
     return (
         <div className="obras-view">
             <header className="view-header">
                 <div className="header-info">
-                    <h1 className="page-title">Canteiros de Obras</h1>
-                    <p className="page-subtitle">Gestão centralizada de infraestrutura e logística operacional.</p>
+                    <h1 className="page-title">Gestão de Canteiros</h1>
+                    <p className="page-subtitle">Acompanhe o status físico e financeiro de suas obras ativas.</p>
                 </div>
                 <div className="header-actions">
                     <div className="view-toggle-glass">
-                        <button
-                            className={viewMode === 'table' ? 'active' : ''}
-                            onClick={() => setViewMode('table')}
-                            title="Visualização em Lista"
-                        >
+                        <button className={viewMode === 'table' ? 'active' : ''} onClick={() => setViewMode('table')}>
                             <List size={18} />
                         </button>
-                        <button
-                            className={viewMode === 'cards' ? 'active' : ''}
-                            onClick={() => setViewMode('cards')}
-                            title="Visualização em Cards"
-                        >
+                        <button className={viewMode === 'cards' ? 'active' : ''} onClick={() => setViewMode('cards')}>
                             <LayoutGrid size={18} />
                         </button>
                     </div>
                     <div className="search-bar-glass">
-                        <Search size={18} color="var(--text-muted)" />
-                        <input type="text" placeholder="Localizar canteiro..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                        <Search size={16} color="var(--text-muted)" />
+                        <input type="text" placeholder="Pesquisar obra..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                     </div>
-                    <button className="btn-primary" onClick={handleOpenCreate}>
+                    <button className="btn-primary" onClick={() => navigate('/admin/obras/novo')}>
                         <Plus size={20} /> Nova Obra
                     </button>
                 </div>
             </header>
 
-            {viewMode === 'table' ? (
-                <div className="premium-table-wrapper">
-                    <table className="modern-table">
-                        <thead>
-                            <tr>
-                                <th>NOME DA OBRA</th>
-                                <th style={{ textAlign: 'center' }}>PEDIDOS</th>
-                                <th style={{ textAlign: 'right' }}>ORÇAMENTO</th>
-                                <th style={{ textAlign: 'right' }}>VALOR USADO</th>
-                                <th style={{ textAlign: 'right' }}>SALDO</th>
-                                <th style={{ textAlign: 'right' }}>AÇÕES</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {obras.filter(o =>
-                                (o.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                (o.address?.full || '').toLowerCase().includes(searchTerm.toLowerCase())
-                            ).map(obra => (
-                                <tr key={obra.id} className={`clickable-row ${obra.budget > 0 ? (obra.usedValue / obra.budget >= 0.9 ? 'row-alert-red' : obra.usedValue / obra.budget >= 0.5 ? 'row-alert-yellow' : '') : ''}`} onClick={() => handleEdit(obra)}>
-                                    <td>
-                                        <div className="obra-identity">
-                                            <div className="obra-icon-mini"><Building2 size={14} /></div>
+            <StandardCard
+                title="Gestão de Canteiros"
+                subtitle="Acompanhe o status físico e financeiro de suas obras ativas."
+                actions={
+                    <button className="btn-primary" onClick={() => navigate('/admin/obras/novo')}>
+                        <Plus size={20} /> Nova Obra
+                    </button>
+                }
+            >
+                {viewMode === 'table' ? (
+                    <ModernTable headers={['Nome da Obra', 'Pedidos', 'Orçamento', 'Ações']}>
+                        {filteredObras.map(obra => (
+                            <tr key={obra.id} className="clickable-row" onClick={() => handleEdit(obra)}>
+                                <td>
+                                    <div className="obra-identity">
+                                        <div className="obra-icon-mini"><Building2 size={14} /></div>
+                                        <div className="obra-texts">
                                             <strong>{obra.name}</strong>
+                                            <span className="text-muted-xs">{obra.address?.full}</span>
                                         </div>
-                                    </td>
-                                    <td style={{ textAlign: 'center' }}>
-                                        <span className="count-badge">{obra.orderCount}</span>
-                                    </td>
-                                    <td style={{ textAlign: 'right' }}>
-                                        <span className="money-value">{fmtBRL(obra.budget)}</span>
-                                    </td>
-                                    <td style={{ textAlign: 'right' }}>
-                                        <span className="money-value used">{fmtBRL(obra.usedValue)}</span>
-                                    </td>
-                                    <td style={{ textAlign: 'right' }}>
-                                        {(() => {
-                                            const diff = (obra.budget || 0) - (obra.usedValue || 0);
-                                            return <span className={`money-value ${diff >= 0 ? 'positive' : 'negative'}`}>{fmtBRL(diff)}</span>;
-                                        })()}
-                                    </td>
-                                    <td style={{ textAlign: 'right' }}>
-                                        <div className="table-actions-btns" onClick={e => e.stopPropagation()}>
-                                            <button className="icon-btn-edit" onClick={() => handleEdit(obra)} title="Editar"><Edit2 size={16} /></button>
-                                            <button className="icon-btn-delete" onClick={() => handleDeleteObra(obra.id)} title="Remover"><Trash2 size={16} /></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            ) : (
-                <div className="obras-grid-reduced">
-                    {obras.filter(o =>
-                        (o.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        (o.address?.full || '').toLowerCase().includes(searchTerm.toLowerCase())
-                    ).map(obra => (
-                        <div key={obra.id} className="obra-card-small glass clickable-card" onClick={() => handleEdit(obra)}>
-                            <div className="card-top">
-                                <h3>{obra.name}</h3>
-                                <div className="card-actions-mini" onClick={e => e.stopPropagation()}>
-                                    <button className="card-icon-action" onClick={() => handleEdit(obra)}><Edit2 size={14} /></button>
-                                    <button className="card-icon-action delete" onClick={() => handleDeleteObra(obra.id)}><Trash2 size={14} /></button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <StatusBadge status={obra.orderCount > 0 ? 'active' : 'pending'} label={`${obra.orderCount} Pedidos`} />
+                                </td>
+                                <td>
+                                    <div className="budget-stack">
+                                        <span className="money-main">{fmtBRL(obra.budget)}</span>
+                                        <span className="money-sub">Usado: {fmtBRL(obra.usedValue)}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div className="table-actions-btns" onClick={e => e.stopPropagation()}>
+                                        <button className="icon-btn-edit" onClick={() => handleEdit(obra)} title="Editar"><Edit2 size={16} /></button>
+                                        <button className="icon-btn-delete" onClick={async () => {
+                                            if (confirm('Remover canteiro?')) {
+                                                await supabase.from('sites').delete().eq('id', obra.id);
+                                                fetchObras();
+                                            }
+                                        }} title="Remover"><Trash2 size={16} /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </ModernTable>
+                ) : (
+                    <div className="obras-grid-reduced">
+                        {filteredObras.map(obra => (
+                            <div key={obra.id} className="obra-card-small clickable-card" onClick={() => handleEdit(obra)}>
+                                <div className="card-top">
+                                    <h3>{obra.name}</h3>
+                                    <div className="card-actions-mini" onClick={e => e.stopPropagation()}>
+                                        <button className="card-icon-action" onClick={() => handleEdit(obra)}><Edit2 size={14} /></button>
+                                    </div>
+                                </div>
+                                <div className="card-mid">
+                                    <StatusBadge status="active" label={`${obra.orderCount} Pedidos`} />
+                                </div>
+                                <div className="card-address">
+                                    <MapPin size={12} />
+                                    <span>{obra.address?.full || 'Não informado'}</span>
+                                </div>
+                                <div className="card-budget-info">
+                                    <label>ORÇAMENTO</label>
+                                    <strong>{fmtBRL(obra.budget)}</strong>
                                 </div>
                             </div>
-                            <div className="card-mid">
-                                <span className="order-pill">{obra.orderCount} Pedidos</span>
-                            </div>
-                            <div className="card-address">
-                                <MapPin size={12} color="var(--primary)" />
-                                <span>{obra.address?.full || 'Não informado'}</span>
-                            </div>
-                            <button className="btn-card-enter">
-                                Acessar Canteiro
-                            </button>
+                        ))}
+                        <div className="add-obra-card-small" onClick={() => navigate('/admin/obras/novo')}>
+                            <Plus size={24} />
+                            <span>Adicionar Obra</span>
                         </div>
-                    ))}
-                    <div className="add-obra-card-small" onClick={handleOpenCreate}>
-                        <Plus size={24} />
-                        <span>Nova Obra</span>
                     </div>
-                </div>
-            )}
-
-            {showModal && (
-                <div className="modal-overlay glass" onClick={() => setShowModal(false)}>
-                    <div className="modal-card premium-card animate-fade" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header">
-                            <h2 className="modal-title">{editingObra ? 'Alterar Canteiro' : 'Cadastrar Nova Obra'}</h2>
-                            <p>{editingObra ? 'Atualize as informações técnicas da unidade.' : 'Insira os detalhes técnicos da nova unidade.'}</p>
-                        </div>
-                        <form onSubmit={handleSubmit} className="modal-form">
-                            <div className="input-field">
-                                <label>Nome do Canteiro</label>
-                                <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="Ex: Residencial Diamond" required />
-                            </div>
-
-                            <div className="form-row-dual">
-                                <div className="input-field">
-                                    <label>Busca por CEP</label>
-                                    <input
-                                        type="text"
-                                        value={formData.cep}
-                                        onChange={e => handleCEPLookup(e.target.value)}
-                                        placeholder="00000-000"
-                                        maxLength={9}
-                                        required
-                                    />
-                                </div>
-                                <div className="input-field">
-                                    <label>Orçamento Previsto (R$)</label>
-                                    <input
-                                        type="number"
-                                        value={formData.budget}
-                                        onChange={e => setFormData({ ...formData, budget: e.target.value })}
-                                        placeholder="150000.00"
-                                        required
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="input-field">
-                                <label>Endereço Completo</label>
-                                <input
-                                    type="text"
-                                    value={formData.address}
-                                    onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                    placeholder="Rua, Número, Bairro, Cidade"
-                                    required
-                                />
-                            </div>
-
-                            <div className="modal-actions-btns">
-                                <button type="button" className="btn-ghost" onClick={() => setShowModal(false)}>Cancelar</button>
-                                <button type="submit" className="btn-primary" disabled={loading}>
-                                    {loading ? 'Sincronizando...' : 'Confirmar'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+                )}
+            </StandardCard>
 
             <style>{`
-        .obras-view { display: flex; flex-direction: column; gap: 40px; }
-        .view-header { display: flex; justify-content: space-between; align-items: flex-end; }
-        .page-title { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
-        .page-subtitle { color: var(--text-secondary); font-size: 14px; }
+        .obras-view { display: flex; flex-direction: column; gap: 24px; animation: fadeIn 0.3s ease-out; }
+        .view-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; }
+        .page-title { font-size: 28px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+        .page-subtitle { color: var(--text-muted); font-size: 14px; }
         
-        .header-actions { display: flex; gap: 16px; align-items: center; }
+        .header-actions { display: flex; gap: 12px; align-items: center; }
         .view-toggle-glass { 
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border); 
+            background: var(--bg-dark); border: 1px solid var(--border); 
             border-radius: 12px; display: flex; padding: 4px; gap: 4px;
         }
         .view-toggle-glass button {
             background: transparent; border: none; color: var(--text-muted); 
-            width: 38px; height: 38px; border-radius: 8px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; transition: 0.3s;
+            width: 34px; height: 34px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
-        .view-toggle-glass button.active { background: var(--border); color: var(--primary); }
+        .view-toggle-glass button.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
         .search-bar-glass {
-           background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-           border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 12px; width: 300px;
-           height: 48px;
+           background: var(--bg-dark); border: 1px solid var(--border);
+           border-radius: 12px; padding: 0 16px; display: flex; align-items: center; gap: 10px; width: 260px;
+           height: 42px;
         }
-        .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; }
+        .search-bar-glass input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 13px; }
 
-        .premium-table-wrapper { background: var(--bg-card); border-radius: 24px; border: 1px solid var(--border); overflow: hidden; }
-        .modern-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .modern-table th { padding: 20px 24px; font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 1px; border-bottom: 1px solid var(--border); }
-        .modern-table td { padding: 18px 24px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        .modern-table tr:hover { background: rgba(255,255,255,0.015); }
-        .row-alert-yellow { background: var(--primary-glow) !important; border-left: 3px solid var(--primary); }
-        .row-alert-yellow:hover { background: var(--primary-glow) !important; opacity: 0.8; }
-        .row-alert-red { background: rgba(255, 59, 48, 0.07) !important; border-left: 3px solid rgba(255,59,48,0.5); }
-        .row-alert-red:hover { background: rgba(255, 59, 48, 0.12) !important; }
-        .clickable-row { cursor: pointer; }
-        
-        .table-actions-btns { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
-        .icon-btn-edit, .icon-btn-delete { 
-            background: transparent; border: none; color: var(--text-muted); 
-            cursor: pointer; padding: 8px; border-radius: 8px; transition: 0.2s;
-            display: flex; align-items: center; justify-content: center;
+        .obra-identity { display: flex; align-items: center; gap: 14px; }
+        .obra-icon-mini { width: 36px; height: 36px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary); }
+        .obra-texts { display: flex; flex-direction: column; }
+        .text-muted-xs { font-size: 11px; color: var(--text-muted); }
+
+        .budget-stack { display: flex; flex-direction: column; }
+        .money-main { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+        .money-sub { font-size: 11px; color: var(--text-muted); }
+
+        .obras-grid-reduced { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+        .obra-card-small { 
+            padding: 24px; border-radius: 20px; border: 1px solid var(--border); 
+            transition: 0.3s; background: var(--bg-card); display: flex; flex-direction: column; gap: 16px;
         }
-        .icon-btn-edit:hover { background: var(--primary-glow); color: var(--primary); }
-        .icon-btn-delete:hover { background: rgba(255,59,48,0.1); color: #FF3B30; }
-
-        .obra-identity { display: flex; align-items: center; gap: 12px; }
-        .obra-icon-mini { width: 32px; height: 32px; background: var(--primary-glow); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--primary); }
-        
-        .count-badge { background: var(--primary-glow); color: var(--primary); padding: 5px 12px; border-radius: 100px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); }
-
-        .money-value { font-size: 13px; font-weight: 700; font-family: monospace; color: var(--text-secondary); }
-        .money-value.used     { color: #e67e22; }
-        .money-value.positive { color: var(--status-approved); }
-        .money-value.negative { color: var(--status-denied); }
-        .address-cell { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); max-width: 400px; }
-        .address-cell span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; }
-
-        .obras-grid-reduced { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-        .obra-card-small { padding: 24px; border-radius: 20px; border: 1px solid var(--border); transition: 0.3s; position: relative; }
         .clickable-card { cursor: pointer; }
-        .obra-card-small:hover { border-color: var(--primary); transform: translateY(-4px); background: rgba(255,255,255,0.02); }
+        .obra-card-small:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: var(--shadow-premium); }
         
-        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-        .obra-card-small h3 { font-size: 18px; color: var(--text-primary); margin: 0; }
+        .obra-card-small h3 { font-size: 18px; margin: 0; font-weight: 700; }
+        .card-address { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 12px; }
+        .card-address span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .card-actions-mini { display: flex; gap: 4px; }
-        .card-icon-action { 
-            background: transparent; border: none; color: var(--text-muted); 
-            cursor: pointer; padding: 6px; border-radius: 6px; transition: 0.2s;
-        }
-        .card-icon-action:hover { background: var(--primary-glow); color: var(--primary); }
-        .card-icon-action.delete:hover { background: rgba(255,59,48,0.1); color: #FF3B30; }
+        .card-budget-info { border-top: 1px solid var(--border); pt: 16px; display: flex; flex-direction: column; gap: 4px; }
+        .card-budget-info label { font-size: 10px; font-weight: 700; color: var(--text-muted); }
+        .card-budget-info strong { font-size: 15px; }
 
-        .card-mid { margin-bottom: 12px; }
-        .order-pill { font-size: 10px; font-weight: 700; color: var(--primary); text-transform: uppercase; }
-        .card-address { display: flex; align-items: center; gap: 8px; color: var(--text-muted); margin-bottom: 20px; }
-        .card-address span { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .btn-card-enter { width: 100%; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--text-primary); padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-
-        .add-obra-card-small { border: 2px dashed var(--border); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; color: var(--text-muted); transition: 0.3s; min-height: 160px; }
-        .add-obra-card-small:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-glow); }
+        .add-obra-card-small { border: 2px dashed var(--border); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; cursor: pointer; color: var(--text-muted); min-height: 180px; }
+        .add-obra-card-small:hover { border-color: var(--primary); color: var(--primary); background: var(--bg-dark); }
 
         .modal-card { width: 500px; padding: 48px; border-radius: 32px; }
         .modal-actions-btns { display: flex; justify-content: flex-end; gap: 16px; margin-top: 32px; }

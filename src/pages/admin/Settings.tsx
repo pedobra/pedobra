@@ -1,29 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import {
-    Building,
-    MapPin,
-    Globe,
-    Upload,
-    Save,
-    CheckCircle2,
-    Search,
-    ShieldCheck,
-    FileText,
-    ToggleLeft,
-    ToggleRight,
-    CreditCard,
-    Calendar,
-    Zap,
-    Crown
-} from 'lucide-react';
+import { Building, MapPin, Globe, Save, CheckCircle2, Crown, CreditCard, Star, FileText, Package, Calendar } from 'lucide-react';
 import { useSubscription } from '../../hooks/useSubscription';
+import StandardCard from '../../components/ui/StandardCard';
 
 const AdminSettings = () => {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [activeTab, setActiveTab] = useState<'general' | 'permissions' | 'subscription'>('general');
-    const { isTrial, daysRemaining, planId, organizationName, organizationId } = useSubscription();
+    const { isTrial, daysRemaining, planId, organizationName } = useSubscription();
     const [settings, setSettings] = useState({
         company_name: '',
         cnpj: '',
@@ -33,11 +17,9 @@ const AdminSettings = () => {
         address_neighborhood: '',
         address_city: '',
         address_state: '',
-        logo_url: '',
-        pdf_show_site_address: true
+        pdf_show_site_address: true,
+        allow_custom_materials_global: false
     });
-    const [sites, setSites] = useState<any[]>([]);
-    const [siteSearchTerm, setSiteSearchTerm] = useState('');
 
     useEffect(() => {
         fetchSettings();
@@ -45,448 +27,177 @@ const AdminSettings = () => {
 
     const fetchSettings = async () => {
         const { data } = await supabase.from('company_settings').select('*').single();
-        if (data) setSettings(data);
-
-        // Fetch sites for permissions
-        const { data: sitesData } = await supabase.from('sites').select('*').order('name');
-        if (sitesData) setSites(sitesData);
+        if (data) setSettings({ ...settings, ...data });
     };
 
-    const toggleSitePermission = async (siteId: string, currentSettings: any) => {
-        const newSettings = {
-            ...currentSettings,
-            allow_custom_materials: !currentSettings?.allow_custom_materials
-        };
-
-        const { error } = await supabase
-            .from('sites')
-            .update({ settings: newSettings })
-            .eq('id', siteId);
-
-        if (error) alert(error.message);
-        else {
-            setSites(sites.map(s => s.id === siteId ? { ...s, settings: newSettings } : s));
-        }
-    };
-
-    const handleCEPBlur = async () => {
-        const cep = settings.address_cep.replace(/\D/g, '');
-        if (cep.length === 8) {
-            try {
-                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-                const data = await response.json();
-                if (!data.erro) {
-                    setSettings({
-                        ...settings,
-                        address_street: data.logradouro,
-                        address_neighborhood: data.bairro,
-                        address_city: data.localidade,
-                        address_state: data.uf
-                    });
-                }
-            } catch (error) {
-                console.error("Erro ao buscar CEP", error);
-            }
-        }
-    };
-
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setLoading(true);
-        try {
-            const fileExt = file.name.split('.').pop();
-            const fileName = `logo_${Math.random()}.${fileExt}`;
-            const filePath = `${fileName}`;
-
-            const { error: uploadError } = await supabase.storage
-                .from('logos')
-                .upload(filePath, file);
-
-            if (uploadError) throw uploadError;
-
-            const { data: { publicUrl } } = supabase.storage
-                .from('logos')
-                .getPublicUrl(filePath);
-
-            setSettings({ ...settings, logo_url: publicUrl });
-        } catch (error: any) {
-            alert('Erro ao fazer upload: ' + error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleSubmit = async (e?: React.FormEvent) => {
-        if (e) e.preventDefault();
-        if (!organizationId) return;
-        
+    const handleSave = async () => {
         setLoading(true);
         const { error } = await supabase.from('company_settings').upsert({
-            organization_id: organizationId,
-            company_name: settings.company_name,
-            cnpj: settings.cnpj,
-            address_cep: settings.address_cep,
-            address_street: settings.address_street,
-            address_number: settings.address_number,
-            address_neighborhood: settings.address_neighborhood,
-            address_city: settings.address_city,
-            address_state: settings.address_state,
-            logo_url: settings.logo_url,
-            pdf_show_site_address: settings.pdf_show_site_address,
-            updated_at: new Date()
+            ...settings,
+            updated_at: new Date().toISOString()
         });
-
-        if (error) alert(error.message);
-        else {
+        if (!error) {
             setSuccess(true);
             setTimeout(() => setSuccess(false), 3000);
         }
         setLoading(false);
     };
 
+    const handleCEPBlur = async () => {
+        const cep = settings.address_cep.replace(/\D/g, '');
+        if (cep.length === 8) {
+            const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`).then(r => r.json());
+            if (!res.erro) {
+                setSettings({ ...settings, address_street: res.logradouro, address_neighborhood: res.bairro, address_city: res.localidade, address_state: res.uf });
+            }
+        }
+    };
+
     return (
         <div className="settings-view">
             <header className="view-header">
                 <div className="header-info">
-                    <h1 className="page-title">Configurações</h1>
-                    <p className="page-subtitle">Gerencie sua conta, equipe e assinatura.</p>
+                    <h1 className="page-title">Configurações Gerais</h1>
+                    <p className="page-subtitle">Personalize a identidade da sua organização e parâmetros do sistema.</p>
                 </div>
-                <div className="header-actions">
-                    <div className={`status-indicator ${success ? 'active' : ''}`}>
-                        <CheckCircle2 size={16} />
-                        <span>Atualizado com Sucesso</span>
-                    </div>
-                </div>
+                <button className="btn-primary" onClick={handleSave} disabled={loading}>
+                    {success ? <CheckCircle2 size={18} /> : <Save size={18} />}
+                    {loading ? 'Salvando...' : success ? 'Salvo com Sucesso' : 'Salvar Alterações'}
+                </button>
             </header>
 
-            <nav className="settings-tabs">
-                <button className={`tab-item ${activeTab === 'general' ? 'active' : ''}`} onClick={() => setActiveTab('general')}>
-                    <Building size={18} /> <span>Geral</span>
-                </button>
-                <button className={`tab-item ${activeTab === 'permissions' ? 'active' : ''}`} onClick={() => setActiveTab('permissions')}>
-                    <ShieldCheck size={18} /> <span>Campo & Impressos</span>
-                </button>
-                <button className={`tab-item ${activeTab === 'subscription' ? 'active' : ''}`} onClick={() => setActiveTab('subscription')}>
-                    <CreditCard size={18} /> <span>Assinatura</span>
-                </button>
-            </nav>
-
-            {activeTab === 'general' && (
-                <div className="settings-grid">
-                    <main className="settings-main-form">
-                        <form onSubmit={handleSubmit} className="premium-card">
-                            <section className="form-section">
-                                <div className="section-title-sm">
-                                    <Building size={16} />
-                                    <span>Identidade Corporativa</span>
-                                </div>
-                                <div className="input-field">
-                                    <label>Razão Social / Nome da Empresa</label>
-                                    <input type="text" value={settings.company_name} onChange={e => setSettings({ ...settings, company_name: e.target.value })} placeholder="Ex: Engenharia de Elite S.A." required />
-                                </div>
-                                <div className="input-field">
-                                    <label>CNPJ</label>
-                                    <input type="text" value={settings.cnpj} onChange={e => setSettings({ ...settings, cnpj: e.target.value })} placeholder="00.000.000/0001-00" />
-                                </div>
-                            </section>
-
-                            <section className="form-section">
-                                <div className="section-title-sm">
-                                    <MapPin size={16} />
-                                    <span>Localização da Sede Administrativa</span>
-                                </div>
-                                <div className="input-group">
-                                    <div className="input-field">
-                                        <label>CEP</label>
-                                        <div className="cep-input-wrapper">
-                                            <input type="text" value={settings.address_cep} onChange={e => setSettings({ ...settings, address_cep: e.target.value })} onBlur={handleCEPBlur} placeholder="00000-000" required />
-                                            <Search size={16} className="search-icon" />
-                                        </div>
-                                    </div>
-                                    <div className="input-field" style={{ flex: 2 }}>
-                                        <label>Logradouro</label>
-                                        <input type="text" value={settings.address_street} onChange={e => setSettings({ ...settings, address_street: e.target.value })} placeholder="Rua, Av..." required />
-                                    </div>
-                                </div>
-                                <div className="input-group">
-                                    <div className="input-field">
-                                        <label>Número</label>
-                                        <input type="text" value={settings.address_number} onChange={e => setSettings({ ...settings, address_number: e.target.value })} placeholder="123" required />
-                                    </div>
-                                    <div className="input-field">
-                                        <label>Bairro</label>
-                                        <input type="text" value={settings.address_neighborhood} onChange={e => setSettings({ ...settings, address_neighborhood: e.target.value })} placeholder="Ex: Centro" required />
-                                    </div>
-                                </div>
-                                <div className="input-group">
-                                    <div className="input-field">
-                                        <label>Cidade</label>
-                                        <input type="text" value={settings.address_city} onChange={e => setSettings({ ...settings, address_city: e.target.value })} placeholder="Cidade" required />
-                                    </div>
-                                    <div className="input-field">
-                                        <label>Estado (UF)</label>
-                                        <input type="text" value={settings.address_state} onChange={e => setSettings({ ...settings, address_state: e.target.value })} placeholder="EX: SP" required />
-                                    </div>
-                                </div>
-                            </section>
-
-                            <div className="form-footer">
-                                <button type="submit" className="btn-primary" disabled={loading}>
-                                    <Save size={18} /> {loading ? 'Salvando...' : 'Atualizar'}
-                                </button>
-                            </div>
-                        </form>
-                    </main>
-
-                    <aside className="settings-sidebar">
-                        <div className="premium-card logo-upload-card">
-                            <div className="section-title-sm">
-                                <Globe size={16} />
-                                <span>Branding & Logo</span>
-                            </div>
-                            <div className="logo-preview-box">
-                                {settings.logo_url ? (
-                                    <img src={settings.logo_url} alt="Logo Preview" />
-                                ) : (
-                                    <div className="logo-placeholder">
-                                        <Upload size={32} color="var(--text-muted)" />
-                                        <span>Nenhum logo definido</span>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="upload-btn-wrapper">
-                                <label className="btn-ghost w-full cursor-pointer flex items-center justify-center gap-2">
-                                    <Upload size={18} />
-                                    {loading ? 'Enviando...' : 'Selecionar Imagem'}
-                                    <input type="file" accept="image/*" onChange={handleFileUpload} hidden disabled={loading} />
-                                </label>
-                            </div>
-                            <p className="hint">Use imagens com fundo transparente (PNG/SVG) para melhor resultado.</p>
+            <div className="settings-grid">
+                <div className="main-column">
+                    <StandardCard title="Dados da Empresa" subtitle="Estas informações aparecerão nos documentos e PDFs gerados.">
+                        <div className="form-group">
+                            <label><Building size={14} /> Nome da Organização / Razão Social</label>
+                            <input type="text" className="form-input" value={settings.company_name} onChange={e => setSettings({...settings, company_name:e.target.value})} placeholder="Ex: Engenharia & Construções LTDA" />
                         </div>
-
-                        <div className="security-info premium-card">
-                            <ShieldCheck size={24} color="var(--primary)" />
-                            <strong>Zona de Segurança</strong>
-                            <p>Todas as alterações de configurações são auditadas e registradas no log master do sistema.</p>
+                        <div className="form-row">
+                            <div className="form-group flex-1">
+                                <label><Globe size={14} /> CNPJ</label>
+                                <input type="text" className="form-input" value={settings.cnpj} onChange={e => setSettings({...settings, cnpj:e.target.value})} placeholder="00.000.000/0001-00" />
+                            </div>
+                            <div className="form-group flex-1">
+                                <label><MapPin size={14} /> CEP</label>
+                                <input type="text" className="form-input" value={settings.address_cep} onChange={e => setSettings({...settings, address_cep:e.target.value})} onBlur={handleCEPBlur} placeholder="00000-000" />
+                            </div>
                         </div>
-                    </aside>
+                        <div className="form-row">
+                             <div className="form-group flex-3">
+                                <label>Logradouro</label>
+                                <input type="text" className="form-input" value={settings.address_street} onChange={e => setSettings({...settings, address_street:e.target.value})} />
+                            </div>
+                            <div className="form-group flex-1">
+                                <label>Número</label>
+                                <input type="text" className="form-input" value={settings.address_number} onChange={e => setSettings({...settings, address_number:e.target.value})} />
+                            </div>
+                        </div>
+                        <div className="form-row">
+                             <div className="form-group flex-1">
+                                <label>Cidade</label>
+                                <input type="text" className="form-input" value={settings.address_city} readOnly />
+                            </div>
+                            <div className="form-group flex-1">
+                                <label>Estado</label>
+                                <input type="text" className="form-input" value={settings.address_state} readOnly />
+                            </div>
+                        </div>
+                    </StandardCard>
+
+                    <StandardCard title="Preferências de Exportação" subtitle="Controle como os arquivos PDF são gerados.">
+                         <div className="toggle-item">
+                            <div>
+                                <strong>Exibir endereço da obra nos pedidos</strong>
+                                <p>Inclui o endereço completo do canteiro no cabeçalho dos PDFs.</p>
+                            </div>
+                            <input type="checkbox" className="ios-toggle" checked={settings.pdf_show_site_address} onChange={e => setSettings({...settings, pdf_show_site_address: e.target.checked})} />
+                        </div>
+                    </StandardCard>
                 </div>
-            )}
 
-            {activeTab === 'permissions' && (
-                <div className="settings-grid">
-                    <main className="settings-main-form">
-                         <div className="premium-card">
-                            <div className="section-title-sm">
-                                <FileText size={16} />
-                                <span>Configurações de Impressos</span>
-                            </div>
-                            <p style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '24px' }}>
-                                Personalize as informações exibidas nos documentos PDF gerados pelo sistema.
-                            </p>
-
-                            <div className="toggle-row" onClick={() => setSettings({ ...settings, pdf_show_site_address: !settings.pdf_show_site_address })}>
-                                <div className="toggle-info">
-                                    <span className="toggle-label">Nome e endereço da obra no PDF</span>
-                                    <span className="toggle-desc">Exibe o cabeçalho completo da obra nos relatórios de pedidos.</span>
-                                </div>
-                                <div className={`toggle-btn ${settings.pdf_show_site_address ? 'on' : 'off'}`}>
-                                    {settings.pdf_show_site_address
-                                        ? <ToggleRight size={32} />
-                                        : <ToggleLeft size={32} />}
-                                </div>
-                            </div>
-                            
-                            <div className="form-footer" style={{ marginTop: '40px' }}>
-                                <button onClick={() => handleSubmit()} className="btn-primary" disabled={loading}>
-                                    <Save size={18} /> Salvar Preferências
-                                </button>
-                            </div>
-                        </div>
-                    </main>
-
-                    <aside className="settings-sidebar">
-                         <div className="premium-card">
-                            <div className="section-title-sm">
-                                <ShieldCheck size={16} />
-                                <span>Permissões por Obra</span>
-                            </div>
-                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                                Controle individual de permissão para novos insumos.
-                            </p>
-                            <div className="site-search-wrapper">
-                                <Search size={14} />
-                                <input
-                                    type="text"
-                                    placeholder="Buscar obra..."
-                                    value={siteSearchTerm}
-                                    onChange={e => setSiteSearchTerm(e.target.value)}
-                                />
-                            </div>
-                            <div className="sites-permissions-scroll" style={{ maxHeight: '400px' }}>
-                                <div className="sites-permissions-list">
-                                    {sites
-                                        .filter(site => site.name.toLowerCase().includes(siteSearchTerm.toLowerCase()))
-                                        .map(site => {
-                                            const allowed = site.settings?.allow_custom_materials ?? true;
-                                            return (
-                                                <div key={site.id} className="site-perm-item" onClick={() => toggleSitePermission(site.id, site.settings)}>
-                                                    <div className="site-info-min">
-                                                        <strong>{site.name}</strong>
-                                                        <span>{allowed ? 'Livre' : 'Restrito'}</span>
-                                                    </div>
-                                                    <div className={`toggle-switch-compact ${allowed ? 'on' : 'off'}`}>
-                                                        <div className="switch-knob" />
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                </div>
-                            </div>
-                         </div>
-                    </aside>
-                </div>
-            )}
-
-            {activeTab === 'subscription' && (
-                <div className="subscription-view">
-                    <div className="subscription-hero premium-card">
-                        <div className="sub-header">
-                            <div className="plan-badge">
-                                <Crown size={20} />
-                                <span>PLANO {planId?.toUpperCase() || 'TRIAL'}</span>
-                            </div>
-                            <h2>{organizationName || 'Carregando...'}</h2>
-                        </div>
-
-                        <div className="sub-details-grid">
-                            <div className="sub-stat">
-                                <Calendar size={20} />
-                                <div className="stat-info">
-                                    <label>Status da Conta</label>
-                                    <strong>{isTrial ? 'Período de Teste' : 'Assinatura Ativa'}</strong>
-                                </div>
-                            </div>
-                            <div className="sub-stat">
-                                <Zap size={20} />
-                                <div className="stat-info">
-                                    <label>Tempo Restante</label>
-                                    <strong>{daysRemaining} dias</strong>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="sub-actions">
-                            <button className="btn-primary" onClick={() => alert('Em breve: Integração com Stripe Checkout')}>
-                                <Zap size={18} /> Fazer Upgrade para Pro
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="plans-comparison-grid">
+                <div className="side-column">
+                    <StandardCard title="Plano e Assinatura" subtitle="Status do seu licenciamento.">
                         <div className="plan-card">
-                            <h3>Básico (Free)</h3>
-                            <p className="price">R$ 0<span>/mês</span></p>
-                            <ul>
-                                <li>Até 1 Obra ativa</li>
-                                <li>Limite de 5 fornecedores</li>
-                                <li>Suporte via Email</li>
-                            </ul>
-                            <button className="btn-ghost w-full">Plano Atual</button>
+                            <div className="plan-header">
+                                <Crown size={24} className="plan-icon" />
+                                <div>
+                                    <span className="plan-name">Plano Enterprise</span>
+                                    <span className={`plan-status ${isTrial ? 'trial' : 'active'}`}>
+                                        {isTrial ? 'Período de Teste' : 'Assinatura Ativa'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="plan-details">
+                                <div className="detail-row">
+                                    <Calendar size={14} />
+                                    <span>Vencimento:</span>
+                                    <strong>{isTrial ? `${daysRemaining} dias restantes` : 'Renovação Mensal'}</strong>
+                                </div>
+                                <div className="detail-row">
+                                    <CreditCard size={14} />
+                                    <span>Método:</span>
+                                    <strong>Cartão de Crédito</strong>
+                                </div>
+                            </div>
+                            <button className="btn-secondary w-full">Gerenciar Faturamento</button>
                         </div>
-                        <div className="plan-card popular">
-                            <div className="popular-tag">RECOMENDADO</div>
-                            <h3>Profissional</h3>
-                            <p className="price">R$ 299<span>/mês</span></p>
-                            <ul>
-                                <li>Obras ilimitadas</li>
-                                <li>Fornecedores ilimitados</li>
-                                <li>Relatórios Customizados</li>
-                                <li>Suporte Prioritário</li>
-                            </ul>
-                            <button className="btn-primary w-full" onClick={() => alert('Em breve')}>Escolher Plano</button>
-                        </div>
-                    </div>
+                    </StandardCard>
+
+                    <StandardCard title="Suporte Integrado" subtitle="Precisa de ajuda?">
+                        <ul className="support-list">
+                            <li><Star size={14} color="var(--primary)" /> Central de Ajuda</li>
+                            <li><FileText size={14} color="var(--primary)" /> Documentação API</li>
+                            <li className="premium-link"><Package size={14} color="var(--primary)" /> Solicitar Personalização</li>
+                        </ul>
+                    </StandardCard>
                 </div>
-            )}
+            </div>
 
             <style>{`
-                .settings-view { display: flex; flex-direction: column; gap: 20px; }
-                .view-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; }
-                .page-title { font-size: 32px; font-weight: 800; margin-bottom: 8px; }
-                .page-subtitle { color: var(--text-secondary); font-size: 14px; }
+                .settings-view { display: flex; flex-direction: column; gap: 32px; }
+                .view-header { display: flex; justify-content: space-between; align-items: flex-end; }
+                .page-title { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+                .page-subtitle { color: var(--text-muted); font-size: 14px; }
                 
-                .settings-tabs { display: flex; gap: 12px; margin-bottom: 32px; border-bottom: 1px solid var(--border); padding-bottom: 2px; }
-                .tab-item { 
-                    display: flex; align-items: center; gap: 10px; padding: 12px 24px; 
-                    background: transparent; border: none; color: var(--text-muted); 
-                    cursor: pointer; font-size: 14px; font-weight: 600; transition: 0.3s;
-                    border-bottom: 2px solid transparent; margin-bottom: -2px;
-                }
-                .tab-item:hover { color: var(--text-primary); }
-                .tab-item.active { color: var(--primary); border-bottom-color: var(--primary); }
+                .settings-grid { display: grid; grid-template-columns: 1fr 340px; gap: 32px; }
+                .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+                .form-group label { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+                .form-row { display: flex; gap: 16px; margin-bottom: 20px; }
+                .flex-1 { flex: 1; }
+                .flex-3 { flex: 3; }
+                
+                .form-input { background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-primary); padding: 12px 16px; border-radius: 12px; outline: none; transition: 0.2s; }
+                .form-input:focus { border-color: var(--primary); }
+                .form-input[readonly] { opacity: 0.6; cursor: default; }
 
-                .settings-grid { display: grid; grid-template-columns: 1fr 340px; gap: 32px; align-items: start; }
-                .form-section { margin-bottom: 40px; }
-                .section-title-sm { display: flex; align-items: center; gap: 10px; color: var(--primary); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 24px; }
+                .toggle-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 16px; }
+                .toggle-item strong { display: block; font-size: 14px; color: var(--text-primary); }
+                .toggle-item p { font-size: 12px; color: var(--text-muted); margin: 4px 0 0; }
                 
-                .input-group { display: flex; gap: 20px; }
-                .input-field { margin-bottom: 24px; flex: 1; }
-                .input-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
-                .input-field input { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); outline: none; transition: 0.3s; font-size: 14px; }
-                .input-field input:focus { border-color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
+                .plan-card { background: var(--bg-dark); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+                .plan-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+                .plan-icon { color: var(--primary); filter: drop-shadow(0 0 8px var(--primary-glow)); }
+                .plan-name { display: block; font-size: 16px; font-weight: 800; color: var(--text-primary); }
+                .plan-status { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; }
+                .plan-status.active { background: rgba(52,199,89,0.1); color: #34C759; }
+                .plan-status.trial { background: rgba(255,149,0,0.1); color: #FF9500; }
                 
-                .subscription-view { display: flex; flex-direction: column; gap: 32px; max-width: 900px; margin: 0 auto; width: 100%; }
-                .subscription-hero { padding: 48px; border: 1px solid var(--primary); border-radius: 24px; background: var(--bg-card); position: relative; }
-                .plan-badge { 
-                    display: inline-flex; align-items: center; gap: 8px; 
-                    background: var(--primary-glow); color: var(--primary); 
-                    padding: 6px 16px; border-radius: 100px; font-size: 12px; font-weight: 800;
-                    margin-bottom: 24px; border: 1px solid var(--primary);
-                }
-                .sub-header h2 { font-size: 32px; margin-bottom: 32px; color: var(--text-primary); }
-                .sub-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
-                .sub-stat { display: flex; align-items: center; gap: 16px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 16px; }
-                .stat-info label { display: block; font-size: 11px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
-                .stat-info strong { font-size: 18px; color: var(--text-primary); }
+                .plan-details { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+                .detail-row { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); }
+                .detail-row strong { margin-left: auto; color: var(--text-primary); }
                 
-                .plans-comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-                .plan-card { padding: 32px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; }
-                .plan-card.popular { border-color: var(--primary); background: var(--primary-glow); position: relative; }
-                .popular-tag { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 4px 12px; border-radius: 100px; font-size: 10px; font-weight: 800; }
-                .plan-card h3 { margin-bottom: 16px; font-size: 20px; }
-                .plan-card .price { font-size: 36px; font-weight: 800; margin-bottom: 24px; }
-                .plan-card .price span { font-size: 14px; color: var(--text-muted); font-weight: 400; }
-                .plan-card ul { list-style: none; margin-bottom: 32px; flex: 1; }
-                .plan-card li { margin-bottom: 12px; font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 10px; }
-                .plan-card li::before { content: "✓"; color: var(--primary); font-weight: bold; }
+                .support-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
+                .support-list li { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text-secondary); cursor: pointer; transition: 0.2s; }
+                .support-list li:hover { color: var(--text-primary); }
+                .premium-link { font-weight: 700; color: var(--primary) !important; }
+                
+                .w-full { width: 100%; }
+                .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-secondary); padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 700; }
+                .btn-secondary:hover { border-color: var(--text-muted); color: var(--text-primary); }
 
-                .site-search-wrapper { display: flex; align-items: center; gap: 8px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-bottom: 16px; }
-                .site-search-wrapper input { background: transparent; border: none; outline: none; color: var(--text-primary); width: 100%; font-size: 13px; }
-                
-                .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: 0.2s; }
-                .toggle-row:hover { border-color: var(--primary); }
-                .toggle-info { display: flex; flex-direction: column; gap: 4px; }
-                .toggle-label { font-size: 14px; font-weight: 600; }
-                .toggle-desc { font-size: 11px; color: var(--text-muted); }
-                .toggle-btn { transition: 0.3s; }
-                .toggle-btn.on { color: var(--primary); }
-                
-                .site-perm-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; transition: 0.2s; margin-bottom: 8px; }
-                .site-perm-item:hover { border-color: var(--primary); }
-                .site-info-min strong { display: block; font-size: 13px; }
-                .site-info-min span { font-size: 11px; color: var(--text-muted); }
-                
-                .toggle-switch-compact { width: 36px; height: 20px; background: var(--border); border-radius: 100px; position: relative; transition: 0.3s; }
-                .toggle-switch-compact.on { background: var(--primary); }
-                .switch-knob { width: 16px; height: 16px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
-                .toggle-switch-compact.on .switch-knob { left: 18px; }
-
-                @media (max-width: 768px) {
-                  .settings-grid, .sub-details-grid, .plans-comparison-grid { grid-template-columns: 1fr; }
-                  .settings-tabs { overflow-x: auto; white-space: nowrap; }
+                @media (max-width: 800px) {
+                    .settings-grid { grid-template-columns: 1fr; }
                 }
             `}</style>
         </div>

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Package, ChevronLeft, CheckCircle, PackageCheck, Send, Archive } from 'lucide-react';
+import { Package, ChevronLeft, PackageCheck, Send, Archive, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import StandardCard from '../../components/ui/StandardCard';
 
 const WorkerReceiving = ({ profile }: { profile: any }) => {
     const navigate = useNavigate();
@@ -19,7 +20,6 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
     }, [profile]);
 
     const fetchOrders = async () => {
-        // Fetch approved orders for the user's site
         const { data } = await supabase
             .from('orders')
             .select('*, sites(name, address), profiles(name)')
@@ -62,69 +62,52 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
     const handleSaveReceiving = async () => {
         setLoading(true);
         try {
-            let numReceived = 0;
-            let numRequests = 0;
-            const finalEditingItems = editingItems.map(i => {
-                const recQty = parseFloat(i.received_quantity) || 0;
-                const reqQty = parseFloat(i.quantity) || 0;
-                numReceived += recQty;
-                numRequests += reqQty;
-                return { ...i, received_quantity: recQty };
-            });
+            const finalEditingItems = editingItems.map(i => ({
+                ...i, 
+                received_quantity: parseFloat(i.received_quantity) || 0,
+                unit_value: parseFloat(i.unit_value) || 0
+            }));
 
-            // Note: If no quantities entered at all, it's just 'approved'. but we assume they entered something.
-            // Requirement from User: "Se as quantidades recebidas forem menor do que as solicitadas, em qualquer item..."
-            const isPartial = finalEditingItems.some(i => (parseFloat(i.received_quantity as string) || 0) < parseFloat(i.quantity as string));
+            const isPartial = finalEditingItems.some(i => i.received_quantity < i.quantity);
             const finalStatus = isPartial ? 'partial' : 'completed';
 
-            const updatePayload: any = { items: finalEditingItems, status: finalStatus };
-            updatePayload.received_at = new Date().toISOString();
-            updatePayload.received_by_name = profile?.name || 'Encarregado / Mestre de Obras';
-
-            const { data: updatedData, error: updateError } = await supabase
+            const { error: updateError } = await supabase
                 .from('orders')
-                .update(updatePayload)
-                .eq('id', viewingOrder.id)
-                .select();
+                .update({ 
+                    items: finalEditingItems, 
+                    status: finalStatus,
+                    received_at: new Date().toISOString(),
+                    received_by_name: profile?.name || 'Encarregado'
+                })
+                .eq('id', viewingOrder.id);
 
             if (updateError) throw updateError;
-            if (!updatedData || updatedData.length === 0) {
-                throw new Error("O recebimento não foi salvo. Verifique as políticas de segurança (RLS) da tabela 'orders' no Supabase para permitir UPDATE aos usuários.");
-            }
 
             if (isPartial) {
                 const missingItems = finalEditingItems
-                    .filter(i => (parseFloat(i.received_quantity as string) || 0) < parseFloat(i.quantity as string))
-                    .map(i => {
-                        const recQty = parseFloat(i.received_quantity as string) || 0;
-                        const reqQty = parseFloat(i.quantity as string) || 0;
-                        return {
-                            material_id: i.material_id,
-                            name: `[COMPLEMENTO REF ${getOrderRef(viewingOrder)}] ${i.name}`,
-                            quantity: reqQty - recQty,
-                            unit: i.unit,
-                            received_quantity: null,
-                            unit_value: null,
-                            supplier_id: null
-                        };
-                    });
+                    .filter(i => i.received_quantity < i.quantity)
+                    .map(i => ({
+                        material_id: i.material_id,
+                        name: `[COMPLEMENTO REF ${getOrderRef(viewingOrder)}] ${i.name}`,
+                        quantity: i.quantity - i.received_quantity,
+                        unit: i.unit
+                    }));
 
                 if (missingItems.length > 0) {
-                    const { error: insertError } = await supabase.from('orders').insert({
+                    await supabase.from('orders').insert({
                         site_id: viewingOrder.site_id,
                         user_id: viewingOrder.user_id,
                         items: missingItems,
                         status: 'new'
                     });
-                    if (insertError) throw insertError;
                 }
             }
 
             fetchOrders();
             setViewingOrder(null);
-            alert('Recebimento registrado com sucesso!');
+            alert('Recebimento registrado!');
         } catch (err: any) {
-            alert('Erro ao registrar: ' + err.message);
+            alert('Erro: ' + err.message);
         } finally {
             setLoading(false);
         }
@@ -134,132 +117,92 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
         <div className="worker-app">
             <header className="app-header glass">
                 <button className="back-btn" onClick={() => navigate('/dashboard')}>
-                    <ChevronLeft size={24} />
-                    <span>Voltar</span>
+                    <ChevronLeft size={20} />
+                    <span>Início</span>
                 </button>
                 <div className="worker-meta">
-                    <div className="app-logo">
-                        <Archive size={20} color="var(--bg-dark)" />
-                    </div>
+                    <div className="app-logo"><Archive size={18} color="var(--bg-dark)" /></div>
+                    <strong>Recebimento</strong>
                 </div>
             </header>
 
             <main className="app-content animate-fade">
-                <div className="action-hub" style={{ marginBottom: '24px' }}>
-                    <h1 className="welcome-title">Recebimento</h1>
-                    <p className="welcome-desc">Registre a entrega dos insumos nas obras.</p>
+                <div className="action-hub">
+                    <h1 className="welcome-title">Cargas & Entregas</h1>
+                    <p className="welcome-desc">Confirme a chegada de materiais no canteiro.</p>
                 </div>
 
-                <section className="history-section">
-                    <div className="section-title-row">
-                        <div className="title-with-icon">
-                            <CheckCircle size={18} color="var(--status-approved)" />
-                            <h2>Pedidos Aprovados</h2>
-                        </div>
-                        <span className="count-badge">{orders.length}</span>
-                    </div>
-
-                    <div className="order-list">
+                <StandardCard title="Pedidos para Receber" subtitle="Apenas pedidos aprovados pelo financeiro.">
+                    <div className="receiving-list">
                         {orders.length === 0 ? (
-                            <div className="premium-card" style={{ padding: '32px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                                Nenhum pedido aprovado pendente de recebimento.
+                            <div className="empty-state">
+                                <PackageCheck size={48} color="var(--border)" />
+                                <p>Tudo em dia! Sem entregas pendentes.</p>
                             </div>
                         ) : (
-                            orders.map(order => {
-                                const totalItems = order.items?.length || 0;
-                                const itemsReceived = order.items?.filter((i: any) => i.received_quantity).length || 0;
-
-                                return (
-                                    <div key={order.id} className="order-card-compact premium-card" onClick={() => handleOpenOrder(order)} style={{ cursor: 'pointer' }}>
-                                        <div className="order-main">
-                                            <div className="order-info">
-                                                <span className="order-id">REF: {getOrderRef(order)}</span>
-                                                <div className="item-count">
-                                                    <Package size={14} />
-                                                    <span>{order.items.length} itens no pedido</span>
-                                                </div>
-                                            </div>
-                                            <div className="status-icon-box approved" style={{ background: itemsReceived === totalItems ? 'rgba(52, 199, 89, 0.1)' : 'var(--primary-glow)', color: itemsReceived === totalItems ? 'var(--status-approved)' : 'var(--primary)' }}>
-                                                {itemsReceived === totalItems ? <PackageCheck size={20} /> : <Archive size={20} />}
+                            orders.map(order => (
+                                <div key={order.id} className="receiving-card-premium" onClick={() => handleOpenOrder(order)}>
+                                    <div className="card-top">
+                                        <div className="ref-info">
+                                            <span className="ref-text">REF: {getOrderRef(order)}</span>
+                                            <div className="badge-items">
+                                                <Package size={12} />
+                                                <span>{order.items.length} itens</span>
                                             </div>
                                         </div>
-                                        <div className="order-footer">
-                                            <span className="order-date">Aprovado em {new Date(order.created_at).toLocaleDateString()}</span>
-                                            <span style={{ fontSize: '12px', fontWeight: 'bold', color: itemsReceived === totalItems ? 'var(--status-approved)' : 'var(--primary)' }}>
-                                                {itemsReceived} de {totalItems} recebidos
-                                            </span>
-                                        </div>
+                                        <div className="icon-arrow"><ChevronRight size={18} /></div>
                                     </div>
-                                );
-                            })
+                                    <div className="card-footer">
+                                        <span className="date-text">Aprovado em {new Date(order.created_at).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                            ))
                         )}
                     </div>
-                </section>
+                </StandardCard>
             </main>
 
             {viewingOrder && (
-                <div className="modal-overlay-mobile glass" onClick={() => setViewingOrder(null)}>
-                    <div className="mobile-sheet premium-card animate-fade" onClick={e => e.stopPropagation()}>
-                        <div className="sheet-handle"></div>
-                        <div className="sheet-header">
-                            <h2>Recebimento de Insumos</h2>
+                <div className="modal-overlay-worker glass" onClick={() => setViewingOrder(null)}>
+                    <div className="worker-sheet animate-slide-up" onClick={e => e.stopPropagation()}>
+                        <div className="sheet-handle" />
+                        <div className="sheet-header-box">
+                            <h2>Baixa de Materiais</h2>
                             <p>REF: {getOrderRef(viewingOrder)} • {viewingOrder.sites?.name}</p>
                         </div>
 
-                        <div className="items-preview-list" style={{ maxHeight: '50vh', overflowY: 'auto', paddingRight: '4px' }}>
+                        <div className="receiving-items-scroll">
                             {editingItems.map((item: any, idx: number) => (
-                                <div key={idx} style={{ background: 'var(--bg-glass)', borderRadius: '16px', padding: '16px', marginBottom: '12px', border: '1px solid var(--border)' }}>
-                                    <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                        <strong style={{ fontSize: '15px' }}>{item.name}</strong>
-                                        <span style={{ fontSize: '14px', color: 'var(--primary)', fontWeight: 'bold' }}>Sol: {item.quantity} {item.unit || 'un'}</span>
+                                <div key={idx} className="receiving-item-box">
+                                    <div className="item-title-row">
+                                        <strong>{item.name}</strong>
+                                        <span className="req-qty">Sol: {item.quantity} {item.unit}</span>
                                     </div>
-
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
-                                        <div>
-                                            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block', fontWeight: 600 }}>QTDE. RECEBIDA</label>
-                                            <input
-                                                type="number"
-                                                value={item.received_quantity}
-                                                onChange={e => handleItemChange(idx, 'received_quantity', e.target.value)}
-                                                placeholder="0"
-                                                style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', padding: '12px', outline: 'none' }}
-                                            />
+                                    <div className="inputs-grid">
+                                        <div className="input-field">
+                                            <label>Qtd Recebida</label>
+                                            <input type="number" value={item.received_quantity} onChange={e => handleItemChange(idx, 'received_quantity', e.target.value)} placeholder="0" />
                                         </div>
-                                        <div>
-                                            <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block', fontWeight: 600 }}>VALOR UNIT. (R$)</label>
-                                            <input
-                                                type="number"
-                                                step="0.01"
-                                                value={item.unit_value}
-                                                onChange={e => handleItemChange(idx, 'unit_value', e.target.value)}
-                                                placeholder="0,00"
-                                                style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', padding: '12px', outline: 'none' }}
-                                            />
+                                        <div className="input-field">
+                                            <label>Valor Unit. (R$)</label>
+                                            <input type="number" step="0.01" value={item.unit_value} onChange={e => handleItemChange(idx, 'unit_value', e.target.value)} placeholder="0,00" />
                                         </div>
                                     </div>
-
-                                    <div>
-                                        <label style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', display: 'block', fontWeight: 600 }}>FORNECEDOR</label>
-                                        <select
-                                            value={item.supplier_id}
-                                            onChange={e => handleItemChange(idx, 'supplier_id', e.target.value)}
-                                            style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text-primary)', padding: '12px', outline: 'none' }}
-                                        >
+                                    <div className="input-field full">
+                                        <label>Fornecedor</label>
+                                        <select value={item.supplier_id} onChange={e => handleItemChange(idx, 'supplier_id', e.target.value)}>
                                             <option value="">Selecione...</option>
-                                            {suppliers.map(sup => (
-                                                <option key={sup.id} value={sup.id}>{sup.name}</option>
-                                            ))}
-                                            <option value="other">Outro / Sem Cadastro</option>
+                                            {suppliers.map(sup => <option key={sup.id} value={sup.id}>{sup.name}</option>)}
+                                            <option value="other">Outro / Avulso</option>
                                         </select>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="sheet-footer" style={{ marginTop: '24px' }}>
-                            <button className="btn-ghost" onClick={() => setViewingOrder(null)}>Cancelar</button>
-                            <button className="btn-primary" onClick={handleSaveReceiving} disabled={loading}>
-                                <Send size={18} /> {loading ? 'Salvando...' : 'Salvar Recebimento'}
+                        <div className="sheet-footer">
+                            <button className="btn-primary large" onClick={handleSaveReceiving} disabled={loading}>
+                                <Send size={18} /> {loading ? 'Salvando...' : 'Confirmar Entrega'}
                             </button>
                         </div>
                     </div>
@@ -267,54 +210,50 @@ const WorkerReceiving = ({ profile }: { profile: any }) => {
             )}
 
             <style>{`
-        .worker-app {
-          min-height: 100vh; background: var(--bg-dark); color: var(--text-primary);
-          padding-top: 80px; padding-bottom: 40px;
-        }
-        .app-header {
-          position: fixed; top: 0; left: 0; right: 0; height: 72px;
-          display: flex; align-items: center; justify-content: space-between;
-          padding: 0 24px; z-index: 100; border-bottom: 1px solid var(--border);
-        }
-        .back-btn { display: flex; align-items: center; gap: 4px; background: transparent; border: none; color: var(--text-primary); font-weight: 600; cursor: pointer;}
-        .worker-meta { display: flex; align-items: center; gap: 12px; }
-        .app-logo { background: var(--primary); padding: 6px; border-radius: 8px; }
-
-        .app-content { max-width: 600px; margin: 0 auto; padding: 0 24px; }
-        .action-hub { margin-bottom: 48px; }
-        .welcome-title { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
-        .welcome-desc { color: var(--text-secondary); font-size: 14px; margin-bottom: 32px; }
-        
-        .section-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .title-with-icon { display: flex; align-items: center; gap: 10px; }
-        .title-with-icon h2 { font-size: 18px; font-weight: 700; color: var(--text-secondary); }
-        .count-badge { background: var(--bg-card); color: var(--text-muted); padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; border: 1px solid var(--border); }
-
-        .order-list { display: flex; flex-direction: column; gap: 16px; }
-        .order-card-compact { padding: 20px; border-radius: 20px; display: flex; flex-direction: column; gap: 16px; }
-        .order-main { display: flex; justify-content: space-between; align-items: center; }
-        .order-info { display: flex; flex-direction: column; gap: 4px; }
-        .order-id { font-family: monospace; font-size: 13px; color: var(--primary); }
-        .item-count { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 13px; }
-        
-        .status-icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-        .status-icon-box.approved { color: var(--status-approved); background: rgba(52, 199, 89, 0.05); }
-
-        .order-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); margin-top: 4px; padding-top: 12px;}
-        .order-date { font-size: 12px; color: var(--text-muted); }
-
-        /* Mobile Sheet Styling */
-        .modal-overlay-mobile { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1000; background: rgba(0,0,0,0.8); display: flex; align-items: flex-end; }
-        .mobile-sheet { width: 100%; border-radius: 32px 32px 0 0; padding: 32px; padding-top: 12px; max-height: 90vh; overflow-y: hidden; display: flex; flex-direction: column;}
-        .sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 24px; flex-shrink: 0;}
-        .sheet-header { margin-bottom: 24px; flex-shrink: 0;}
-        .sheet-header h2 { font-size: 22px; font-weight: 800; }
-        .sheet-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
-
-        .sheet-footer { display: flex; gap: 16px; flex-shrink: 0;}
-        .sheet-footer .btn-ghost { flex: 1; }
-        .sheet-footer .btn-primary { flex: 2; }
-      `}</style>
+                .worker-app { min-height: 100vh; background: var(--bg-dark); padding: 88px 16px 40px; }
+                .app-header { position: fixed; top: 0; left: 0; right: 0; height: 72px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; z-index: 100; border-bottom: 1px solid var(--border); }
+                .back-btn { background: transparent; border: none; color: var(--text-primary); display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; }
+                .worker-meta { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+                .app-logo { background: var(--primary); padding: 5px; border-radius: 6px; }
+                
+                .app-content { max-width: 600px; margin: 0 auto; }
+                .welcome-title { font-size: 24px; font-weight: 800; }
+                .welcome-desc { color: var(--text-muted); font-size: 13px; margin-bottom: 32px; }
+                
+                .receiving-list { display: flex; flex-direction: column; gap: 12px; }
+                .empty-state { padding: 60px 20px; text-align: center; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 16px; }
+                
+                .receiving-card-premium { background: var(--bg-dark); padding: 20px; border-radius: 18px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+                .receiving-card-premium:active { border-color: var(--primary); }
+                .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+                .ref-info { display: flex; flex-direction: column; gap: 4px; }
+                .ref-text { font-family: monospace; font-weight: 700; color: var(--primary); font-size: 14px; }
+                .badge-items { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+                .icon-arrow { color: var(--border); }
+                .card-footer { padding-top: 12px; border-top: 1px solid var(--border); }
+                .date-text { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+                
+                .modal-overlay-worker { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.8); display: flex; align-items: flex-end; }
+                .worker-sheet { width: 100%; background: var(--bg-card); border-radius: 32px 32px 0 0; padding: 24px; padding-top: 12px; border: 1px solid var(--border); border-bottom: none; display: flex; flex-direction: column; max-height: 94vh; }
+                .sheet-handle { width: 40px; height: 4px; background: var(--border); border-radius: 20px; margin: 0 auto 20px; flex-shrink: 0; }
+                .sheet-header-box { margin-bottom: 24px; flex-shrink: 0; }
+                .sheet-header-box h2 { font-size: 20px; font-weight: 800; }
+                .sheet-header-box p { font-size: 12px; color: var(--text-muted); }
+                
+                .receiving-items-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 24px; }
+                .receiving-item-box { background: var(--bg-dark); padding: 16px; border-radius: 16px; border: 1px solid var(--border); }
+                .item-title-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+                .item-title-row strong { font-size: 14px; }
+                .req-qty { font-size: 12px; color: var(--primary); font-family: monospace; font-weight: 700; }
+                
+                .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+                .input-field { display: flex; flex-direction: column; gap: 4px; }
+                .input-field label { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+                .input-field input, .input-field select { width: 100%; height: 44px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; color: var(--text-primary); padding: 0 12px; outline: none; font-size: 14px; }
+                
+                .sheet-footer { padding-top: 16px; border-top: 1px solid var(--border); flex-shrink: 0; }
+                .btn-primary.large { width: 100%; height: 56px; border-radius: 16px; font-weight: 800; }
+            `}</style>
         </div>
     );
 };
