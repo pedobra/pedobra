@@ -24,18 +24,17 @@ const OrganizationManageModal = ({ organization, onClose, onUpdate }: Organizati
                     plan_id: planId,
                     subscription_status: status,
                     system_message: message,
-                    system_message_level: messageLevel,
-                    updated_at: new Date().toISOString()
+                    system_message_level: messageLevel
                 })
-                .match({ id: organization.id });
+                .eq('id', organization.id);
 
             if (error) throw error;
             alert('Organização atualizada com sucesso!');
             onUpdate();
             onClose();
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            alert('Erro ao atualizar organização.');
+            alert(`Erro ao atualizar organização: ${err.message || 'Erro desconhecido'}`);
         } finally {
             setSaving(false);
         }
