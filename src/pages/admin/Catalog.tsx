@@ -166,9 +166,10 @@ const AdminCatalog = () => {
         (item.name || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const columns = type === 'materials' ? [
+    const columns: any[] = type === 'materials' ? [
         {
             header: 'Material',
+            align: 'left',
             accessor: (item: any) => (
                 <div className="item-cell">
                     <Box className="item-icon" size={14} />
@@ -178,16 +179,19 @@ const AdminCatalog = () => {
         },
         {
             header: 'Categoria',
+            align: 'center',
             accessor: (item: any) => <span className="cat-badge">{item.category}</span>
         },
         {
             header: 'Unidade',
+            align: 'center',
             accessor: (item: any) => <span className="unit-tag">{item.unit}</span>
         },
         {
             header: 'Ações',
+            align: 'right',
             accessor: (item: any) => (
-                <div className="table-actions-btns">
+                <div className="table-actions-btns" style={{ justifyContent: 'flex-end' }}>
                     <button className="icon-btn" onClick={() => handleEdit(item)}><Edit2 size={16} /></button>
                 </div>
             )
