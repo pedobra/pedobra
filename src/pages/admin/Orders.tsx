@@ -174,7 +174,7 @@ const AdminOrders = () => {
                         selectable={true}
                         selectedIds={selectedIds}
                         onSelectionChange={setSelectedIds}
-                        onRowClick={(order) => navigate(`/admin/orders/editar/${order.id}`)}
+                        onRowClick={(order) => navigate(`/admin/orders/visualizar/${order.id}`)}
                     />
                 </div>
             </StandardCard>

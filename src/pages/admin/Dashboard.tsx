@@ -139,7 +139,12 @@ const AdminDashboard = () => {
                 title="Movimentações Recentes"
                 subtitle="Acompanhe e gerencie as últimas solicitações do sistema."
             >
-                <ModernTable columns={columns} data={filteredOrders.slice(0, 10)} loading={loading} />
+                <ModernTable 
+                    columns={columns} 
+                    data={filteredOrders.slice(0, 10)} 
+                    loading={loading} 
+                    onRowClick={(o) => navigate(`/admin/orders/visualizar/${o.id}`)}
+                />
             </StandardCard>
 
             <style>{`
