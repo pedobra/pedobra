@@ -33,6 +33,18 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const [hasNotification, setHasNotification] = useState(
         () => localStorage.getItem('pedobra_notif') === 'true'
     );
+    const [isMessageDismissed, setIsMessageDismissed] = useState(false);
+
+    useEffect(() => {
+        if (systemMessage) {
+            const savedDismissed = localStorage.getItem('pedobra_sys_msg_dismissed');
+            if (savedDismissed === systemMessage) {
+                setIsMessageDismissed(true);
+            } else {
+                setIsMessageDismissed(false);
+            }
+        }
+    }, [systemMessage]);
 
     const lastCheckRef = useRef<string>(
         localStorage.getItem('pedobra_last_check') || new Date().toISOString()
@@ -259,7 +271,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             </aside>
 
             <main className="admin-main-content">
-                {systemMessage && (
+                {systemMessage && !isMessageDismissed && (
                     <div className={`system-banner ${systemMessageLevel}`} style={{ 
                         padding: '12px 24px', 
                         display: 'flex', 
@@ -270,10 +282,21 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         color: systemMessageLevel === 'error' ? '#ef4444' : systemMessageLevel === 'warning' ? '#f59e0b' : '#3b82f6',
                         fontSize: '13px',
                         fontWeight: 600,
-                        animation: 'slideDown 0.3s ease-out'
+                        animation: 'slideDown 0.3s ease-out',
+                        position: 'relative'
                     }}>
                         <ShieldAlert size={18} />
                         <span style={{ flex: 1 }}>{systemMessage}</span>
+                        <button 
+                            onClick={() => {
+                                setIsMessageDismissed(true);
+                                localStorage.setItem('pedobra_sys_msg_dismissed', systemMessage);
+                            }}
+                            className="icon-btn-ghost"
+                            style={{ padding: '4px', height: 'auto', background: 'transparent' }}
+                        >
+                            <X size={16} />
+                        </button>
                     </div>
                 )}
                 <TrialBanner />
