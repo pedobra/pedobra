@@ -84,8 +84,7 @@ const LandingPage = () => {
                     });
                     
                     if (isFraud) {
-                        // If fraud detected, we should ideally delete the auth user, but for now we just block
-                        throw new Error('Limite de teste gratuito atingido para este CPF ou conexão de internet.');
+                        throw new Error('Limite de teste gratuito atingido para este CPF / CNPJ.');
                     }
 
                     // 1. Create Organization
