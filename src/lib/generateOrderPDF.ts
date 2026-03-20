@@ -15,13 +15,19 @@ export interface CompanySettings {
     pdf_show_site_address?: boolean;
 }
 
-async function loadImageAsBase64(url: string): Promise<string | null> {
+async function loadImageAsBase64(url: string): Promise<{ data: string; format: string } | null> {
     try {
         const response = await fetch(url);
+        if (!response.ok) return null;
         const blob = await response.blob();
+        const format = blob.type.split('/')[1]?.toUpperCase() || 'PNG';
+        
         return new Promise((resolve) => {
             const reader = new FileReader();
-            reader.onloadend = () => resolve(reader.result as string);
+            reader.onloadend = () => resolve({ 
+                data: reader.result as string, 
+                format: format === 'VND.MICROSOFT.ICON' ? 'PNG' : format // Simple fallback for icons
+            });
             reader.onerror = () => resolve(null);
             reader.readAsDataURL(blob);
         });
@@ -58,12 +64,21 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
     let logoY = 14;
     let logoH = 20;
     if (settings.logo_url) {
-        const base64 = await loadImageAsBase64(settings.logo_url);
-        if (base64) {
+        let finalLogoUrl = settings.logo_url;
+        
+        // Se for apenas um path (não começa com http nem data:), gera Signed URL
+        if (!settings.logo_url.startsWith('http') && !settings.logo_url.startsWith('data:')) {
+            const { data: signed } = await supabase.storage.from('secure-assets').createSignedUrl(settings.logo_url, 60);
+            if (signed?.signedUrl) finalLogoUrl = signed.signedUrl;
+        }
+
+        const imgData = await loadImageAsBase64(finalLogoUrl);
+        if (imgData) {
             try {
-                doc.addImage(base64, 'PNG', margin, logoY, 40, logoH);
-            } catch {
-                // Logo load failed — skip
+                // jspdf addImage supports PNG, JPEG, WEBP
+                doc.addImage(imgData.data, imgData.format, margin, logoY, 40, logoH, undefined, 'FAST');
+            } catch (e) {
+                console.error('PDF Logo Error:', e);
             }
         }
     } else {
