@@ -288,7 +288,7 @@ const ReceivingConfirmPage = ({ profile }: { profile: any }) => {
             </main>
 
             <style>{`
-                .worker-app { min-height: 100vh; background: var(--bg-dark); padding: 88px 16px 120px; }
+                .worker-app { min-height: 100vh; background: var(--bg-dark); padding: 88px 16px 260px; }
                 .app-header { position: fixed; top: 0; left: 0; right: 0; height: 72px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; z-index: 100; border-bottom: 1px solid var(--border); }
                 .back-btn { background: transparent; border: none; color: var(--text-primary); display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; }
                 .worker-meta { display: flex; align-items: center; gap: 10px; font-size: 14px; }
@@ -311,7 +311,7 @@ const ReceivingConfirmPage = ({ profile }: { profile: any }) => {
                 .input-field-mobile input:focus, .input-field-mobile select:focus { border-color: var(--primary); }
                 .input-field-mobile.full { grid-column: span 2; }
                 
-                .page-actions-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 20px; background: var(--bg-dark); border-top: 1px solid var(--border); z-index: 100; }
+                .page-actions-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 24px 20px; background: var(--bg-dark); border-top: 1px solid var(--border); z-index: 100; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
                 .btn-primary-mobile { width: 100%; max-width: 560px; margin: 0 auto; height: 56px; background: var(--primary); color: var(--bg-dark); border: none; border-radius: 16px; font-weight: 900; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 8px 24px rgba(39, 201, 140, 0.3); }
 
                 /* Smart Search Styles */
