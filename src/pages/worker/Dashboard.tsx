@@ -145,10 +145,10 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .order-item-premium { background: var(--bg-card); padding: 10px 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
                 .order-item-premium:active { transform: scale(0.98); border-color: var(--primary); }
                 
-                .order-status-line-grid { display: grid; grid-template-columns: 80px 1fr 100px; align-items: center; }
-                .order-ref-text-new { font-size: 14px; font-weight: 850; color: var(--text-primary); text-align: left; }
+                .order-status-line-grid { display: grid; grid-template-columns: 100px 1fr 100px; align-items: center; }
+                .order-ref-text-new { font-size: 14px; font-weight: 850; color: var(--text-primary); text-align: left; white-space: nowrap; }
                 .status-center { display: flex; justify-content: center; }
-                .status-center .status-badge-container { border-radius: 20px; padding: 6px 14px; transform: scale(1.1); background: rgba(39, 201, 140, 0.05); }
+                .status-center .status-badge-container { transform: scale(1.1); background: transparent; border: none; }
                 .status-center .status-text { font-size: 13px; font-weight: 800; }
                 
                 .order-right-meta-new { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
