@@ -169,12 +169,24 @@ function ModernTable<T>({
                 </tbody>
             </table>
             <style>{`
-                .modern-table-wrapper { width: 100%; overflow-x: auto; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); }
-                .modern-table { width: 100%; border-collapse: collapse; text-align: center; table-layout: auto; }
+                .modern-table-wrapper { 
+                    width: 100%; 
+                    overflow-x: auto; 
+                    overflow-y: auto;
+                    background: var(--bg-card); 
+                    border-radius: 12px; 
+                    border: 1px solid var(--border); 
+                    max-height: 1004px; /* Approx 30 rows of 32px + header */
+                }
+                .modern-table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; table-layout: auto; }
                 
                 .modern-table th {
+                    position: sticky;
+                    top: 0;
+                    z-index: 10;
                     background: var(--bg-dark);
-                    padding: 14px 20px;
+                    padding: 0 20px;
+                    height: 44px;
                     border-bottom: 1px solid var(--border);
                     color: var(--text-secondary);
                     font-size: 12px;
@@ -185,12 +197,16 @@ function ModernTable<T>({
                 }
 
                 .modern-table td {
-                    padding: 16px 20px;
+                    padding: 0 20px;
+                    height: 32px;
                     border-bottom: 1px solid var(--border);
                     color: var(--text-primary);
-                    font-size: 14px;
+                    font-size: 13px;
                     vertical-align: middle;
                     transition: background 0.1s;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
 
                 .modern-table tr:last-child td { border-bottom: none; }
@@ -207,7 +223,7 @@ function ModernTable<T>({
                 .checkbox-custom:hover { border-color: var(--primary); }
                 .checkbox-custom.active { border-color: var(--text-primary); background: var(--text-primary); }
                 
-                .modern-table-wrapper::-webkit-scrollbar { height: 8px; }
+                .modern-table-wrapper::-webkit-scrollbar { width: 8px; height: 8px; }
                 .modern-table-wrapper::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 4px; }
             `}</style>
         </div>
