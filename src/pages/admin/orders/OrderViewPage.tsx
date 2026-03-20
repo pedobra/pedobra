@@ -285,8 +285,9 @@ const OrderViewPage = () => {
                 .comp-header h3 { margin: 0; font-size: 16px; flex: 1; }
                 .btn-text { background: transparent; border: none; color: var(--primary); padding: 0; cursor: pointer; font-weight: 600; margin-top: 8px; }
                 
-                .side-info-container { padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; }
-                .info-item-compact { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+                .side-info-container { padding: 0 16px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+                .info-item-compact { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+                .info-item-compact:last-child { border-bottom: none; }
                 .info-item-compact label { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
                 .info-item-compact strong { font-size: 13px; color: var(--text-primary); text-transform: uppercase; display: block; }
                 
