@@ -234,6 +234,12 @@ const OrderViewPage = () => {
                             <label><Clock size={10} /> DATA E HORA</label>
                             <strong>{new Date(order.created_at).toLocaleString('pt-BR')}</strong>
                         </div>
+                        {order.received_at && (
+                            <div className="info-item-compact animate-fade">
+                                <label><Clock size={10} /> DATA DO RECEBIMENTO</label>
+                                <strong>{new Date(order.received_at).toLocaleString('pt-BR')}</strong>
+                            </div>
+                        )}
                         {order.received_by_name && (
                             <div className="info-item-compact animate-fade">
                                 <label><User size={10} /> RECEBIDO POR</label>
@@ -277,7 +283,7 @@ const OrderViewPage = () => {
                 .comp-header h3 { margin: 0; font-size: 16px; flex: 1; }
                 .btn-text { background: transparent; border: none; color: var(--primary); padding: 0; cursor: pointer; font-weight: 600; margin-top: 8px; }
                 
-                .info-item-compact { margin-bottom: 14px; }
+                .info-item-compact { margin-bottom: 8px; }
                 .info-item-compact label { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
                 .info-item-compact strong { font-size: 13px; color: var(--text-primary); text-transform: uppercase; display: block; }
                 
