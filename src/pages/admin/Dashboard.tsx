@@ -58,6 +58,15 @@ const AdminDashboard = () => {
         }, { total: 0, new: 0, approved: 0, denied: 0, partial: 0, completed: 0 });
     }, [orders]);
 
+    const getOrderRef = (o: any) => {
+        if (!o || !o.created_at) return 'N/A';
+        const d = new Date(o.created_at);
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const seq = String(o.seq_number || 0).padStart(4, '0');
+        return `${dd}${mm}-${seq}`;
+    };
+
     const statCards = [
         { key: null, label: 'Fluxo Total', value: stats.total, icon: <TrendingUp size={20} color="var(--primary)" /> },
         { key: 'new', label: 'Pendentes', value: stats.new, icon: <Clock size={20} color="var(--status-pending)" /> },
@@ -70,7 +79,7 @@ const AdminDashboard = () => {
     const columns = [
         { 
             header: 'ID', 
-            accessor: (o: any) => <span className="text-mono">#{o.id?.slice(0,8)}</span> 
+            accessor: (o: any) => <span className="text-mono">{getOrderRef(o)}</span> 
         },
         { header: 'Obra', accessor: (o: any) => <strong>{o.sites?.name}</strong> },
         { header: 'Solicitante', accessor: (o: any) => o.profiles?.name || 'Sistema' },

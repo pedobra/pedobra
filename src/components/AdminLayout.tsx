@@ -187,9 +187,12 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                             <span>Admin</span>
                         </div>
                     )}
-                    <button className="sidebar-toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
-                        <ChevronLeft size={16} style={{ transform: isCollapsed ? 'rotate(180deg)' : 'none' }} />
-                    </button>
+                    <div className="sidebar-brand-actions">
+                        <ThemeToggle />
+                        <button className="sidebar-toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
+                            <ChevronLeft size={16} style={{ transform: isCollapsed ? 'rotate(180deg)' : 'none' }} />
+                        </button>
+                    </div>
                 </div>
 
                 <nav className="sidebar-menu">
@@ -232,9 +235,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <TrialBanner />
                 <header className="admin-header">
                     <div className="header-left">
-                        <ThemeToggle />
                         {hasNotification && (
-                            <div className="header-notif" style={{ fontSize: '12px', color: 'var(--status-pending)', fontWeight: '600' }}>Novo Pedido disponível</div>
+                            <div className="notif-dot-modern" title="Novo pedido disponível">
+                                <span className="dot-core" />
+                                <span className="dot-pulse" />
+                            </div>
                         )}
                     </div>
                     <div className="header-right">
@@ -248,6 +253,29 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <div className="admin-page-content">
                     {children}
                 </div>
+                <style>{`
+                    .admin-wrapper { display: flex; min-height: 100vh; background-color: var(--bg-dark); }
+                    .sidebar-brand-actions { display: flex; align-items: center; gap: 8px; position: absolute; right: -28px; top: 4px; z-index: 10; }
+                    .sidebar-toggle-btn { background: var(--bg-card); border: 1px solid var(--border); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
+                    .sidebar-toggle-btn:hover { color: var(--text-primary); border-color: var(--text-muted); }
+                    
+                    .notif-dot-modern { position: relative; width: 12px; height: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+                    .dot-core { width: 10px; height: 10px; background: #EF4444; border-radius: 50%; z-index: 2; border: 2px solid var(--bg-card); }
+                    .dot-pulse { position: absolute; width: 100%; height: 100%; background: #EF4444; border-radius: 50%; opacity: 0.6; animation: pulse-red 2s infinite; z-index: 1; }
+                    
+                    @keyframes pulse-red {
+                        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+                        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+                        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+                    }
+
+                    .admin-main-content { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+                    .admin-header { height: 64px; background-color: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; position: sticky; top: 0; z-index: 100; }
+                    .admin-page-content { flex: 1; padding: 40px 48px; max-width: 1600px; width: 100%; margin: 0 auto; }
+                    .expired-overlay { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); backdrop-filter: blur(12px); }
+                    .expired-card { max-width: 450px; width: 90%; text-align: center; padding: 40px; background: var(--bg-sidebar); border: 1px solid var(--border); border-radius: 32px; }
+                    .expired-actions { display: flex; flex-direction: column; gap: 12px; }
+                `}</style>
             </main>
         </div>
     );

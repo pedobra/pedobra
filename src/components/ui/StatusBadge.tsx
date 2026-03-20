@@ -13,7 +13,10 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label }) => {
     const config: Record<string, { color: string; label: string }> = {
         active: { color: 'var(--status-approved)', label: 'Ativo' },
         approved: { color: 'var(--status-approved)', label: 'Aprovado' },
+        new: { color: 'var(--status-pending)', label: 'Novo' },
         pending: { color: 'var(--status-pending)', label: 'Pendente' },
+        completed: { color: 'var(--status-approved)', label: 'Concluído' },
+        partial: { color: 'var(--status-pending)', label: 'Rec. Parcial' },
         delayed: { color: 'var(--status-denied)', label: 'Atrasado' },
         cancelled: { color: 'var(--status-denied)', label: 'Cancelado' },
         denied: { color: 'var(--status-denied)', label: 'Negado' },
