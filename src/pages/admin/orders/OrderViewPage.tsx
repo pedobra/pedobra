@@ -222,30 +222,32 @@ const OrderViewPage = () => {
 
                 <div className="side-info">
                     <StandardCard title="Dados da Solicitação" subtitle="Informações de suporte.">
-                        <div className="info-item-compact">
-                            <label><Building2 size={10} /> OBRA</label>
-                            <strong>{order.sites?.name}</strong>
-                        </div>
-                        <div className="info-item-compact">
-                            <label><User size={10} /> SOLICITADO POR</label>
-                            <strong>{order.profiles?.name}</strong>
-                        </div>
-                        <div className="info-item-compact">
-                            <label><Clock size={10} /> DATA E HORA</label>
-                            <strong>{new Date(order.created_at).toLocaleString('pt-BR')}</strong>
-                        </div>
-                        {order.received_at && (
-                            <div className="info-item-compact animate-fade">
-                                <label><Clock size={10} /> DATA DO RECEBIMENTO</label>
-                                <strong>{new Date(order.received_at).toLocaleString('pt-BR')}</strong>
+                        <div className="side-info-container">
+                            <div className="info-item-compact">
+                                <label><Building2 size={10} /> OBRA</label>
+                                <strong>{order.sites?.name}</strong>
                             </div>
-                        )}
-                        {order.received_by_name && (
-                            <div className="info-item-compact animate-fade">
-                                <label><User size={10} /> RECEBIDO POR</label>
-                                <strong>{order.received_by_name}</strong>
+                            <div className="info-item-compact">
+                                <label><User size={10} /> SOLICITADO POR</label>
+                                <strong>{order.profiles?.name}</strong>
                             </div>
-                        )}
+                            <div className="info-item-compact">
+                                <label><Clock size={10} /> DATA E HORA</label>
+                                <strong>{new Date(order.created_at).toLocaleString('pt-BR')}</strong>
+                            </div>
+                            {order.received_at && (
+                                <div className="info-item-compact animate-fade">
+                                    <label><Clock size={10} /> DATA DO RECEBIMENTO</label>
+                                    <strong>{new Date(order.received_at).toLocaleString('pt-BR')}</strong>
+                                </div>
+                            )}
+                            {order.received_by_name && (
+                                <div className="info-item-compact animate-fade">
+                                    <label><User size={10} /> RECEBIDO POR</label>
+                                    <strong>{order.received_by_name}</strong>
+                                </div>
+                            )}
+                        </div>
                     </StandardCard>
                 </div>
             </div>
@@ -283,8 +285,9 @@ const OrderViewPage = () => {
                 .comp-header h3 { margin: 0; font-size: 16px; flex: 1; }
                 .btn-text { background: transparent; border: none; color: var(--primary); padding: 0; cursor: pointer; font-weight: 600; margin-top: 8px; }
                 
-                .info-item-compact { margin-bottom: 8px; }
-                .info-item-compact label { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
+                .side-info-container { padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center; }
+                .info-item-compact { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+                .info-item-compact label { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
                 .info-item-compact strong { font-size: 13px; color: var(--text-primary); text-transform: uppercase; display: block; }
                 
                 .approval-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; max-width: 400px; }
