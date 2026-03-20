@@ -7,6 +7,8 @@ import {
 import { 
     ChevronLeft, 
     TrendingUp, 
+    ArrowUp,
+    ArrowDown,
     FileText,
     Building2
 } from 'lucide-react';
@@ -149,6 +151,28 @@ const AdminReports = () => {
         return `${dd}${mm}-${seq}`;
     };
 
+    // WoW and Trend Calculations
+    const calculateTrends = () => {
+        const now = new Date();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+        const currentWeekCount = filteredOrders.filter(o => new Date(o.created_at) >= oneWeekAgo).length;
+        const prevWeekCount = filteredOrders.filter(o => new Date(o.created_at) >= twoWeeksAgo && new Date(o.created_at) < oneWeekAgo).length;
+
+        const diff = currentWeekCount - prevWeekCount;
+        const percent = prevWeekCount === 0 ? (currentWeekCount > 0 ? 100 : 0) : Math.round((diff / prevWeekCount) * 100);
+
+        // Trend calculation (average per week)
+        const earliest = filteredOrders.length > 0 ? new Date(Math.min(...filteredOrders.map(o => new Date(o.created_at).getTime()))) : now;
+        const totalWeeks = Math.max(1, (now.getTime() - earliest.getTime()) / (7 * 24 * 60 * 60 * 1000));
+        const avgPerWeek = Math.round(filteredOrders.length / totalWeeks);
+
+        return { currentWeekCount, prevWeekCount, diff, percent, avgPerWeek };
+    };
+
+    const trends = calculateTrends();
+
     if (loading) return <div className="loading-box">Carregando relatórios...</div>;
 
     return (
@@ -237,6 +261,45 @@ const AdminReports = () => {
                             </ResponsiveContainer>
                         </div>
                     </div>
+
+                    <div className="chart-card glass trend-card-custom">
+                        <div className="card-header">
+                            <h3>Volume de Pedidos</h3>
+                            <span>Comparativo semanal e tendência.</span>
+                        </div>
+                        <div className="trend-content">
+                            <div className="trend-main-stat">
+                                <div className="stat-value">{filteredOrders.length}</div>
+                                <div className="stat-label">Total de Pedidos Realizados</div>
+                            </div>
+
+                            <div className="wow-comparison">
+                                <div className="wow-box">
+                                    <span className="wow-label">SEMANA ATUAL</span>
+                                    <span className="wow-val">{trends.currentWeekCount}</span>
+                                </div>
+                                <div className={`wow-indicator ${trends.diff >= 0 ? 'positive' : 'negative'}`}>
+                                    {trends.diff >= 0 ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
+                                    <span>{Math.abs(trends.percent)}%</span>
+                                </div>
+                                <div className="wow-box">
+                                    <span className="wow-label">SEMANA PASSADA</span>
+                                    <span className="wow-val">{trends.prevWeekCount}</span>
+                                </div>
+                            </div>
+
+                            <div className="trend-projection">
+                                <div className="projection-header">
+                                    <TrendingUp size={14} />
+                                    <span>TENDÊNCIA PRÓXIMA SEMANA</span>
+                                </div>
+                                <div className="projection-value">
+                                    ~{trends.avgPerWeek} Pedidos
+                                    <small>Baseado no histórico total</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
 
@@ -314,8 +377,28 @@ const AdminReports = () => {
                 .filter-group { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; display: flex; align-items: center; padding: 0 16px; height: 44px; gap: 8px; }
                 .filter-group select { background: transparent; border: none; color: var(--text-primary); font-size: 13px; font-weight: 700; outline: none; min-width: 150px; }
 
-                .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; }
+                .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
                 .chart-card { background: var(--bg-card); border-radius: 24px; padding: 24px; min-height: 400px; display: flex; flex-direction: column; }
+                .trend-card-custom { display: flex; flex-direction: column; justify-content: space-between; }
+                .trend-content { flex: 1; display: flex; flex-direction: column; justify-content: space-around; padding: 10px 0; }
+                
+                .trend-main-stat { text-align: center; }
+                .trend-main-stat .stat-value { font-size: 48px; font-weight: 900; color: var(--primary); line-height: 1; }
+                .trend-main-stat .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 700; margin-top: 8px; text-transform: uppercase; }
+
+                .wow-comparison { display: flex; justify-content: space-between; align-items: center; background: var(--bg-dark); padding: 16px; border-radius: 16px; margin: 20px 0; border: 1px solid var(--border); }
+                .wow-box { display: flex; flex-direction: column; align-items: center; }
+                .wow-label { font-size: 9px; font-weight: 800; color: var(--text-muted); margin-bottom: 4px; }
+                .wow-val { font-size: 18px; font-weight: 900; }
+                
+                .wow-indicator { display: flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 100px; font-size: 12px; font-weight: 800; }
+                .wow-indicator.positive { background: rgba(39, 201, 140, 0.1); color: #27c98c; }
+                .wow-indicator.negative { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+                .trend-projection { background: var(--primary); color: var(--primary-foreground); padding: 16px; border-radius: 16px; }
+                .projection-header { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 800; margin-bottom: 8px; opacity: 0.8; }
+                .projection-value { font-size: 20px; font-weight: 900; }
+                .projection-value small { display: block; font-size: 9px; opacity: 0.7; font-weight: 500; margin-top: 4px; }
                 .card-header { margin-bottom: 24px; }
                 .card-header h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
                 .card-header span { font-size: 12px; color: var(--text-muted); font-weight: 600; }
