@@ -203,9 +203,14 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <nav className="sidebar-menu">
                     {!isCollapsed && <label>PRINCIPAL</label>}
                     {userRole === 'master' ? (
-                        <NavLink to="/master" end className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                            <LayoutDashboard size={20} /> {!isCollapsed && <span>Master Dashboard</span>}
-                        </NavLink>
+                        <>
+                            <NavLink to="/master" end className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <LayoutDashboard size={20} /> {!isCollapsed && <span>Master Dashboard</span>}
+                            </NavLink>
+                            <NavLink to="/master/financeiro" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <PieChart size={20} /> {!isCollapsed && <span>Financeiro</span>}
+                            </NavLink>
+                        </>
                     ) : (
                         <NavLink to="/admin" end className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
                             <LayoutDashboard size={20} /> {!isCollapsed && <span>Dashboard</span>}
@@ -233,7 +238,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         </>
                     )}
 
-                    {userRole !== 'master' ? (
+                    {userRole !== 'master' && (
                         <>
                             {!isCollapsed && <label>SISTEMA</label>}
                             <NavLink to="/admin/users" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
@@ -247,13 +252,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                             </NavLink>
                             <NavLink to="/admin/audit-logs" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
                                 <Activity size={20} /> {!isCollapsed && <span>Logs</span>}
-                            </NavLink>
-                        </>
-                    ) : (
-                        <>
-                            {!isCollapsed && <label>SISTEMA</label>}
-                            <NavLink to="/admin/settings" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                                <Settings size={20} /> {!isCollapsed && <span>Configurações</span>}
                             </NavLink>
                         </>
                     )}

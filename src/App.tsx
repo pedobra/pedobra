@@ -13,6 +13,7 @@ import AdminPlans from './pages/admin/Plans';
 import AdminAuditLogs from './pages/admin/AuditLogs';
 import AdminReports from './pages/admin/Reports';
 import MasterDashboard from './pages/admin/MasterDashboard';
+import MasterFinanceiro from './pages/admin/MasterFinanceiro';
 import WorkerDashboard from './pages/worker/Dashboard';
 import WorkerReceiving from './pages/worker/Receiving';
 import SiteFormPage from './pages/admin/sites/SiteFormPage';
@@ -112,6 +113,9 @@ function App() {
 
         <Route path="/master" element={
           session && profile?.role === 'master' ? <AdminLayout><MasterDashboard /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/master/financeiro" element={
+          session && profile?.role === 'master' ? <AdminLayout><MasterFinanceiro /></AdminLayout> : <Navigate to="/" />
         } />
 
         <Route path="/admin" element={
