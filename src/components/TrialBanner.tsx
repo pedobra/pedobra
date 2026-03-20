@@ -4,9 +4,10 @@ import { AlertTriangle, Crown, ArrowRight } from 'lucide-react';
 
 export const TrialBanner = () => {
     const navigate = useNavigate();
-    const { isTrial, daysRemaining = 0, isExpired, loading } = useSubscription();
-
-    if (loading || !isTrial || isExpired) return null;
+    const { planId, daysRemaining = 0, isExpired, loading } = useSubscription();
+    const isTrial = planId === 'trial';
+    
+    if (loading || isExpired) return null;
 
     // Show warning if 2 days or less
     const isUrgent = (daysRemaining ?? 0) <= 2;
@@ -17,17 +18,22 @@ export const TrialBanner = () => {
                 <div className="banner-message">
                     {isUrgent ? <AlertTriangle size={16} className="text-orange" /> : <Crown size={16} className="text-primary" />}
                     <span>
-                        {isUrgent 
-                            ? `Atenção: Seu teste grátis expira em ${daysRemaining} ${daysRemaining === 1 ? 'dia' : 'dias'}.` 
-                            : `Você está no período de teste gratuito. Restam ${daysRemaining} dias.`}
+                        {isTrial 
+                            ? (isUrgent 
+                                ? `Atenção: Seu teste grátis expira em ${daysRemaining} ${daysRemaining === 1 ? 'dia' : 'dias'}.` 
+                                : `Você está no período de teste gratuito. Restam ${daysRemaining} dias.`)
+                            : `Plano ${planId?.toUpperCase()}: Restam ${daysRemaining} dias para renovação.`
+                        }
                     </span>
                 </div>
-                <button 
-                    onClick={() => navigate('/admin/plans')}
-                    className="banner-cta"
-                >
-                    ASSINAR PLANO PROFISSIONAL <ArrowRight size={14} />
-                </button>
+                {isTrial && (
+                    <button 
+                        onClick={() => navigate('/admin/plans')}
+                        className="banner-cta"
+                    >
+                        ASSINAR PLANO PROFISSIONAL <ArrowRight size={14} />
+                    </button>
+                )}
             </div>
 
             <style>{`

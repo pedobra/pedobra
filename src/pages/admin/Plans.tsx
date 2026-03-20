@@ -2,7 +2,8 @@ import { CheckCircle2, Star } from 'lucide-react';
 import { useSubscription } from '../../hooks/useSubscription';
 
 const AdminPlans = () => {
-    const { isTrial, daysRemaining } = useSubscription();
+    const { planId, daysRemaining } = useSubscription();
+    const isTrial = planId === 'trial';
     
     return (
         <div className="plans-view animate-fade">
@@ -13,12 +14,10 @@ const AdminPlans = () => {
                 </div>
             </header>
 
-            {isTrial && (
-                <div className="trial-alert">
-                    <span>Você está usando o <strong>Plano de Teste</strong></span>
-                    <span className="trial-badge-orange">{daysRemaining} dias restantes</span>
-                </div>
-            )}
+            <div className="trial-alert">
+                <span>Você está usando o <strong>{isTrial ? 'Plano de Teste' : `Plano ${planId?.toUpperCase()}`}</strong></span>
+                <span className="trial-badge-orange">{daysRemaining} dias restantes</span>
+            </div>
 
             <div className="plans-grid">
                 {/* Plano Básico */}
