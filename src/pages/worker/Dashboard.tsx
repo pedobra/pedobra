@@ -158,11 +158,11 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .order-item-premium:active { transform: scale(0.98); }
 
                 /* Status Highlights */
-                .order-item-premium.highlight-approved { border: 1.5px solid rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.05); }
-                .order-item-premium.highlight-pending { border: 1.5px solid rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.05); }
-                .order-item-premium.highlight-denied { border: 1.5px solid rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.05); }
+                .order-item-premium.highlight-approved { border: 3px solid rgba(16, 185, 129, 0.8); background: rgba(16, 185, 129, 0.05); }
+                .order-item-premium.highlight-pending { border: 3px solid rgba(245, 158, 11, 0.8); background: rgba(245, 158, 11, 0.05); }
+                .order-item-premium.highlight-denied { border: 3px solid rgba(239, 68, 68, 0.8); background: rgba(239, 68, 68, 0.05); }
                 
-                .order-item-premium:hover { border-width: 1.5px; }
+                .order-item-premium:hover { border-width: 3px; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
                 
                 .order-status-line-grid { display: grid; grid-template-columns: 100px 1fr 100px; align-items: center; }
                 .order-ref-text-new { font-size: 14px; font-weight: 850; color: var(--text-primary); text-align: left; white-space: nowrap; }
