@@ -215,7 +215,7 @@ const ReceivingConfirmPage = ({ profile }: { profile: any }) => {
                                 <div className="input-field-mobile full" style={{ position: 'relative' }}>
                                     <label>Fornecedor</label>
                                     <div className="smart-search-input-wrapper">
-                                        {!supplierSearchTerms[idx] && !item.supplier_id && <Search size={16} className="search-icon-inside" />}
+                                        {!supplierSearchTerms[idx] && !item.supplier_id && <Search size={18} className="search-icon-inside" />}
                                         <input 
                                             type="text" 
                                             className="worker-input-smart small" 
@@ -249,7 +249,7 @@ const ReceivingConfirmPage = ({ profile }: { profile: any }) => {
                     <div className="add-extra-material-box">
                         <h3 className="section-label">Adicionar Extra (Não Consta no Pedido)</h3>
                         <div className="smart-search-input-wrapper">
-                            {!materialSearchTerm && <Search size={16} className="search-icon-inside" />}
+                            {!materialSearchTerm && <Search size={18} className="search-icon-inside" />}
                             <input 
                                 type="text" 
                                 className="worker-input-smart" 
@@ -316,10 +316,10 @@ const ReceivingConfirmPage = ({ profile }: { profile: any }) => {
 
                 /* Smart Search Styles */
                 .smart-search-input-wrapper { position: relative; }
-                .search-icon-inside { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
-                .worker-input-smart { width: 100%; height: 56px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 16px; padding: 0 16px 0 48px; color: var(--text-primary); font-size: 16px; outline: none; transition: 0.2s; }
+                .search-icon-inside { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+                .worker-input-smart { width: 100%; height: 56px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 16px; padding: 0 16px 0 56px; color: var(--text-primary); font-size: 16px; outline: none; transition: 0.2s; }
                 .worker-input-smart:focus { border-color: var(--primary); }
-                .worker-input-smart.small { height: 48px; font-size: 14px; border-radius: 12px; }
+                .worker-input-smart.small { height: 48px; font-size: 14px; border-radius: 12px; padding-left: 56px; }
                 
                 .smart-results-list { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
                 .result-item { padding: 12px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid var(--border); transition: 0.2s; }
