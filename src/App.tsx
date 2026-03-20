@@ -47,8 +47,9 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchProfile = async (id: string) => {
-    setLoading(true);
+  const fetchProfile = async (id: string, retryCount = 0) => {
+    if (retryCount === 0) setLoading(true);
+    if (retryCount > 0) setProfile('fetching');
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -58,18 +59,25 @@ function App() {
 
       if (error) throw error;
       setProfile(data);
-    } catch (err) {
-      console.error("Erro ao carregar perfil:", err);
-      setProfile(null);
-    } finally {
       setLoading(false);
+    } catch (err) {
+      console.error(`Erro ao carregar perfil (Tentativa ${retryCount + 1}):`, err);
+      if (retryCount < 3) {
+        // Wait a bit and try again (helps with race conditions during signup)
+        setTimeout(() => fetchProfile(id, retryCount + 1), 1500);
+      } else {
+        setProfile(null);
+        setLoading(false);
+      }
     }
   };
 
   if (loading) return (
     <div style={{ background: 'var(--bg-dark)', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexDirection: 'column', gap: '20px' }}>
       <div className="loader"></div>
-      <div style={{ fontSize: '18px', letterSpacing: '2px', fontWeight: 300, color: 'var(--text-primary)' }}>PEDOBRA</div>
+      <div style={{ fontSize: '18px', letterSpacing: '2px', fontWeight: 300, color: 'var(--text-primary)' }}>
+        {profile === 'fetching' ? 'SINCRONIZANDO PERFIL...' : 'PEDOBRA'}
+      </div>
       <style>{`
         .loader {
           width: 40px;

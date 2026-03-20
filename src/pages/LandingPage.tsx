@@ -128,7 +128,6 @@ const LandingPage = () => {
                     await supabase.auth.signOut();
                     
                     alert('Conta criada com sucesso! Agora você pode acessar o sistema.');
-                    // window.location.reload(); // App.tsx will handle the re-render when session is null
                 }
             } else {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
