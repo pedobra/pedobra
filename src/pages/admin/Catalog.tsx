@@ -13,6 +13,7 @@ const AdminCatalog = () => {
     const type = location.pathname.includes('suppliers') ? 'suppliers' : 'materials';
 
     const [data, setData] = useState<any[]>([]);
+    const [totalCount, setTotalCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [adminProfile, setAdminProfile] = useState<any>(null);
@@ -35,14 +36,30 @@ const AdminCatalog = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
+            // Wait for profile if not loaded yet
+            let currentProfile = adminProfile;
+            if (!currentProfile) {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                    const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+                    currentProfile = profile;
+                    setAdminProfile(profile);
+                }
+            }
+
+            if (!currentProfile) return;
+
             const table = type === 'materials' ? 'materials' : 'suppliers';
-            const { data: res, error } = await supabase
+            const { data: res, error, count } = await supabase
                 .from(table)
-                .select('*')
-                .order('name');
+                .select('*', { count: 'exact' })
+                .eq('organization_id', currentProfile.organization_id)
+                .order('name')
+                .limit(10000);
 
             if (error) throw error;
             setData(res || []);
+            setTotalCount(count || res?.length || 0);
         } catch (error: any) {
             console.error('Erro:', error.message);
         } finally {
@@ -327,7 +344,7 @@ const AdminCatalog = () => {
 
             <StandardCard
                 title={type === 'materials' ? 'Lista de Materiais' : 'Lista de Fornecedores'}
-                subtitle={`Total de ${filteredData.length} registros.`}
+                subtitle={`Total de ${totalCount} registros.`}
             >
                 <ModernTable 
                     columns={columns} 
