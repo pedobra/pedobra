@@ -19,6 +19,9 @@ import SupplierFormPage from './pages/admin/catalog/SupplierFormPage';
 import OrderFormPage from './pages/admin/orders/OrderFormPage';
 import OrderViewPage from './pages/admin/orders/OrderViewPage';
 import UserFormPage from './pages/admin/users/UserFormPage';
+import NewOrderPage from './pages/worker/NewOrderPage';
+import OrderDetailsPage from './pages/worker/OrderDetailsPage';
+import ReceivingConfirmPage from './pages/worker/ReceivingConfirmPage';
 
 function App() {
   const [session, setSession] = useState<any>(null);
@@ -162,6 +165,15 @@ function App() {
         } />
         <Route path="/dashboard/receipts" element={
           session && profile?.role === 'worker' ? <WorkerReceiving profile={profile} /> : <Navigate to="/" />
+        } />
+        <Route path="/dashboard/receipts/:id" element={
+          session && profile?.role === 'worker' ? <ReceivingConfirmPage profile={profile} /> : <Navigate to="/" />
+        } />
+        <Route path="/dashboard/pedir" element={
+          session && profile?.role === 'worker' ? <NewOrderPage profile={profile} /> : <Navigate to="/" />
+        } />
+        <Route path="/dashboard/pedido/:id" element={
+          session && profile?.role === 'worker' ? <OrderDetailsPage /> : <Navigate to="/" />
         } />
 
         <Route path="*" element={<Navigate to="/" />} />
