@@ -45,6 +45,27 @@ const AdminAuditLogs = () => {
         }
     };
 
+    const getRecordLabel = (log: AuditLog) => {
+        const data = log.details?.new || log.details?.old || log.details;
+        if (!data) return log.record_id?.slice(0, 8);
+
+        if (log.entity === 'orders') {
+            try {
+                const dateSource = data.created_at;
+                if (!dateSource) return log.record_id?.slice(0, 8);
+                const d = new Date(dateSource);
+                const dd = String(d.getDate()).padStart(2, '0');
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const seq = String(data.seq_number || 0).padStart(4, '0');
+                return `${dd}${mm}-${seq}`;
+            } catch {
+                return log.record_id?.slice(0, 8);
+            }
+        }
+
+        return data.name || data.title || log.record_id?.slice(0, 8);
+    };
+
     const columns = [
         { 
             header: 'Data', 
@@ -76,7 +97,8 @@ const AdminAuditLogs = () => {
                 return (
                     <div className="entity-info">
                         <strong>{entityMap[log.entity] || log.entity || 'N/A'}</strong>
-                        <span className="text-mono-xs">{log.record_id?.slice(0, 8)}</span>
+                        <span className="record-separator">—</span>
+                        <span className="record-label">{getRecordLabel(log)}</span>
                     </div>
                 );
             }
@@ -124,8 +146,9 @@ const AdminAuditLogs = () => {
                 .action-badge.update { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
                 .action-badge.delete { background: rgba(239, 68, 68, 0.1); color: var(--status-denied); }
 
-                .entity-info { display: flex; flex-direction: column; gap: 2px; }
-                .text-mono-xs { font-size: 10px; font-family: var(--font-main); color: var(--text-muted); }
+                .entity-info { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+                .record-separator { color: var(--border); font-weight: 300; }
+                .record-label { color: var(--text-muted); font-family: var(--font-main); }
             `}</style>
         </div>
     );
