@@ -103,13 +103,13 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                         ) : (
                             orders.map(order => (
                                 <div key={order.id} className="order-item-premium" onClick={() => navigate(`/dashboard/pedido/${order.id}`)}>
-                                    <div className="order-status-line">
-                                        <div className="status-with-ref">
+                                    <div className="order-status-line-grid">
+                                        <span className="order-ref-text-new">{getOrderRef(order)}</span>
+                                        <div className="status-center">
                                             <StatusBadge status={order.status} />
-                                            <span className="order-ref-text">{getOrderRef(order)}</span>
                                         </div>
-                                        <div className="order-right-meta">
-                                            <span className="order-date">{new Date(order.created_at).toLocaleDateString()}</span>
+                                        <div className="order-right-meta-new">
+                                            <span className="order-date-new">{new Date(order.created_at).toLocaleDateString()}</span>
                                             <ChevronRight size={16} color="var(--border)" />
                                         </div>
                                     </div>
@@ -142,13 +142,17 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .hero-btn:active { transform: scale(0.96); }
                 
                 .order-feed { display: flex; flex-direction: column; gap: 8px; }
-                .order-item-premium { background: var(--bg-card); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+                .order-item-premium { background: var(--bg-card); padding: 10px 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
                 .order-item-premium:active { transform: scale(0.98); border-color: var(--primary); }
-                .order-status-line { display: flex; justify-content: space-between; align-items: center; }
-                .status-with-ref { display: flex; align-items: center; gap: 10px; }
-                .order-ref-text { font-size: 13px; font-weight: 900; color: var(--text-primary); }
-                .order-right-meta { display: flex; align-items: center; gap: 8px; }
-                .order-date { font-size: 11px; color: var(--text-muted); font-weight: 800; }
+                
+                .order-status-line-grid { display: grid; grid-template-columns: 80px 1fr 100px; align-items: center; }
+                .order-ref-text-new { font-size: 14px; font-weight: 850; color: var(--text-primary); text-align: left; }
+                .status-center { display: flex; justify-content: center; }
+                .status-center .status-badge-container { border-radius: 20px; padding: 6px 14px; transform: scale(1.1); background: rgba(39, 201, 140, 0.05); }
+                .status-center .status-text { font-size: 13px; font-weight: 800; }
+                
+                .order-right-meta-new { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+                .order-date-new { font-size: 14px; color: var(--text-primary); font-weight: 850; text-align: right; }
                 
                 .empty-state { padding: 40px 20px; text-align: center; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 12px; }
             `}</style>
