@@ -25,7 +25,7 @@ import { useSubscription } from '../hooks/useSubscription';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();
-    const { isExpired, loading: subLoading } = useSubscription();
+    const { isExpired, loading: subLoading, systemMessage, systemMessageLevel } = useSubscription();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [userName, setUserName] = useState('Admin Master');
@@ -259,6 +259,23 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             </aside>
 
             <main className="admin-main-content">
+                {systemMessage && (
+                    <div className={`system-banner ${systemMessageLevel}`} style={{ 
+                        padding: '12px 24px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '12px',
+                        background: systemMessageLevel === 'error' ? 'rgba(239,68,68,0.1)' : systemMessageLevel === 'warning' ? 'rgba(245,158,11,0.1)' : 'rgba(59,130,246,0.1)',
+                        borderBottom: '1.5px solid var(--border)',
+                        color: systemMessageLevel === 'error' ? '#ef4444' : systemMessageLevel === 'warning' ? '#f59e0b' : '#3b82f6',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                        animation: 'slideDown 0.3s ease-out'
+                    }}>
+                        <ShieldAlert size={18} />
+                        <span style={{ flex: 1 }}>{systemMessage}</span>
+                    </div>
+                )}
                 <TrialBanner />
                 <header className="admin-header">
                     <div className="header-left">

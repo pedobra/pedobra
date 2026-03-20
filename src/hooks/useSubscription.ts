@@ -10,6 +10,8 @@ export interface SubscriptionInfo {
     organizationId: string;
     maxSites: number;
     maxWorkers: number;
+    systemMessage: string | null;
+    systemMessageLevel: 'info' | 'warning' | 'error' | null;
 }
 
 export const useSubscription = () => {
@@ -58,7 +60,9 @@ export const useSubscription = () => {
                         organizationName: org.name,
                         organizationId: org.id,
                         maxSites: currentLimits.maxSites,
-                        maxWorkers: currentLimits.maxWorkers
+                        maxWorkers: currentLimits.maxWorkers,
+                        systemMessage: org.system_message,
+                        systemMessageLevel: org.system_message_level
                     });
                 }
             } catch (err) {

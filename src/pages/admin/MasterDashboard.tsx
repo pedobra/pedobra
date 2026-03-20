@@ -3,14 +3,15 @@ import { supabase } from '../../lib/supabase';
 import { Users, CreditCard, ShieldCheck, Globe, Search } from 'lucide-react';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
+import OrganizationManageModal from '../../components/modals/OrganizationManageModal';
 
 const MasterDashboard = () => {
     const [organizations, setOrganizations] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
 
-    useEffect(() => {
-        const fetchOrgs = async () => {
+    const fetchOrgs = async () => {
             setLoading(true);
             try {
                 const { data, error } = await supabase
@@ -27,6 +28,7 @@ const MasterDashboard = () => {
             }
         };
 
+    useEffect(() => {
         fetchOrgs();
     }, []);
 
@@ -116,7 +118,7 @@ const MasterDashboard = () => {
                     <button 
                         className="btn-secondary" 
                         style={{ height: '32px', padding: '0 12px', fontSize: '12px' }}
-                        onClick={() => alert(`Gerenciando organização: ${org.name}`)}
+                        onClick={() => setSelectedOrg(org)}
                     >
                         Gerenciar
                     </button>
@@ -186,6 +188,14 @@ const MasterDashboard = () => {
                     loading={loading}
                 />
             </StandardCard>
+
+            {selectedOrg && (
+                <OrganizationManageModal 
+                    organization={selectedOrg} 
+                    onClose={() => setSelectedOrg(null)} 
+                    onUpdate={fetchOrgs}
+                />
+            )}
 
             <style>{`
                 .master-dashboard { max-width: 1400px; margin: 0 auto; }
