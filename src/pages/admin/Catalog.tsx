@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Plus, Search, Edit2, Box, Warehouse, MapPin, Upload, Download } from 'lucide-react';
+import { Plus, Search, Edit2, Box, Warehouse, MapPin, Upload, Download, MessageCircle, Truck } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
@@ -195,6 +195,7 @@ const AdminCatalog = () => {
     ] : [
         {
             header: 'Fornecedor',
+            align: 'left',
             accessor: (item: any) => (
                 <div className="item-cell">
                     <Warehouse className="item-icon" size={14} />
@@ -210,18 +211,51 @@ const AdminCatalog = () => {
             )
         },
         {
+            header: 'Especialidade',
+            align: 'center',
+            accessor: (item: any) => <span className="cat-badge">{item.specialty || 'Não Informada'}</span>
+        },
+        {
             header: 'Contato',
+            align: 'center',
             accessor: (item: any) => <span>{item.contact_name || '—'}</span>
         },
         {
             header: 'WhatsApp',
-            accessor: (item: any) => <span>{maskPhone(item.whatsapp || '') || '—'}</span>
+            align: 'center',
+            accessor: (item: any) => {
+                if (!item.whatsapp) return '—';
+                const cleanPhone = item.whatsapp.replace(/\D/g, '');
+                return (
+                    <a 
+                        href={`https://wa.me/55${cleanPhone}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="wa-link"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <MessageCircle size={14} />
+                        {maskPhone(item.whatsapp)}
+                    </a>
+                );
+            }
+        },
+        {
+            header: 'Entrega',
+            align: 'center',
+            accessor: (item: any) => (
+                <div className={`delivery-tag ${item.delivers ? 'yes' : 'no'}`}>
+                    <Truck size={12} />
+                    {item.delivers ? 'SIM' : 'NÃO'}
+                </div>
+            )
         },
         {
             header: 'Ações',
+            align: 'right',
             accessor: (item: any) => (
-                <div className="table-actions-btns">
-                    <button className="icon-btn" onClick={() => handleEdit(item)}><Edit2 size={16} /></button>
+                <div className="table-actions-btns" style={{ justifyContent: 'flex-end' }}>
+                    <button className="icon-btn" onClick={(e) => { e.stopPropagation(); handleEdit(item); }}><Edit2 size={16} /></button>
                 </div>
             )
         }
@@ -288,6 +322,7 @@ const AdminCatalog = () => {
                     selectable={true}
                     selectedIds={selectedIds}
                     onSelectionChange={setSelectedIds}
+                    onRowClick={handleEdit}
                 />
             </StandardCard>
 
@@ -311,6 +346,13 @@ const AdminCatalog = () => {
                 .unit-tag { color: var(--text-muted); font-size: 12px; font-weight: 700; }
                 
                 .supplier-location { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+                .wa-link { display: inline-flex; align-items: center; gap: 6px; color: #25D366; text-decoration: none; font-weight: 600; font-size: 13px; padding: 4px 8px; border-radius: 6px; transition: background 0.2s; }
+                .wa-link:hover { background: rgba(37, 211, 102, 0.1); }
+                
+                .delivery-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; padding: 4px 10px; border-radius: 100px; }
+                .delivery-tag.yes { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+                .delivery-tag.no { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
+                
                 .table-actions-btns { display: flex; gap: 8px; }
 
                 .bulk-actions-bar {

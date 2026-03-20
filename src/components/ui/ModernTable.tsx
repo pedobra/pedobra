@@ -4,6 +4,7 @@ import { Check, Minus } from 'lucide-react';
 interface Column<T> {
     header: string;
     accessor: (item: T) => React.ReactNode;
+    align?: 'left' | 'center' | 'right';
 }
 
 interface ModernTableProps<T> {
@@ -95,7 +96,7 @@ function ModernTable<T>({
                             </th>
                         )}
                         {columns.map((col, i) => (
-                            <th key={i}>{col.header}</th>
+                            <th key={i} style={{ textAlign: col.align || 'center' }}>{col.header}</th>
                         ))}
                     </tr>
                 </thead>
@@ -121,7 +122,7 @@ function ModernTable<T>({
                                     </td>
                                 )}
                                 {columns.map((col, colIdx) => (
-                                    <td key={colIdx}>{col.accessor(item)}</td>
+                                    <td key={colIdx} style={{ textAlign: col.align || 'center' }}>{col.accessor(item)}</td>
                                 ))}
                             </tr>
                         );
