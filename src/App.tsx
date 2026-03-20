@@ -12,6 +12,7 @@ import AdminSettings from './pages/admin/Settings';
 import AdminPlans from './pages/admin/Plans';
 import AdminAuditLogs from './pages/admin/AuditLogs';
 import AdminReports from './pages/admin/Reports';
+import MasterDashboard from './pages/admin/MasterDashboard';
 import WorkerDashboard from './pages/worker/Dashboard';
 import WorkerReceiving from './pages/worker/Receiving';
 import SiteFormPage from './pages/admin/sites/SiteFormPage';
@@ -104,8 +105,13 @@ function App() {
                 <button className="btn-primary" onClick={() => supabase.auth.signOut()}>Sair e Tentar Novamente</button>
               </div>
             ) : (
+              profile.role === 'master' ? <Navigate to="/master" /> :
               profile.role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />
             )
+        } />
+
+        <Route path="/master" element={
+          session && profile?.role === 'master' ? <AdminLayout><MasterDashboard /></AdminLayout> : <Navigate to="/" />
         } />
 
         <Route path="/admin" element={

@@ -29,6 +29,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [userName, setUserName] = useState('Admin Master');
+    const [userRole, setUserRole] = useState<string | null>(null);
     const [hasNotification, setHasNotification] = useState(
         () => localStorage.getItem('pedobra_notif') === 'true'
     );
@@ -104,10 +105,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         if (user) {
             const { data } = await supabase
                 .from('profiles')
-                .select('name')
+                .select('name, role')
                 .eq('id', user.id)
                 .single();
             if (data?.name) setUserName(data.name);
+            if (data?.role) setUserRole(data.role);
         }
     };
 
@@ -200,9 +202,15 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
                 <nav className="sidebar-menu">
                     {!isCollapsed && <label>PRINCIPAL</label>}
-                    <NavLink to="/admin" end className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <LayoutDashboard size={20} /> {!isCollapsed && <span>Dashboard</span>}
-                    </NavLink>
+                    {userRole === 'master' ? (
+                        <NavLink to="/master" end className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                            <LayoutDashboard size={20} /> {!isCollapsed && <span>Master Dashboard</span>}
+                        </NavLink>
+                    ) : (
+                        <NavLink to="/admin" end className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                            <LayoutDashboard size={20} /> {!isCollapsed && <span>Dashboard</span>}
+                        </NavLink>
+                    )}
 
                     {!isCollapsed && <label>RECURSOS</label>}
                     <NavLink to="/admin/sites" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
