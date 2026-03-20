@@ -158,9 +158,9 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .order-item-premium:active { transform: scale(0.98); }
 
                 /* Status Highlights */
-                .order-item-premium.highlight-approved { border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.05); }
-                .order-item-premium.highlight-pending { border-color: rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.05); }
-                .order-item-premium.highlight-denied { border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.05); }
+                .order-item-premium.highlight-approved { border: 1.5px solid rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.05); }
+                .order-item-premium.highlight-pending { border: 1.5px solid rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.05); }
+                .order-item-premium.highlight-denied { border: 1.5px solid rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.05); }
                 
                 .order-item-premium:hover { border-width: 1.5px; }
                 
