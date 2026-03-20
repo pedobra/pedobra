@@ -300,6 +300,52 @@ const OrderViewPage = () => {
                             </button>
                         </div>
                     )}
+
+                    <div className="order-timeline-container animate-fade">
+                        <div className="timeline-header">
+                            <History size={16} />
+                            <span>Histórico do Pedido</span>
+                        </div>
+                        <div className="timeline-horizontal">
+                            <div className={`timeline-step ${order.created_at ? 'active' : ''}`}>
+                                <div className="step-point"></div>
+                                <div className="step-info">
+                                    <span className="step-label">Solicitado</span>
+                                    <span className="step-user">{order.profiles?.name || 'Sistema'}</span>
+                                    <span className="step-date">{new Date(order.created_at).toLocaleDateString('pt-BR')}</span>
+                                    <span className="step-time">{new Date(order.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                            </div>
+                            
+                            {(order.approved_at || order.status === 'denied') && (
+                                <div className={`timeline-step active ${order.status === 'denied' ? 'denied' : ''}`}>
+                                    <div className="step-line"></div>
+                                    <div className="step-point"></div>
+                                    <div className="step-info">
+                                        <span className="step-label">{order.status === 'denied' ? 'Negado' : 'Aprovado'}</span>
+                                        <span className="step-user">{order.approved_by_name || 'Admin'}</span>
+                                        <span className="step-date">{order.approved_at ? new Date(order.approved_at).toLocaleDateString('pt-BR') : '-'}</span>
+                                        <span className="step-time">{order.approved_at ? new Date(order.approved_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '-'}</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {(order.status === 'partial' || order.status === 'completed') && (
+                                <div className="timeline-step active">
+                                    <div className="step-line"></div>
+                                    <div className="step-point"></div>
+                                    <div className="step-info">
+                                        <span className="step-label">
+                                            {order.status === 'partial' ? 'Rec. Parcial' : 'Concluído'}
+                                        </span>
+                                        <span className="step-user">{order.received_by_name || 'Almoxarife'}</span>
+                                        <span className="step-date">{order.received_at ? new Date(order.received_at).toLocaleDateString('pt-BR') : '-'}</span>
+                                        <span className="step-time">{order.received_at ? new Date(order.received_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '-'}</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="side-info">
@@ -375,11 +421,87 @@ const OrderViewPage = () => {
                 .info-item-compact label { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
                 .info-item-compact strong { font-size: 13px; color: var(--text-primary); text-transform: uppercase; display: block; }
                 
-                .approval-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; max-width: 400px; }
+                .approval-actions { display: flex; flex-direction: column; gap: 12px; margin: 32px auto; max-width: 400px; align-items: stretch; width: 100%; }
                 .btn-approve { background: var(--status-approved); color: var(--primary-foreground); border: none; height: 48px; padding: 0 24px; border-radius: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
                 .btn-approve:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2); }
                 .btn-deny { background: transparent; border: 1px solid var(--status-denied); color: var(--status-denied); height: 48px; padding: 0 24px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
                 .btn-deny:hover { background: rgba(255, 59, 48, 0.05); transform: translateY(-1px); }
+
+                /* Timeline Horizontal */
+                .order-timeline-container {
+                    margin-top: 48px;
+                    background: var(--bg-card);
+                    border: 1px solid var(--border);
+                    border-radius: 20px;
+                    padding: 24px;
+                }
+                .timeline-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    color: var(--text-muted);
+                    font-size: 12px;
+                    font-weight: 800;
+                    text-transform: uppercase;
+                    margin-bottom: 32px;
+                    letter-spacing: 0.5px;
+                }
+                .timeline-horizontal {
+                    display: flex;
+                    justify-content: space-around;
+                    align-items: flex-start;
+                }
+                .timeline-step {
+                    position: relative;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                }
+                .step-point {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    background: var(--border);
+                    border: 2px solid var(--bg-card);
+                    z-index: 2;
+                    transition: 0.3s;
+                }
+                .step-line {
+                    position: absolute;
+                    top: 5px;
+                    right: 50%;
+                    width: 100%;
+                    height: 2px;
+                    background: var(--border);
+                    z-index: 1;
+                }
+                .timeline-step.active .step-point {
+                    background: var(--primary);
+                    box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.4);
+                }
+                .timeline-step.active .step-line {
+                    background: var(--primary);
+                }
+                .timeline-step.denied.active .step-point {
+                    background: var(--status-denied);
+                    box-shadow: 0 0 10px rgba(255, 59, 48, 0.4);
+                }
+                .timeline-step.denied.active .step-line {
+                    background: var(--status-denied);
+                }
+                
+                .step-info {
+                    margin-top: 12px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 2px;
+                }
+                .step-label { font-size: 12px; font-weight: 850; color: var(--text-primary); }
+                .step-user { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+                .step-date { font-size: 10px; color: var(--text-muted); opacity: 0.8; margin-top: 4px; }
+                .step-time { font-size: 10px; color: var(--text-muted); opacity: 0.6; }
                 
                 .btn-ghost.delete:hover { background: rgba(255,59,48,0.1); color: var(--status-denied); border-color: rgba(255,59,48,0.2); }
                 .loading-state, .error-state { padding: 100px; text-align: center; color: var(--text-muted); }
