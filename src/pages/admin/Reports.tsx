@@ -288,7 +288,7 @@ const AdminReports = () => {
                                 </div>
                             </div>
 
-                            <div className={`trend-projection ${trends.diff > 0 ? 'bg-green' : trends.diff < 0 ? 'bg-red' : 'bg-yellow'}`}>
+                            <div className={`trend-projection ${trends.diff < 0 ? 'bg-green' : trends.diff > 0 ? 'bg-red' : 'bg-yellow'}`}>
                                 <div className="projection-header">
                                     <TrendingUp size={14} />
                                     <span>TENDÊNCIA PRÓXIMA SEMANA</span>
@@ -399,13 +399,13 @@ const AdminReports = () => {
                 .wow-indicator.positive { background: rgba(39, 201, 140, 0.1); color: #27c98c; }
                 .wow-indicator.negative { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
-                .trend-projection { color: #fff; padding: 16px; border-radius: 16px; text-align: center; }
-                .trend-projection.bg-green { background: #27c98c; }
-                .trend-projection.bg-red { background: #ef4444; }
-                .trend-projection.bg-yellow { background: #f59e0b; }
-                .projection-header { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 10px; font-weight: 800; margin-bottom: 8px; opacity: 0.9; }
+                .trend-projection { color: #111; padding: 16px; border-radius: 20px; text-align: center; border: 3px solid transparent; }
+                .trend-projection.bg-green { background: rgba(39, 201, 140, 0.05); border-color: #27c98c; }
+                .trend-projection.bg-red { background: rgba(239, 68, 68, 0.05); border-color: #ef4444; }
+                .trend-projection.bg-yellow { background: rgba(245, 158, 11, 0.05); border-color: #f59e0b; }
+                .projection-header { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 10px; font-weight: 800; margin-bottom: 8px; color: var(--text-muted); }
                 .projection-value { font-size: 20px; font-weight: 900; }
-                .projection-value small { display: block; font-size: 9px; opacity: 0.8; font-weight: 500; margin-top: 4px; }
+                .projection-value small { display: block; font-size: 9px; opacity: 0.8; font-weight: 500; margin-top: 4px; color: var(--text-muted); }
                 .card-header { margin-bottom: 24px; }
                 .card-header h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
                 .card-header span { font-size: 12px; color: var(--text-muted); font-weight: 600; }
