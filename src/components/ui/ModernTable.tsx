@@ -17,6 +17,8 @@ interface ModernTableProps<T> {
     onSelectionChange?: (ids: string[]) => void;
     onRowClick?: (item: T) => void;
     idField?: string;
+    rowHeight?: number;
+    maxRows?: number;
 }
 
 // Memoized Row for high performance with thousands of records
@@ -65,7 +67,9 @@ function ModernTable<T>({
     selectedIds = [],
     onSelectionChange,
     onRowClick,
-    idField = 'id'
+    idField = 'id',
+    rowHeight = 32,
+    maxRows = 30
 }: ModernTableProps<T>) {
     
     // We keep this memo for isAllSelected check, but use Set for row-level checks
@@ -176,7 +180,7 @@ function ModernTable<T>({
                     background: var(--bg-card); 
                     border-radius: 12px; 
                     border: 1px solid var(--border); 
-                    max-height: 1004px; /* Approx 30 rows of 32px + header */
+                    max-height: ${(rowHeight * maxRows) + 44}px;
                 }
                 .modern-table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; table-layout: auto; }
                 
@@ -198,7 +202,7 @@ function ModernTable<T>({
 
                 .modern-table td {
                     padding: 0 20px;
-                    height: 32px;
+                    height: ${rowHeight}px;
                     border-bottom: 1px solid var(--border);
                     color: var(--text-primary);
                     font-size: 13px;

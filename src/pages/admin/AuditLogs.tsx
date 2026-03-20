@@ -7,10 +7,9 @@ import StandardCard from '../../components/ui/StandardCard';
 interface AuditLog {
     id: string;
     action: string;
-    entity_type: string;
-    entity_id: string;
-    old_data: any;
-    new_data: any;
+    entity: string;
+    record_id: string;
+    details: any;
     created_at: string;
     profiles?: {
         name: string;
@@ -64,13 +63,23 @@ const AdminAuditLogs = () => {
             ) 
         },
         { 
-            header: 'Entidade', 
-            accessor: (log: AuditLog) => (
-                <div className="entity-info">
-                    <strong>{log.entity_type || 'N/A'}</strong>
-                    <span className="text-mono-xs">{log.entity_id?.slice(0, 8)}</span>
-                </div>
-            ) 
+            header: 'Módulo', 
+            accessor: (log: AuditLog) => {
+                const entityMap: Record<string, string> = {
+                    'materials': 'Materiais',
+                    'suppliers': 'Fornecedores',
+                    'orders': 'Pedidos',
+                    'sites': 'Obras',
+                    'profiles': 'Usuários',
+                    'company_settings': 'Configurações'
+                };
+                return (
+                    <div className="entity-info">
+                        <strong>{entityMap[log.entity] || log.entity || 'N/A'}</strong>
+                        <span className="text-mono-xs">{log.record_id?.slice(0, 8)}</span>
+                    </div>
+                );
+            }
         }
     ];
 
@@ -92,6 +101,8 @@ const AdminAuditLogs = () => {
                     columns={columns} 
                     data={logs} 
                     loading={loading}
+                    rowHeight={30}
+                    maxRows={30}
                     emptyMessage="Nenhum log de auditoria encontrado."
                 />
             </StandardCard>
