@@ -16,6 +16,7 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
     const [materials, setMaterials] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [showResults, setShowResults] = useState(false);
     const [allowCustom, setAllowCustom] = useState(false);
 
     const [items, setItems] = useState<any[]>([]);
@@ -57,7 +58,9 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
 
         setItems([...items, { ...finalItem, quantity: parseFloat(currentItem.quantity) }]);
         setCurrentItem({ material_id: '', name: '', quantity: '', unit: 'un' });
+        setSearchTerm('');
         setIsCustom(false);
+        setShowResults(false);
     };
 
     const handleRemoveItem = (idx: number) => {
@@ -110,65 +113,76 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
                     <p className="welcome-desc">Adicione os itens necessários para a obra.</p>
                 </div>
 
-                <StandardCard title="Catálogo e Itens" subtitle="Selecione os materiais desejados.">
-                    <div className="item-selector-box">
-                        <div className="search-bar-mini">
-                            <Search size={16} />
-                            <input 
-                                type="text" 
-                                placeholder="Buscar no catálogo..." 
-                                value={searchTerm}
-                                onChange={e => setSearchTerm(e.target.value)}
-                            />
+                <StandardCard title="Catálogo e Itens" subtitle="Busque e adicione materiais à lista.">
+                    <div className="item-selector-box-modern">
+                        <div className="search-group-smart">
+                            <label className="section-label">Buscar Material</label>
+                            <div className="smart-search-input-wrapper">
+                                <Search size={18} className="search-icon-inside" />
+                                <input 
+                                    type="text" 
+                                    className="worker-input-smart" 
+                                    placeholder="Ex: Cimento, Areia, Brita..." 
+                                    value={searchTerm}
+                                    onFocus={() => setShowResults(true)}
+                                    onChange={e => {
+                                        setSearchTerm(e.target.value);
+                                        setShowResults(true);
+                                        if (isCustom) setCurrentItem({ ...currentItem, name: e.target.value });
+                                    }}
+                                />
+                                {showResults && (searchTerm.length > 0 || materials.length > 0) && (
+                                    <div className="smart-results-list glass">
+                                        {filteredMaterials.map(m => (
+                                            <div 
+                                                key={m.id} 
+                                                className="result-item"
+                                                onClick={() => {
+                                                    setCurrentItem({ ...currentItem, material_id: m.id, name: m.name, unit: m.unit });
+                                                    setSearchTerm(m.name);
+                                                    setIsCustom(false);
+                                                    setShowResults(false);
+                                                }}
+                                            >
+                                                <Package size={14} />
+                                                <span>{m.name}</span>
+                                            </div>
+                                        ))}
+                                        {allowCustom && searchTerm.length > 0 && !filteredMaterials.some(m => m.name.toLowerCase() === searchTerm.toLowerCase()) && (
+                                            <div 
+                                                className="result-item custom"
+                                                onClick={() => {
+                                                    setIsCustom(true);
+                                                    setCurrentItem({ ...currentItem, material_id: '', name: searchTerm });
+                                                    setShowResults(false);
+                                                }}
+                                            >
+                                                <Plus size={14} />
+                                                <span>Adicionar "{searchTerm}" como novo</span>
+                                            </div>
+                                        )}
+                                        {filteredMaterials.length === 0 && !allowCustom && (
+                                            <div className="no-results-text">Nenhum material encontrado</div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
-                        <div className="input-field-mobile" style={{ marginBottom: '16px' }}>
-                            <label className="section-label">Material do Catálogo</label>
-                            <select 
-                                className="worker-select"
-                                value={currentItem.material_id}
-                                onChange={e => {
-                                    const m = materials.find(mat => mat.id === e.target.value);
-                                    if (m) {
-                                        setCurrentItem({ ...currentItem, material_id: m.id, name: m.name, unit: m.unit });
-                                        setIsCustom(false);
-                                    } else if (e.target.value === 'custom') {
-                                        setIsCustom(true);
-                                        setCurrentItem({ ...currentItem, material_id: '', name: '' });
-                                    } else {
-                                        setCurrentItem({ ...currentItem, material_id: '', name: '' });
-                                        setIsCustom(false);
-                                    }
-                                }}
-                            >
-                                <option value="">Selecione um material...</option>
-                                {filteredMaterials.map(m => (
-                                    <option key={m.id} value={m.id}>{m.name}</option>
-                                ))}
-                                {allowCustom && <option value="custom">+ Outro item (não listado)</option>}
-                            </select>
-                        </div>
-
-                        {isCustom && (
-                            <input 
-                                type="text" 
-                                className="worker-input" 
-                                style={{ marginBottom: '12px' }}
-                                placeholder="Nome do material..." 
-                                value={currentItem.name}
-                                onChange={e => setCurrentItem({ ...currentItem, name: e.target.value })}
-                            />
-                        )}
-
-                        <div className="qty-row">
-                            <input 
-                                type="number" 
-                                className="worker-input qty" 
-                                placeholder="Qtd" 
-                                value={currentItem.quantity}
-                                onChange={e => setCurrentItem({ ...currentItem, quantity: e.target.value })}
-                            />
-                            <button className="btn-add-item" onClick={handleAddItem}>Adicionar à Lista</button>
+                        <div className="qty-row-modern" style={{ marginTop: '16px' }}>
+                            <div className="qty-input-group">
+                                <label className="section-label">Qtd</label>
+                                <input 
+                                    type="number" 
+                                    className="worker-input-smart qty" 
+                                    placeholder="0" 
+                                    value={currentItem.quantity}
+                                    onChange={e => setCurrentItem({ ...currentItem, quantity: e.target.value })}
+                                />
+                            </div>
+                            <button className="btn-add-item-modern" onClick={handleAddItem}>
+                                <Plus size={18} /> Adicionar à Lista
+                            </button>
                         </div>
                     </div>
 
@@ -220,21 +234,25 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
                 .welcome-title { font-size: 24px; font-weight: 850; margin-bottom: 4px; }
                 .welcome-desc { color: var(--text-muted); font-size: 13px; margin-bottom: 32px; }
                 
-                .item-selector-box { background: var(--bg-card); padding: 16px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; }
-                .search-bar-mini { display: flex; align-items: center; gap: 8px; background: var(--bg-input); padding: 0 12px; height: 44px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 16px; }
-                .search-bar-mini input { background: transparent; border: none; color: var(--text-primary); width: 100%; outline: none; font-size: 14px; }
+                .search-group-smart { position: relative; }
+                .smart-search-input-wrapper { position: relative; }
+                .search-icon-inside { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
+                .worker-input-smart { width: 100%; height: 56px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 16px; padding: 0 16px 0 48px; color: var(--text-primary); font-size: 16px; outline: none; transition: 0.2s; }
+                .worker-input-smart:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(39, 201, 140, 0.1); }
                 
-                .materials-grid-mini { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
-                .mat-chip { padding: 8px 14px; border-radius: 10px; background: var(--bg-input); border: 1px solid var(--border); font-size: 12px; font-weight: 700; color: var(--text-secondary); transition: 0.2s; }
-                .mat-chip.active { background: var(--primary); color: var(--bg-dark); border-color: var(--primary); }
-                .mat-chip.outline { border-style: dashed; }
-                
-                .qty-row { display: flex; gap: 10px; }
-                .worker-input, .worker-select { background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; height: 48px; padding: 0 16px; color: var(--text-primary); outline: none; font-size: 14px; width: 100%; transition: 0.2s; }
-                .worker-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; }
-                .worker-input:focus, .worker-select:focus { border-color: var(--primary); }
-                .worker-input.qty { width: 90px; text-align: center; }
-                .btn-add-item { flex: 1; background: var(--text-primary); color: var(--bg-dark); border: none; border-radius: 12px; font-weight: 800; font-size: 14px; }
+                .smart-results-list { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; max-height: 280px; overflow-y: auto; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+                .result-item { padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; border-bottom: 1px solid var(--border); transition: 0.2s; }
+                .result-item:last-child { border-bottom: none; }
+                .result-item:active { background: var(--primary); color: var(--bg-dark); }
+                .result-item span { font-size: 14px; font-weight: 700; }
+                .result-item.custom { color: var(--primary); }
+                .no-results-text { padding: 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+                .qty-row-modern { display: flex; gap: 12px; align-items: flex-end; }
+                .qty-input-group { flex-shrink: 0; }
+                .worker-input-smart.qty { width: 80px; text-align: center; padding: 0; }
+                .btn-add-item-modern { flex: 1; height: 56px; background: var(--text-primary); color: var(--bg-dark); border: none; border-radius: 16px; font-weight: 900; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+                .btn-add-item-modern:active { transform: scale(0.96); }
                 
                 .added-items-list-page { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
                 .section-label { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; display: block; }
