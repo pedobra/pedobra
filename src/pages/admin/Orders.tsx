@@ -148,17 +148,22 @@ const AdminOrders = () => {
             </header>
 
             {selectedIds.length > 0 && (
-                <div className="bulk-actions-bar animate-slide-down">
-                    <div className="selection-info">
-                        <strong>{selectedIds.length}</strong> {selectedIds.length === 1 ? 'pedido selecionado' : 'pedidos selecionados'}
-                    </div>
-                    <div className="bulk-btns">
-                        <button className="btn-danger-ghost" onClick={handleBulkDelete}>
-                            <Trash2 size={16} /> Excluir Selecionados
-                        </button>
-                        <button className="btn-text" onClick={() => setSelectedIds([])}>
-                            Cancelar
-                        </button>
+                <div className="bulk-actions-floating animate-pop-in">
+                    <div className="bulk-content-glass">
+                        <div className="selection-count">
+                            <span className="count-pill">{selectedIds.length}</span>
+                            <span className="count-label">{selectedIds.length === 1 ? 'Pedido Selecionado' : 'Pedidos Selecionados'}</span>
+                        </div>
+                        <div className="bulk-divider" />
+                        <div className="bulk-btns-hub">
+                            <button className="btn-bulk-delete" onClick={handleBulkDelete}>
+                                <Trash2 size={18} />
+                                <span>Excluir Selecionados</span>
+                            </button>
+                            <button className="btn-bulk-cancel" onClick={() => setSelectedIds([])}>
+                                Cancelar
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
@@ -212,6 +217,102 @@ const AdminOrders = () => {
                 }
                 .icon-btn:hover { color: var(--text-primary); border-color: var(--border-bright); background: var(--bg-dark); }
                 .icon-btn.delete:hover { background: #FEF2F2; color: var(--status-denied); border-color: #FEE2E2; }
+
+                /* Floating Bulk Bar Premium */
+                .bulk-actions-floating {
+                    position: fixed;
+                    bottom: 40px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    z-index: 1000;
+                    width: auto;
+                    min-width: 400px;
+                }
+                .bulk-content-glass {
+                    background: rgba(var(--bg-card-rgb), 0.85);
+                    backdrop-filter: blur(12px) saturate(180%);
+                    border: 1px solid var(--primary);
+                    border-radius: 24px;
+                    padding: 8px 12px 8px 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 24px;
+                    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 20px rgba(var(--primary-rgb), 0.1);
+                }
+                .selection-count { display: flex; align-items: center; gap: 12px; }
+                .count-pill {
+                    background: var(--primary);
+                    color: var(--bg-dark);
+                    width: 28px;
+                    height: 28px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 8px;
+                    font-weight: 900;
+                    font-size: 14px;
+                }
+                .count-label {
+                    font-size: 13px;
+                    font-weight: 700;
+                    color: var(--text-primary);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                .bulk-divider {
+                    width: 1px;
+                    height: 32px;
+                    background: var(--border);
+                }
+                .bulk-btns-hub { display: flex; align-items: center; gap: 8px; }
+                .btn-bulk-delete {
+                    background: #EF4444;
+                    color: white;
+                    border: none;
+                    height: 44px;
+                    padding: 0 20px;
+                    border-radius: 14px;
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    font-weight: 800;
+                    font-size: 14px;
+                    cursor: pointer;
+                    transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+                }
+                .btn-bulk-delete:hover {
+                    transform: translateY(-2px);
+                    filter: brightness(1.1);
+                    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+                }
+                .btn-bulk-delete:active { transform: translateY(0); }
+                
+                .btn-bulk-cancel {
+                    background: transparent;
+                    color: var(--text-muted);
+                    border: none;
+                    height: 44px;
+                    padding: 0 16px;
+                    font-weight: 600;
+                    font-size: 13px;
+                    cursor: pointer;
+                    transition: 0.2s;
+                    border-radius: 12px;
+                }
+                .btn-bulk-cancel:hover {
+                    color: var(--text-primary);
+                    background: rgba(255, 255, 255, 0.05);
+                }
+
+                .animate-pop-in {
+                    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                }
+                @keyframes popIn {
+                    from { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.9); }
+                    to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+                }
             `}</style>
         </div>
     );
