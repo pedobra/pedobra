@@ -15,7 +15,8 @@ import {
     Menu,
     X,
     ShieldAlert,
-    Crown
+    Crown,
+    PieChart
 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import ThemeToggle from './ThemeToggle';
@@ -200,6 +201,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                     </NavLink>
                     <NavLink to="/admin/suppliers" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
                         <Truck size={20} /> {!isCollapsed && <span>Fornecedores</span>}
+                    </NavLink>
+                    <NavLink to="/admin/reports" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                        <PieChart size={20} /> {!isCollapsed && <span>Relatórios</span>}
                     </NavLink>
 
                     {!isCollapsed && <label>SISTEMA</label>}

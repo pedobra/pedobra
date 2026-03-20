@@ -11,6 +11,7 @@ import AdminOrders from './pages/admin/Orders';
 import AdminSettings from './pages/admin/Settings';
 import AdminPlans from './pages/admin/Plans';
 import AdminAuditLogs from './pages/admin/AuditLogs';
+import AdminReports from './pages/admin/Reports';
 import WorkerDashboard from './pages/worker/Dashboard';
 import WorkerReceiving from './pages/worker/Receiving';
 import SiteFormPage from './pages/admin/sites/SiteFormPage';
@@ -166,6 +167,10 @@ function App() {
         } />
         <Route path="/admin/audit-logs" element={
           session && profile?.role === 'admin' ? <AdminLayout><AdminAuditLogs /></AdminLayout> : <Navigate to="/" />
+        } />
+
+        <Route path="/admin/reports" element={
+          session && profile?.role === 'admin' ? <AdminLayout><AdminReports /></AdminLayout> : <Navigate to="/" />
         } />
 
         <Route path="/dashboard" element={
