@@ -2,18 +2,14 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { 
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
-    BarChart, Bar, XAxis, YAxis, CartesianGrid
+    BarChart, Bar, XAxis, YAxis
 } from 'recharts';
 import { 
     ChevronLeft, 
     TrendingUp, 
-    Filter, 
-    Calendar,
-    ChevronDown,
-    Building2,
-    Package,
     History,
-    FileText
+    FileText,
+    Building2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -199,7 +195,7 @@ const AdminReports = () => {
                                         ))}
                                     </Pie>
                                     <Tooltip 
-                                        formatter={(value: number) => formatCurrency(value)}
+                                        formatter={(value: any) => formatCurrency(Number(value))}
                                         contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}
                                     />
                                     <Legend />
@@ -216,12 +212,12 @@ const AdminReports = () => {
                         <div className="chart-wrapper">
                             <ResponsiveContainer width="100%" height={300}>
                                 <BarChart data={materialChartData} layout="vertical" onClick={(data) => {
-                                    if (data?.activeLabel) setDrillDown({ level: 2, material: data.activeLabel });
+                                    if (data?.activeLabel) setDrillDown({ level: 2, material: String(data.activeLabel) });
                                 }}>
                                     <XAxis type="number" hide />
-                                    <YAxis dataKey="name" type="category" width={100} style={{ fontSize: '10px', fill: 'var(--text-muted)' }} />
+                                    <YAxis dataKey="name" type="category" width={100} style={{ fontSize: '10px', fill: 'var(--text-muted)' } as React.CSSProperties} />
                                     <Tooltip 
-                                        formatter={(value: number) => formatCurrency(value)}
+                                        formatter={(value: any) => formatCurrency(Number(value))}
                                         contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '12px' }}
                                     />
                                     <Bar dataKey="value" radius={[0, 4, 4, 0]} cursor="pointer">
