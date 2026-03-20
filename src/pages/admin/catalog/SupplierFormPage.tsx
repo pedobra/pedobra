@@ -108,16 +108,16 @@ const SupplierFormPage = () => {
         <div className="catalog-form-view">
             <div className="form-header">
                 <button className="btn-back" onClick={() => navigate('/admin/suppliers')}>
-                    <ArrowLeft size={18} /> Voltar para parceiros
+                    <ArrowLeft size={18} /> Voltar para fornecedores
                 </button>
                 <div className="header-titles">
-                    <h1 className="page-title">{id ? 'Ficha do Fornecedor' : 'Novo Parceiro Logístico'}</h1>
+                    <h1 className="page-title">{id ? 'Ficha do Fornecedor' : 'Novo Fornecedor'}</h1>
                     <p className="page-subtitle">Gestão de credenciamento e dados de contato do fornecedor.</p>
                 </div>
             </div>
 
             <form onSubmit={handleSubmit}>
-                <StandardCard title="Dados Corporativos" subtitle="Informações fiscais e especialidade do parceiro.">
+                <StandardCard title="Dados Corporativos" subtitle="Informações fiscais e especialidade do fornecedor.">
                     <div className="form-grid">
                         <div className="input-field full-width">
                             <label>Razão Social / Nome Fantasia</label>

@@ -199,12 +199,12 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         <Package size={20} /> {!isCollapsed && <span>Materiais</span>}
                     </NavLink>
                     <NavLink to="/admin/suppliers" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Truck size={20} /> {!isCollapsed && <span>Parceiros</span>}
+                        <Truck size={20} /> {!isCollapsed && <span>Fornecedores</span>}
                     </NavLink>
 
                     {!isCollapsed && <label>SISTEMA</label>}
                     <NavLink to="/admin/users" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Users size={20} /> {!isCollapsed && <span>Equipe</span>}
+                        <Users size={20} /> {!isCollapsed && <span>Usuários</span>}
                     </NavLink>
                     <NavLink to="/admin/settings" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
                         <Settings size={20} /> {!isCollapsed && <span>Configurações</span>}

@@ -287,7 +287,7 @@ const AdminCatalog = () => {
             <header className="view-header">
                 <div className="header-info">
                     <h1 className="page-title">{type === 'materials' ? 'Catálogo de Insumos' : 'Fornecedores'}</h1>
-                    <p className="page-subtitle">Gerencie os recursos e parcerias da sua empresa.</p>
+                    <p className="page-subtitle">Gerencie os recursos e fornecedores da sua empresa.</p>
                 </div>
                 <div className="header-actions">
                     <div className="search-bar-glass">
