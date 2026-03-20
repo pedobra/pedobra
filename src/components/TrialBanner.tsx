@@ -7,7 +7,7 @@ export const TrialBanner = () => {
     const { planId, daysRemaining = 0, isExpired, loading } = useSubscription();
     const isTrial = planId === 'trial';
     
-    if (loading || isExpired) return null;
+    if (loading || !isTrial || isExpired) return null;
 
     // Show warning if 2 days or less
     const isUrgent = (daysRemaining ?? 0) <= 2;
@@ -18,22 +18,17 @@ export const TrialBanner = () => {
                 <div className="banner-message">
                     {isUrgent ? <AlertTriangle size={16} className="text-orange" /> : <Crown size={16} className="text-primary" />}
                     <span>
-                        {isTrial 
-                            ? (isUrgent 
-                                ? `Atenção: Seu teste grátis expira em ${daysRemaining} ${daysRemaining === 1 ? 'dia' : 'dias'}.` 
-                                : `Você está no período de teste gratuito. Restam ${daysRemaining} dias.`)
-                            : `Plano ${planId?.toUpperCase()}: Restam ${daysRemaining} dias para renovação.`
-                        }
+                        {isUrgent 
+                            ? `Atenção: Seu teste grátis expira em ${daysRemaining} ${daysRemaining === 1 ? 'dia' : 'dias'}.` 
+                            : `Você está no período de teste gratuito. Restam ${daysRemaining} dias.`}
                     </span>
                 </div>
-                {isTrial && (
-                    <button 
-                        onClick={() => navigate('/admin/plans')}
-                        className="banner-cta"
-                    >
-                        ASSINAR PLANO PROFISSIONAL <ArrowRight size={14} />
-                    </button>
-                )}
+                <button 
+                    onClick={() => navigate('/admin/plans')}
+                    className="banner-cta"
+                >
+                    ASSINAR PLANO PROFISSIONAL <ArrowRight size={14} />
+                </button>
             </div>
 
             <style>{`
