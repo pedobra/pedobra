@@ -294,7 +294,7 @@ const AdminCatalog = () => {
                         </>
                     )}
                     {selectedIds.length > 0 && (
-                        <button className="btn-bulk-delete-header animate-pop-in" onClick={handleBulkDelete}>
+                        <button className="btn-bulk-delete-header animate-fade-in-scale" onClick={handleBulkDelete}>
                             <Trash2 size={16} /> Excluir ({selectedIds.length})
                         </button>
                     )}
@@ -483,6 +483,14 @@ const AdminCatalog = () => {
                 @keyframes popIn {
                     from { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.9); }
                     to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+                }
+
+                .animate-fade-in-scale {
+                    animation: fadeInScale 0.3s ease-out;
+                }
+                @keyframes fadeInScale {
+                    from { opacity: 0; transform: scale(0.9); }
+                    to { opacity: 1; transform: scale(1); }
                 }
             `}</style>
         </div>
