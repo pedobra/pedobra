@@ -54,7 +54,8 @@ const AdminObras = () => {
                 const items = (order.items as any[]) || [];
                 const orderTotal = items.reduce((acc, item) => {
                     const price = parseFloat(item.price_hint) || 0;
-                    const qty = parseFloat(item.quantity) || 0;
+                    // Somamos apenas o que foi de fato recebido (received_quantity)
+                    const qty = parseFloat(item.received_quantity || 0) || 0;
                     return acc + (price * qty);
                 }, 0);
                 
@@ -104,14 +105,15 @@ const AdminObras = () => {
                (addrText || '').toLowerCase().includes(searchTerm.toLowerCase());
     });
 
-    const columns = [
+    const columns: any[] = [
         {
             header: 'Nome da Obra',
+            align: 'left',
             accessor: (obra: any) => (
                 <div className="obra-identity">
                     <div className="obra-icon-mini"><Building2 size={14} /></div>
                     <div className="obra-texts">
-                        <strong>{obra.name}</strong>
+                        <strong className="obra-name-main">{obra.name}</strong>
                         <span className="text-muted-xs">
                             {typeof obra.address === 'object' ? obra.address?.full : (obra.address || 'Endereço não informado')}
                         </span>
@@ -121,23 +123,58 @@ const AdminObras = () => {
         },
         {
             header: 'Pedidos',
+            align: 'center',
             accessor: (obra: any) => <StatusBadge status={obra.orderCount > 0 ? 'active' : 'pending'} label={`${obra.orderCount} Pedidos`} />
         },
         {
             header: 'Orçamento',
-            accessor: (obra: any) => (
-                <div className="budget-stack">
-                    <span className="money-main">{fmtBRL(obra.budget)}</span>
-                    <span className="money-sub">Usado: {fmtBRL(obra.usedValue)}</span>
-                </div>
-            )
+            align: 'center',
+            accessor: (obra: any) => {
+                const consumedPercent = obra.budget > 0 ? Math.round((obra.usedValue / obra.budget) * 100) : 0;
+                const balance = (obra.budget || 0) - (obra.usedValue || 0);
+                
+                return (
+                    <div className="budget-stack-modern">
+                        <div className="budget-main-row">
+                            <div className="budget-item">
+                                <span className="label-tiny">ORÇAMENTO</span>
+                                <span className="val-num">{fmtBRL(obra.budget)}</span>
+                            </div>
+                            <div className="budget-item">
+                                <span className="label-tiny">GASTO</span>
+                                <span className="val-num">{fmtBRL(obra.usedValue)}</span>
+                            </div>
+                            <div className="budget-item">
+                                <span className="label-tiny">SALDO</span>
+                                <span className="val-num highlight" style={{ color: balance < 0 ? 'var(--status-denied)' : 'var(--primary)' }}>
+                                    {fmtBRL(balance)}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="progress-area">
+                            <div className="progress-bar-container">
+                                <div 
+                                    className="progress-bar-fill" 
+                                    style={{ 
+                                        width: `${Math.min(consumedPercent, 100)}%`,
+                                        backgroundColor: consumedPercent > 100 ? 'var(--status-denied)' : 'var(--primary)'
+                                    }} 
+                                />
+                            </div>
+                            <span className="progress-info">{consumedPercent}% do orçamento consumido</span>
+                        </div>
+                    </div>
+                );
+            }
         },
         {
             header: 'Ações',
+            align: 'right',
             accessor: (obra: any) => (
-                <div className="table-actions-btns">
+                <div className="table-actions-btns" style={{ justifyContent: 'flex-end' }}>
                     <button className="icon-btn" onClick={() => navigate(`/admin/sites/editar/${obra.id}`)} title="Editar"><Edit2 size={16} /></button>
-                    <button className="icon-btn" style={{ color: 'var(--status-denied)' }} onClick={async () => {
+                    <button className="icon-btn" style={{ color: 'var(--status-denied)' }} onClick={async (e) => {
+                        e.stopPropagation();
                         if (confirm('Remover obra?')) {
                             await supabase.from('sites').delete().eq('id', obra.id);
                             fetchObras();
@@ -249,12 +286,21 @@ const AdminObras = () => {
 
                 .obra-identity { display: flex; align-items: center; gap: 12px; }
                 .obra-icon-mini { width: 32px; height: 32px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-primary); }
-                .obra-texts { display: flex; flex-direction: column; }
-                .text-muted-xs { font-size: 11px; color: var(--text-muted); }
+                .obra-texts { display: flex; flex-direction: column; text-align: left; }
+                .obra-name-main { font-size: 14px; font-weight: 850; letter-spacing: -0.02em; }
+                .text-muted-xs { font-size: 11px; color: var(--text-muted); font-weight: 500; }
 
-                .budget-stack { display: flex; flex-direction: column; }
-                .money-main { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-                .money-sub { font-size: 11px; color: var(--text-muted); }
+                .budget-stack-modern { display: flex; flex-direction: column; gap: 8px; min-width: 280px; padding: 4px 0; }
+                .budget-main-row { display: flex; justify-content: space-between; gap: 16px; }
+                .budget-item { display: flex; flex-direction: column; align-items: center; gap: 2px; flex: 1; }
+                .label-tiny { font-size: 9px; font-weight: 850; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+                .val-num { font-size: 13px; font-weight: 800; color: var(--text-primary); }
+                .val-num.highlight { font-size: 14px; }
+
+                .progress-area { display: flex; flex-direction: column; gap: 4px; }
+                .progress-bar-container { height: 6px; background: var(--bg-dark); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+                .progress-bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s ease-out; }
+                .progress-info { font-size: 10px; font-weight: 700; color: var(--text-muted); }
 
                 .obras-grid-saas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; padding: 24px; }
                 .obra-card-saas { 
