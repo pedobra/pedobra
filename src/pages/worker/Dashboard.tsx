@@ -6,7 +6,8 @@ import {
     LogOut,
     Construction,
     ChevronRight,
-    FileText
+    FileText,
+    Search
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import StandardCard from '../../components/ui/StandardCard';
@@ -15,6 +16,7 @@ import StatusBadge from '../../components/ui/StatusBadge';
 const WorkerDashboard = ({ profile }: { profile: any }) => {
     const navigate = useNavigate();
     const [orders, setOrders] = useState<any[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         if (profile?.site_id) {
@@ -69,6 +71,46 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
         return '';
     };
 
+    const filteredOrders = orders.filter(order => {
+        if (!searchTerm) return true;
+        const s = searchTerm.toLowerCase();
+        
+        // Ref
+        if (getOrderRef(order).toLowerCase().includes(s)) return true;
+        
+        // Status
+        const statusMap: Record<string, string> = {
+            'new': 'novo',
+            'approved': 'aprovado',
+            'denied': 'negado',
+            'completed': 'concluído',
+            'partial': 'rec. parcial',
+            'cancelled': 'cancelado'
+        };
+        if (statusMap[order.status]?.includes(s)) return true;
+        
+        // Data
+        if (new Date(order.created_at).toLocaleDateString('pt-BR').includes(s)) return true;
+        
+        // Itens e Valores
+        let totalValue = 0;
+        const hasItemMatch = order.items?.some((item: any) => {
+            const val = (item.unit_value || 0) * (item.quantity || 0);
+            totalValue += val;
+            return (
+                item.name?.toLowerCase().includes(s) ||
+                String(item.unit_value).includes(s) ||
+                String(item.quantity).includes(s) ||
+                val.toFixed(2).replace('.', ',').includes(s)
+            );
+        });
+        
+        if (hasItemMatch) return true;
+        if (totalValue > 0 && totalValue.toFixed(2).replace('.', ',').includes(s)) return true;
+        
+        return false;
+    });
+
     return (
         <div className="worker-app">
             <header className="app-header glass">
@@ -91,25 +133,38 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                     
                     <div className="hero-actions">
                         <button className="hero-btn primary" onClick={() => navigate('/dashboard/pedir')}>
-                            <div className="hero-icon"><Plus size={24} /></div>
+                            <div className="hero-icon"><Plus size={20} /></div>
                             <span>Novo Pedido</span>
                         </button>
                         <button className="hero-btn secondary" onClick={() => navigate('/dashboard/receipts')}>
-                            <div className="hero-icon"><Package size={24} /></div>
+                            <div className="hero-icon"><Package size={20} /></div>
                             <span>Recebimento</span>
                         </button>
                     </div>
+
+                    <div className="smart-search-container">
+                        <div className="search-input-wrapper">
+                            <Search size={18} className="search-icon-fixed" />
+                            <input 
+                                type="text" 
+                                placeholder="Busca inteligente (Nº, Material, Status, Valor...)"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="smart-search-input"
+                            />
+                        </div>
+                    </div>
                 </div>
 
-                <StandardCard title="Pedidos Recentes" subtitle="Acompanhe o status das solicitações.">
+                <StandardCard title="Pedidos Recentes" subtitle={searchTerm ? `Resultados para "${searchTerm}"` : "Acompanhe o status das solicitações."}>
                     <div className="order-feed">
-                        {orders.length === 0 ? (
+                        {filteredOrders.length === 0 ? (
                             <div className="empty-state">
                                 <FileText size={48} color="var(--border)" />
-                                <p>Nenhum pedido realizado nesta obra.</p>
+                                <p>{searchTerm ? 'Nenhum pedido corresponde à sua busca.' : 'Nenhum pedido realizado nesta obra.'}</p>
                             </div>
                         ) : (
-                            orders.map(order => (
+                            filteredOrders.map(order => (
                                 <div 
                                     key={order.id} 
                                     className={`order-item-premium ${getStatusClass(order.status)}`} 
@@ -148,10 +203,16 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .welcome-desc { color: var(--text-muted); font-size: 14px; margin-bottom: 24px; }
                 
                 .hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-                .hero-btn { height: 120px; border-radius: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; font-weight: 800; font-size: 14px; transition: 0.2s; cursor: pointer; }
+                .hero-btn { height: 80px; border-radius: 20px; border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; font-weight: 800; font-size: 13px; transition: 0.2s; cursor: pointer; }
                 .hero-btn.primary { background: var(--primary); color: var(--bg-dark); border: none; }
                 .hero-btn.secondary { background: var(--bg-card); color: var(--text-primary); }
                 .hero-btn:active { transform: scale(0.96); }
+
+                .smart-search-container { margin-top: 20px; }
+                .search-input-wrapper { position: relative; display: flex; align-items: center; }
+                .smart-search-input { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px 12px 42px; color: var(--text-primary); font-size: 14px; transition: 0.2s; outline: none; }
+                .smart-search-input:focus { background: rgba(255, 255, 255, 0.07); border-color: var(--primary); }
+                .search-icon-fixed { position: absolute; left: 14px; color: var(--text-muted); pointer-events: none; }
                 
                 .order-feed { display: flex; flex-direction: column; gap: 8px; }
                 .order-item-premium { background: var(--bg-card); padding: 10px 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
