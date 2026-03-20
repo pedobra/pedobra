@@ -9,7 +9,6 @@ import {
     TrendingUp, 
     ArrowUp,
     ArrowDown,
-    FileText,
     Building2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -130,7 +129,8 @@ const AdminReports = () => {
                         unit: item.unit,
                         unit_value: item.unit_value,
                         total: item.received_quantity * (item.unit_value || 0),
-                        seq_number: order.seq_number
+                        seq_number: order.seq_number,
+                        status: order.status
                     });
                 }
             });
@@ -288,7 +288,7 @@ const AdminReports = () => {
                                 </div>
                             </div>
 
-                            <div className="trend-projection">
+                            <div className={`trend-projection ${trends.diff > 0 ? 'bg-green' : trends.diff < 0 ? 'bg-red' : 'bg-yellow'}`}>
                                 <div className="projection-header">
                                     <TrendingUp size={14} />
                                     <span>TENDÊNCIA PRÓXIMA SEMANA</span>
@@ -353,13 +353,17 @@ const AdminReports = () => {
                     
                     <div className="orders-list-reports">
                         {getMaterialHistory(drillDown.material!).map((hist, idx) => (
-                            <div key={idx} className="order-history-line" onClick={() => navigate(`/admin/orders/visualizar/${hist.order_id}`)}>
-                                <span className="line-date">{new Date(hist.created_at).toLocaleDateString()}</span>
-                                <span className="line-ref">{getOrderRef(hist)}</span>
-                                <span className="line-site">{hist.site_name}</span>
-                                <span className="line-calc">{hist.qty} {hist.unit} x {formatCurrency(hist.unit_value)}</span>
-                                <span className="line-total">{formatCurrency(hist.total)}</span>
-                                <FileText size={14} className="line-icon" />
+                            <div 
+                                key={idx} 
+                                className={`order-history-pill status-${hist.status}`} 
+                                onClick={() => navigate(`/admin/orders/visualizar/${hist.order_id}`)}
+                            >
+                                <span className="pill-ref">{getOrderRef(hist)}</span>
+                                <div className="pill-status">
+                                    <span className="dot"></span>
+                                    {hist.status === 'completed' ? 'Concluído' : 'Recebido Parcial'}
+                                </div>
+                                <span className="pill-date">{new Date(hist.created_at).toLocaleDateString('pt-BR')}</span>
                             </div>
                         ))}
                     </div>
@@ -395,10 +399,13 @@ const AdminReports = () => {
                 .wow-indicator.positive { background: rgba(39, 201, 140, 0.1); color: #27c98c; }
                 .wow-indicator.negative { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 
-                .trend-projection { background: var(--primary); color: var(--primary-foreground); padding: 16px; border-radius: 16px; }
-                .projection-header { display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 800; margin-bottom: 8px; opacity: 0.8; }
+                .trend-projection { color: #fff; padding: 16px; border-radius: 16px; text-align: center; }
+                .trend-projection.bg-green { background: #27c98c; }
+                .trend-projection.bg-red { background: #ef4444; }
+                .trend-projection.bg-yellow { background: #f59e0b; }
+                .projection-header { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 10px; font-weight: 800; margin-bottom: 8px; opacity: 0.9; }
                 .projection-value { font-size: 20px; font-weight: 900; }
-                .projection-value small { display: block; font-size: 9px; opacity: 0.7; font-weight: 500; margin-top: 4px; }
+                .projection-value small { display: block; font-size: 9px; opacity: 0.8; font-weight: 500; margin-top: 4px; }
                 .card-header { margin-bottom: 24px; }
                 .card-header h3 { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
                 .card-header span { font-size: 12px; color: var(--text-muted); font-weight: 600; }
@@ -419,27 +426,32 @@ const AdminReports = () => {
                 .value-cell { font-weight: 800; color: var(--primary); }
                 .btn-view-small { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; font-weight: 800; padding: 4px 12px; border-radius: 6px; }
 
-                .orders-list-reports { display: flex; flex-direction: column; gap: 8px; }
-                .order-history-line { 
+                .orders-list-reports { display: flex; flex-direction: column; gap: 12px; padding: 10px 0; }
+                .order-history-pill { 
                     display: flex; 
                     align-items: center; 
-                    height: 32px; 
-                    background: var(--bg-card); 
-                    border: 1px solid var(--border); 
-                    border-radius: 6px; 
-                    padding: 0 16px; 
-                    gap: 16px; 
-                    cursor: pointer; 
-                    transition: 0.2s;
-                    font-size: 11px;
+                    justify-content: space-between;
+                    padding: 0 40px;
+                    height: 54px;
+                    background: rgba(39, 201, 140, 0.03);
+                    border: 3px solid #27c98c;
+                    border-radius: 100px;
+                    cursor: pointer;
+                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 }
-                .order-history-line:hover { background: var(--bg-dark); border-color: var(--primary); }
-                .line-date { width: 70px; color: var(--text-muted); font-weight: 500; }
-                .line-ref { width: 80px; color: var(--primary); font-weight: 800; font-family: monospace; }
-                .line-site { flex: 1; font-weight: 600; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                .line-calc { width: 140px; text-align: right; color: var(--text-muted); }
-                .line-total { width: 100px; text-align: right; font-weight: 800; color: var(--primary); }
-                .line-icon { color: var(--text-muted); }
+                .order-history-pill.status-partial {
+                    background: rgba(245, 158, 11, 0.03);
+                    border-color: #f59e0b;
+                }
+                .order-history-pill:hover {
+                    transform: scale(1.02);
+                    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                }
+                .pill-ref { font-size: 18px; font-weight: 900; color: #111; letter-spacing: -0.5px; }
+                .pill-status { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 800; color: #333; }
+                .pill-status .dot { width: 10px; height: 10px; background: #27c98c; border-radius: 50%; }
+                .status-partial .pill-status .dot { background: #f59e0b; }
+                .pill-date { font-size: 18px; font-weight: 900; color: #111; }
 
                 .loading-box { height: 60vh; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--text-muted); }
 
