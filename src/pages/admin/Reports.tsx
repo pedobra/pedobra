@@ -278,8 +278,8 @@ const AdminReports = () => {
                                     <span className="wow-label">SEMANA ATUAL</span>
                                     <span className="wow-val">{trends.currentWeekCount}</span>
                                 </div>
-                                <div className={`wow-indicator ${trends.diff >= 0 ? 'positive' : 'negative'}`}>
-                                    {trends.diff >= 0 ? <ArrowUp size={16} /> : <ArrowDown size={16} />}
+                                <div className={`wow-indicator ${trends.diff <= 0 ? 'positive' : 'negative'}`}>
+                                    {trends.diff <= 0 ? <ArrowDown size={16} /> : <ArrowUp size={16} />}
                                     <span>{Math.abs(trends.percent)}%</span>
                                 </div>
                                 <div className="wow-box">
