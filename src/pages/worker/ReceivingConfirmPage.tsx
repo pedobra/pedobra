@@ -215,12 +215,12 @@ const ReceivingConfirmPage = ({ profile }: { profile: any }) => {
                                 <div className="input-field-mobile full" style={{ position: 'relative' }}>
                                     <label>Fornecedor</label>
                                     <div className="smart-search-input-wrapper">
-                                        <Search size={16} className="search-icon-inside" />
+                                        {!supplierSearchTerms[idx] && !item.supplier_id && <Search size={16} className="search-icon-inside" />}
                                         <input 
                                             type="text" 
                                             className="worker-input-smart small" 
                                             placeholder="Buscar fornecedor..." 
-                                            value={supplierSearchTerms[idx] ?? supplierTerm}
+                                            value={supplierSearchTerms[idx] !== undefined ? supplierSearchTerms[idx] : supplierTerm}
                                             onFocus={() => setActiveSupplierSearchIdx(idx)}
                                             onChange={e => {
                                                 setSupplierSearchTerms({ ...supplierSearchTerms, [idx]: e.target.value });
@@ -249,11 +249,11 @@ const ReceivingConfirmPage = ({ profile }: { profile: any }) => {
                     <div className="add-extra-material-box">
                         <h3 className="section-label">Adicionar Extra (Não Consta no Pedido)</h3>
                         <div className="smart-search-input-wrapper">
-                            <Search size={18} className="search-icon-inside" />
+                            {!materialSearchTerm && <Search size={16} className="search-icon-inside" />}
                             <input 
                                 type="text" 
                                 className="worker-input-smart" 
-                                placeholder="Buscar outro material..." 
+                                placeholder="Buscar material no catálogo..." 
                                 value={materialSearchTerm}
                                 onFocus={() => setShowMaterialResults(true)}
                                 onChange={e => {

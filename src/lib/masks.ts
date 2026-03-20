@@ -61,6 +61,8 @@ export const maskCurrency = (value: string | number) => {
 };
 
 // Helper to unmask currency back to number
-export const parseCurrencyToNumber = (value: string) => {
+export const parseCurrencyToNumber = (value: string | number) => {
+    if (typeof value === 'number') return value;
+    if (!value) return 0;
     return Number(value.replace(/\D/g, '')) / 100;
 };
