@@ -174,6 +174,7 @@ const AdminOrders = () => {
                         selectable={true}
                         selectedIds={selectedIds}
                         onSelectionChange={setSelectedIds}
+                        onRowClick={(order) => navigate(`/admin/orders/editar/${order.id}`)}
                     />
                 </div>
             </StandardCard>
@@ -197,7 +198,7 @@ const AdminOrders = () => {
                 }
                 .items-count { font-size: 13px; color: var(--text-muted); }
                 
-                .action-btns { display: flex; gap: 6px; justify-content: flex-end; }
+                .action-btns { display: flex; gap: 6px; justify-content: center; }
                 .icon-btn { 
                     background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); 
                     padding: 6px; border-radius: 6px; cursor: pointer; transition: 0.2s; 

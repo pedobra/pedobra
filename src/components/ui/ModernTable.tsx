@@ -14,6 +14,7 @@ interface ModernTableProps<T> {
     selectable?: boolean;
     selectedIds?: string[];
     onSelectionChange?: (ids: string[]) => void;
+    onRowClick?: (item: T) => void;
     idField?: string;
 }
 
@@ -25,6 +26,7 @@ function ModernTable<T>({
     selectable = false,
     selectedIds = [],
     onSelectionChange,
+    onRowClick,
     idField = 'id'
 }: ModernTableProps<T>) {
     
@@ -103,7 +105,11 @@ function ModernTable<T>({
                         const isSelected = selectedIds.includes(id);
 
                         return (
-                            <tr key={id || rowIdx} className={isSelected ? 'selected' : ''}>
+                            <tr 
+                                key={id || rowIdx} 
+                                className={`${isSelected ? 'selected' : ''} ${onRowClick ? 'clickable' : ''}`}
+                                onClick={() => onRowClick && onRowClick(item)}
+                            >
                                 {selectable && (
                                     <td className="checkbox-col">
                                         <div 
@@ -124,7 +130,7 @@ function ModernTable<T>({
             </table>
             <style>{`
                 .modern-table-wrapper { width: 100%; overflow-x: auto; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); }
-                .modern-table { width: 100%; border-collapse: collapse; text-align: left; table-layout: auto; }
+                .modern-table { width: 100%; border-collapse: collapse; text-align: center; table-layout: auto; }
                 
                 .modern-table th {
                     background: var(--bg-dark);
@@ -149,6 +155,7 @@ function ModernTable<T>({
 
                 .modern-table tr:last-child td { border-bottom: none; }
                 .modern-table tr:hover td { background: var(--bg-dark); }
+                .modern-table tr.clickable { cursor: pointer; }
                 .modern-table tr.selected td { background: rgba(255,215,0,0.02); }
 
                 .checkbox-col { width: 44px; padding-right: 0 !important; }
