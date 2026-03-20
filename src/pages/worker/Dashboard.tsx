@@ -61,6 +61,14 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
         return `${dd}${mm}-${seq}`;
     };
 
+    const getStatusClass = (status: string) => {
+        const s = status.toLowerCase();
+        if (['approved', 'completed', 'active'].includes(s)) return 'highlight-approved';
+        if (['new', 'pending', 'partial'].includes(s)) return 'highlight-pending';
+        if (['denied', 'cancelled', 'rejected'].includes(s)) return 'highlight-denied';
+        return '';
+    };
+
     return (
         <div className="worker-app">
             <header className="app-header glass">
@@ -102,7 +110,11 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                             </div>
                         ) : (
                             orders.map(order => (
-                                <div key={order.id} className="order-item-premium" onClick={() => navigate(`/dashboard/pedido/${order.id}`)}>
+                                <div 
+                                    key={order.id} 
+                                    className={`order-item-premium ${getStatusClass(order.status)}`} 
+                                    onClick={() => navigate(`/dashboard/pedido/${order.id}`)}
+                                >
                                     <div className="order-status-line-grid">
                                         <span className="order-ref-text-new">{getOrderRef(order)}</span>
                                         <div className="status-center">
@@ -143,7 +155,14 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 
                 .order-feed { display: flex; flex-direction: column; gap: 8px; }
                 .order-item-premium { background: var(--bg-card); padding: 10px 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
-                .order-item-premium:active { transform: scale(0.98); border-color: var(--primary); }
+                .order-item-premium:active { transform: scale(0.98); }
+
+                /* Status Highlights */
+                .order-item-premium.highlight-approved { border-color: rgba(16, 185, 129, 0.5); background: rgba(16, 185, 129, 0.05); }
+                .order-item-premium.highlight-pending { border-color: rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.05); }
+                .order-item-premium.highlight-denied { border-color: rgba(239, 68, 68, 0.5); background: rgba(239, 68, 68, 0.05); }
+                
+                .order-item-premium:hover { border-width: 1.5px; }
                 
                 .order-status-line-grid { display: grid; grid-template-columns: 100px 1fr 100px; align-items: center; }
                 .order-ref-text-new { font-size: 14px; font-weight: 850; color: var(--text-primary); text-align: left; white-space: nowrap; }
