@@ -7,7 +7,6 @@ import {
 import { 
     ChevronLeft, 
     TrendingUp, 
-    History,
     FileText,
     Building2
 } from 'lucide-react';
@@ -139,6 +138,15 @@ const AdminReports = () => {
 
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+    };
+
+    const getOrderRef = (order: any) => {
+        if (!order || !order.created_at) return 'N/A';
+        const d = new Date(order.created_at);
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const seq = String(order.seq_number || 0).padStart(4, '0');
+        return `${dd}${mm}-${seq}`;
     };
 
     if (loading) return <div className="loading-box">Carregando relatórios...</div>;
@@ -282,21 +290,13 @@ const AdminReports = () => {
                     
                     <div className="orders-list-reports">
                         {getMaterialHistory(drillDown.material!).map((hist, idx) => (
-                            <div key={idx} className="order-history-card glass" onClick={() => navigate(`/admin/orders/visualizar/${hist.order_id}`)}>
-                                <div className="hist-meta">
-                                    <History size={16} />
-                                    <span>#{String(hist.seq_number).padStart(4, '0')}</span>
-                                    <span className="dot">•</span>
-                                    <span>{new Date(hist.created_at).toLocaleDateString()}</span>
-                                </div>
-                                <div className="hist-body">
-                                    <div className="site-tag">{hist.site_name}</div>
-                                    <div className="qty-show">{hist.qty} {hist.unit} x {formatCurrency(hist.unit_value)}</div>
-                                    <div className="total-label">{formatCurrency(hist.total)}</div>
-                                </div>
-                                <div className="hist-footer">
-                                    <FileText size={14} /> Ver Pedido
-                                </div>
+                            <div key={idx} className="order-history-line" onClick={() => navigate(`/admin/orders/visualizar/${hist.order_id}`)}>
+                                <span className="line-date">{new Date(hist.created_at).toLocaleDateString()}</span>
+                                <span className="line-ref">{getOrderRef(hist)}</span>
+                                <span className="line-site">{hist.site_name}</span>
+                                <span className="line-calc">{hist.qty} {hist.unit} x {formatCurrency(hist.unit_value)}</span>
+                                <span className="line-total">{formatCurrency(hist.total)}</span>
+                                <FileText size={14} className="line-icon" />
                             </div>
                         ))}
                     </div>
@@ -336,16 +336,27 @@ const AdminReports = () => {
                 .value-cell { font-weight: 800; color: var(--primary); }
                 .btn-view-small { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 10px; font-weight: 800; padding: 4px 12px; border-radius: 6px; }
 
-                .orders-list-reports { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-                .order-history-card { background: var(--bg-card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-                .order-history-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-                .hist-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; }
-                .dot { color: var(--border); }
-                .hist-body { margin-bottom: 16px; }
-                .site-tag { display: inline-block; background: rgba(59, 130, 246, 0.1); color: var(--primary); font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; }
-                .qty-show { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-                .total-label { font-size: 18px; font-weight: 900; color: var(--primary); margin-top: 4px; }
-                .hist-footer { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; color: var(--text-muted); padding-top: 12px; border-top: 1px solid var(--border); }
+                .orders-list-reports { display: flex; flex-direction: column; gap: 8px; }
+                .order-history-line { 
+                    display: flex; 
+                    align-items: center; 
+                    height: 32px; 
+                    background: var(--bg-card); 
+                    border: 1px solid var(--border); 
+                    border-radius: 6px; 
+                    padding: 0 16px; 
+                    gap: 16px; 
+                    cursor: pointer; 
+                    transition: 0.2s;
+                    font-size: 11px;
+                }
+                .order-history-line:hover { background: var(--bg-dark); border-color: var(--primary); }
+                .line-date { width: 70px; color: var(--text-muted); font-weight: 500; }
+                .line-ref { width: 80px; color: var(--primary); font-weight: 800; font-family: monospace; }
+                .line-site { flex: 1; font-weight: 600; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                .line-calc { width: 140px; text-align: right; color: var(--text-muted); }
+                .line-total { width: 100px; text-align: right; font-weight: 800; color: var(--primary); }
+                .line-icon { color: var(--text-muted); }
 
                 .loading-box { height: 60vh; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--text-muted); }
 
