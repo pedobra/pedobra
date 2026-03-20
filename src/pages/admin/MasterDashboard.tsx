@@ -88,22 +88,25 @@ const MasterDashboard = () => {
         },
         { 
             header: 'Status', 
-            align: 'center',
-            accessor: (org: any) => (
-                <span style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    gap: '6px',
-                    color: org.subscription_status === 'active' ? 'var(--status-active)' : 'var(--status-cancelled)'
-                }}>
-                    <div style={{ 
-                        width: 8, height: 8, borderRadius: '50%', 
-                        background: org.subscription_status === 'active' ? 'var(--status-active)' : 'var(--status-cancelled)' 
-                    }} />
-                    {org.subscription_status === 'active' ? 'Ativo' : 'Suspenso'}
-                </span>
-            )
+            accessor: (org: any) => {
+                const status = org.subscription_status?.toLowerCase();
+                const isActive = status === 'active';
+                const isTrial = status === 'trialing';
+                
+                return (
+                    <span style={{ 
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                        color: isActive ? 'var(--status-active)' : (isTrial ? '#3b82f6' : 'var(--status-cancelled)')
+                    }}>
+                        <div style={{ 
+                            width: 8, height: 8, borderRadius: '50%', 
+                            background: isActive ? 'var(--status-active)' : (isTrial ? '#3b82f6' : 'var(--status-cancelled)')
+                        }} />
+                        {isActive ? 'Ativo' : (isTrial ? 'Em Teste' : 'Suspenso')}
+                    </span>
+                );
+            },
+            align: 'center'
         },
         {
             header: 'Ações',
