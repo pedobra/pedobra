@@ -76,17 +76,81 @@ const OrderViewPage = () => {
         const items = o.items || [];
         if (items.length === 0) return;
         
-        // If not pending, items already have hints
-        if (o.status !== 'new' && o.status !== 'pending') {
-             const hints: any = {};
-             items.forEach((it: any) => {
-                 if (it.price_hint) hints[it.name] = { supplierName: it.price_hint_supplier, unitValue: it.price_hint };
-             });
-             setPriceSuggestions(hints);
-             return;
-        }
+        // If not pending/new, items might already have hints saved at approval time
+        // but it's always better to show the latest best price as a reference
+        
+        try {
+            // 1. Fetch completed/partial orders from the same organization
+            const { data: pastOrders, error: ordersError } = await supabase
+                .from('orders')
+                .select('items')
+                .eq('organization_id', o.organization_id)
+                .in('status', ['completed', 'partial'])
+                .order('created_at', { ascending: false })
+                .limit(500); // Look at last 500 fulfilled orders
 
-        // ... (Logic to fetch recent best prices)
+            if (ordersError) throw ordersError;
+
+            // 2. Extract and find best price per material
+            const bestPrices: Record<string, { unitValue: number; supplierId: string }> = {};
+            
+            pastOrders?.forEach(order => {
+                const orderItems = Array.isArray(order.items) ? order.items : [];
+                orderItems.forEach((item: any) => {
+                    const price = typeof item.unit_value === 'string' 
+                        ? (parseFloat(item.unit_value.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0)
+                        : (item.unit_value || 0);
+                    
+                    const recQty = parseFloat(item.received_quantity) || 0;
+                    
+                    if (price > 0 && recQty > 0) {
+                        const materialKey = item.material_id || item.name;
+                        if (!bestPrices[materialKey] || price < bestPrices[materialKey].unitValue) {
+                            bestPrices[materialKey] = { 
+                                unitValue: price, 
+                                supplierId: item.supplier_id 
+                            };
+                        }
+                    }
+                });
+            });
+
+            // 3. Fetch supplier names for the best prices
+            const supplierIds = Array.from(new Set(
+                Object.values(bestPrices)
+                    .map(bp => bp.supplierId)
+                    .filter(id => id && id !== 'other' && id.length > 10) // Basic UUID check
+            ));
+
+            let supplierMap: Record<string, string> = {};
+            if (supplierIds.length > 0) {
+                const { data: suppliersData } = await supabase
+                    .from('suppliers')
+                    .select('id, name')
+                    .in('id', supplierIds);
+                
+                suppliersData?.forEach(s => {
+                    supplierMap[s.id] = s.name;
+                });
+            }
+
+            // 4. Map back to items in current order
+            const hints: Record<string, { supplierName: string; unitValue: number }> = {};
+            items.forEach((it: any) => {
+                const materialKey = it.material_id || it.name;
+                const best = bestPrices[materialKey];
+                if (best) {
+                    hints[it.name] = {
+                        unitValue: best.unitValue,
+                        supplierName: supplierMap[best.supplierId] || 'Outro'
+                    };
+                }
+            });
+
+            setPriceSuggestions(hints);
+        } catch (error) {
+            console.error('Error fetching price hints:', error);
+        }
     };
 
     const updateStatus = async (newStatus: string) => {
