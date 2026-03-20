@@ -54,10 +54,11 @@ const MasterDashboard = () => {
         return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
     };
 
-    const columns = [
-        { header: 'Cliente', accessor: (org: any) => <strong>{org.name}</strong> },
+    const columns: any[] = [
+        { header: 'Cliente', accessor: (org: any) => <strong>{org.name}</strong>, align: 'center' },
         { 
             header: 'Plano', 
+            align: 'center',
             accessor: (org: any) => (
                 <span style={{ 
                     padding: '4px 8px', 
@@ -68,12 +69,13 @@ const MasterDashboard = () => {
                     background: org.plan_id === 'pro' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(108, 117, 125, 0.1)',
                     color: org.plan_id === 'pro' ? 'var(--status-active)' : 'var(--text-muted)'
                 }}>
-                    {org.plan_id || 'FREE'}
+                    {org.plan_id || 'TRIAL'}
                 </span>
             )
         },
         { 
             header: 'Expira em', 
+            align: 'center',
             accessor: (org: any) => {
                 const days = getRemainingDays(org.trial_end);
                 if (days === null) return <span style={{ color: 'var(--text-muted)' }}>Vitalício/N/A</span>;
@@ -86,10 +88,12 @@ const MasterDashboard = () => {
         },
         { 
             header: 'Status', 
+            align: 'center',
             accessor: (org: any) => (
                 <span style={{ 
                     display: 'flex', 
                     alignItems: 'center', 
+                    justifyContent: 'center',
                     gap: '6px',
                     color: org.subscription_status === 'active' ? 'var(--status-active)' : 'var(--status-cancelled)'
                 }}>
@@ -103,9 +107,16 @@ const MasterDashboard = () => {
         },
         {
             header: 'Ações',
-            accessor: () => (
-                <div style={{ display: 'flex', gap: '8px' }}>
-                    <button className="icon-btn" style={{ height: '32px', padding: '0 12px', fontSize: '12px' }}>Gerenciar</button>
+            align: 'center',
+            accessor: (org: any) => (
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                    <button 
+                        className="btn-secondary" 
+                        style={{ height: '32px', padding: '0 12px', fontSize: '12px' }}
+                        onClick={() => alert(`Gerenciando organização: ${org.name}`)}
+                    >
+                        Gerenciar
+                    </button>
                 </div>
             )
         }

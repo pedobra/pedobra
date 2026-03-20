@@ -212,36 +212,51 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         </NavLink>
                     )}
 
-                    {!isCollapsed && <label>RECURSOS</label>}
-                    <NavLink to="/admin/sites" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Construction size={20} /> {!isCollapsed && <span>Obras</span>}
-                    </NavLink>
-                    <NavLink to="/admin/orders" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <ClipboardList size={20} /> {!isCollapsed && <span>Pedidos</span>}
-                    </NavLink>
-                    <NavLink to="/admin/materials" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Package size={20} /> {!isCollapsed && <span>Materiais</span>}
-                    </NavLink>
-                    <NavLink to="/admin/suppliers" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Truck size={20} /> {!isCollapsed && <span>Fornecedores</span>}
-                    </NavLink>
-                    <NavLink to="/admin/reports" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <PieChart size={20} /> {!isCollapsed && <span>Relatórios</span>}
-                    </NavLink>
+                    {userRole !== 'master' && (
+                        <>
+                            {!isCollapsed && <label>RECURSOS</label>}
+                            <NavLink to="/admin/sites" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <Construction size={20} /> {!isCollapsed && <span>Obras</span>}
+                            </NavLink>
+                            <NavLink to="/admin/orders" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <ClipboardList size={20} /> {!isCollapsed && <span>Pedidos</span>}
+                            </NavLink>
+                            <NavLink to="/admin/materials" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <Package size={20} /> {!isCollapsed && <span>Materiais</span>}
+                            </NavLink>
+                            <NavLink to="/admin/suppliers" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <Truck size={20} /> {!isCollapsed && <span>Fornecedores</span>}
+                            </NavLink>
+                            <NavLink to="/admin/reports" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <PieChart size={20} /> {!isCollapsed && <span>Relatórios</span>}
+                            </NavLink>
+                        </>
+                    )}
 
-                    {!isCollapsed && <label>SISTEMA</label>}
-                    <NavLink to="/admin/users" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Users size={20} /> {!isCollapsed && <span>Usuários</span>}
-                    </NavLink>
-                    <NavLink to="/admin/settings" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Settings size={20} /> {!isCollapsed && <span>Configurações</span>}
-                    </NavLink>
-                    <NavLink to="/admin/plans" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Crown size={20} /> {!isCollapsed && <span>Planos</span>}
-                    </NavLink>
-                    <NavLink to="/admin/audit-logs" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                        <Activity size={20} /> {!isCollapsed && <span>Logs</span>}
-                    </NavLink>
+                    {userRole !== 'master' ? (
+                        <>
+                            {!isCollapsed && <label>SISTEMA</label>}
+                            <NavLink to="/admin/users" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <Users size={20} /> {!isCollapsed && <span>Usuários</span>}
+                            </NavLink>
+                            <NavLink to="/admin/settings" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <Settings size={20} /> {!isCollapsed && <span>Configurações</span>}
+                            </NavLink>
+                            <NavLink to="/admin/plans" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <Crown size={20} /> {!isCollapsed && <span>Planos</span>}
+                            </NavLink>
+                            <NavLink to="/admin/audit-logs" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <Activity size={20} /> {!isCollapsed && <span>Logs</span>}
+                            </NavLink>
+                        </>
+                    ) : (
+                        <>
+                            {!isCollapsed && <label>SISTEMA</label>}
+                            <NavLink to="/admin/settings" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                <Settings size={20} /> {!isCollapsed && <span>Configurações</span>}
+                            </NavLink>
+                        </>
+                    )}
                 </nav>
             </aside>
 
