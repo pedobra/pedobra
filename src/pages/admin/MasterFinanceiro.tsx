@@ -4,10 +4,8 @@ import {
     TrendingUp, 
     CreditCard, 
     Percent, 
-    Users, 
     DollarSign, 
     ArrowUpRight, 
-    Search,
     PieChart as PieChartIcon
 } from 'lucide-react';
 import { 
@@ -247,10 +245,10 @@ const MasterFinanceiro = () => {
                                     outerRadius={100}
                                     paddingAngle={5}
                                     dataKey="value"
-                                    onClick={(data) => setSelectedPlan(selectedPlan === data.key ? null : data.key)}
+                                    onClick={(data: any) => data && data.key && setSelectedPlan(selectedPlan === data.key ? null : data.key)}
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    {financialData.chartData.map((entry, index) => (
+                                    {financialData.chartData.map((entry: any, index: number) => (
                                         <Cell 
                                             key={`cell-${index}`} 
                                             fill={COLORS[index % COLORS.length]} 
@@ -259,7 +257,7 @@ const MasterFinanceiro = () => {
                                         />
                                     ))}
                                 </Pie>
-                                <Tooltip formatter={(value: number) => `R$ ${value.toLocaleString('pt-BR')}`} />
+                                <Tooltip formatter={(value: any) => `R$ ${Number(value || 0).toLocaleString('pt-BR')}`} />
                                 <Legend />
                             </PieChart>
                         </ResponsiveContainer>
@@ -269,13 +267,13 @@ const MasterFinanceiro = () => {
                 <StandardCard title="Base de Clientes" subtitle="Total de organizações por nível de plano.">
                     <div style={{ height: '300px', width: '100%' }}>
                         <ResponsiveContainer>
-                            <BarChart data={financialData.chartData} onClick={(data) => data && data.activePayload && setSelectedPlan(selectedPlan === data.activePayload[0].payload.key ? null : data.activePayload[0].payload.key)}>
+                            <BarChart data={financialData.chartData} onClick={(data: any) => data && data.activePayload && setSelectedPlan(selectedPlan === data.activePayload[0].payload.key ? null : data.activePayload[0].payload.key)}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                                 <XAxis dataKey="name" fontSize={12} stroke="var(--text-muted)" />
                                 <YAxis fontSize={12} stroke="var(--text-muted)" />
                                 <Tooltip />
                                 <Bar dataKey="count" radius={[4, 4, 0, 0]} style={{ cursor: 'pointer' }}>
-                                    {financialData.chartData.map((entry, index) => (
+                                    {financialData.chartData.map((entry: any, index: number) => (
                                         <Cell 
                                             key={`bar-cell-${index}`} 
                                             fill={COLORS[index % COLORS.length]} 
