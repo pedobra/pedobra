@@ -17,6 +17,26 @@ const AdminOrders = () => {
     useEffect(() => {
         fetchOrders();
         setSelectedIds([]);
+
+        // Realtime subscription
+        const channel = supabase
+            .channel('admin-orders-realtime')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'orders'
+                },
+                () => {
+                    fetchOrders();
+                }
+            )
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
 
     const fetchOrders = async () => {
@@ -41,7 +61,7 @@ const AdminOrders = () => {
         const dd = String(d.getDate()).padStart(2, '0');
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const seq = String(order.seq_number || 0).padStart(4, '0');
-        return `${dd}${mm}_${seq}`;
+        return `${dd}${mm}-${seq}`;
     };
 
     const handleDelete = async (id: string, e: React.MouseEvent) => {

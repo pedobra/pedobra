@@ -15,7 +15,30 @@ const OrderViewPage = () => {
     const [priceSuggestions, setPriceSuggestions] = useState<Record<string, { supplierName: string; unitValue: number }>>({});
 
     useEffect(() => {
-        if (id) fetchOrder();
+        if (id) {
+            fetchOrder();
+            
+            // Realtime subscription for status updates
+            const channel = supabase
+                .channel(`order-${id}`)
+                .on(
+                    'postgres_changes',
+                    {
+                        event: 'UPDATE',
+                        schema: 'public',
+                        table: 'orders',
+                        filter: `id=eq.${id}`
+                    },
+                    (payload) => {
+                        setOrder(payload.new);
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(channel);
+            };
+        }
     }, [id]);
 
     const getOrderRef = (o: any) => {
@@ -24,7 +47,7 @@ const OrderViewPage = () => {
         const dd = String(d.getDate()).padStart(2, '0');
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const seq = String(o.seq_number || 0).padStart(4, '0');
-        return `${dd}${mm}_${seq}`;
+        return `${dd}${mm}-${seq}`;
     };
 
     const fetchOrder = async () => {
@@ -84,13 +107,15 @@ const OrderViewPage = () => {
     return (
         <div className="order-view-page">
             <header className="view-header">
-                <button onClick={() => navigate('/admin/orders')} className="btn-back">
-                    <ArrowLeft size={18} /> Painel de Pedidos
-                </button>
-                <div className="header-info">
-                    <h1 className="page-title">Pedido #{getOrderRef(order)}</h1>
-                    <div className="status-container">
-                        <StatusBadge status={order.status} />
+                <div className="view-header-left">
+                    <button onClick={() => navigate('/admin/orders')} className="btn-back-circle" title="Voltar para Pedidos">
+                        <ArrowLeft size={20} />
+                    </button>
+                    <div className="header-info">
+                        <h1 className="order-title">Pedido {getOrderRef(order)}</h1>
+                        <div className="status-container">
+                            <StatusBadge status={order.status} />
+                        </div>
                     </div>
                 </div>
                 <div className="header-actions">
@@ -163,16 +188,16 @@ const OrderViewPage = () => {
 
                 <div className="side-info">
                     <StandardCard title="Dados da Solicitação" subtitle="Informações de suporte.">
-                        <div className="info-item">
-                            <label><Building2 size={12} /> Obra</label>
+                        <div className="info-item-compact">
+                            <label><Building2 size={10} /> OBRA</label>
                             <strong>{order.sites?.name}</strong>
                         </div>
-                        <div className="info-item">
-                            <label><User size={12} /> Solicitado Por</label>
+                        <div className="info-item-compact">
+                            <label><User size={10} /> SOLICITADO POR</label>
                             <strong>{order.profiles?.name}</strong>
                         </div>
-                        <div className="info-item">
-                            <label><Clock size={12} /> Data/Hora</label>
+                        <div className="info-item-compact">
+                            <label><Clock size={10} /> DATA E HORA</label>
                             <strong>{new Date(order.created_at).toLocaleString('pt-BR')}</strong>
                         </div>
                     </StandardCard>
@@ -192,10 +217,16 @@ const OrderViewPage = () => {
 
             <style>{`
                 .order-view-page { display: flex; flex-direction: column; gap: 32px; }
-                .view-header { display: flex; align-items: center; gap: 24px; }
-                .header-info { flex: 1; }
-                .status-container { margin-top: 8px; }
-                .view-grid { display: grid; grid-template-columns: 1fr 320px; gap: 32px; }
+                .view-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+                .view-header-left { display: flex; align-items: flex-start; gap: 16px; }
+                .btn-back-circle { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg-card); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; color: var(--text-primary); flex-shrink: 0; }
+                .btn-back-circle:hover { background: var(--bg-dark); border-color: var(--text-muted); }
+                .header-info { display: flex; flex-direction: column; }
+                .order-title { font-size: 24px; font-weight: 850; margin: 0; line-height: 1.2; }
+                .status-container { margin-top: 6px; }
+                .header-actions { display: flex; gap: 12px; }
+                
+                .view-grid { display: grid; grid-template-columns: 1fr 340px; gap: 32px; }
                 
                 .details-table { width: 100%; border-collapse: collapse; }
                 .details-table th { text-align: left; font-size: 11px; text-transform: uppercase; color: var(--text-muted); padding: 12px; border-bottom: 1px solid var(--border); }
@@ -212,12 +243,12 @@ const OrderViewPage = () => {
                 .comp-header h3 { margin: 0; font-size: 16px; flex: 1; }
                 .btn-text { background: transparent; border: none; color: var(--primary); padding: 0; cursor: pointer; font-weight: 600; margin-top: 8px; }
                 
-                .info-item { margin-bottom: 20px; }
-                .info-item label { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
-                .info-item strong { font-size: 16px; color: var(--text-primary); }
+                .info-item-compact { margin-bottom: 14px; }
+                .info-item-compact label { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
+                .info-item-compact strong { font-size: 13px; color: var(--text-primary); text-transform: uppercase; display: block; }
                 
                 .approval-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
-                .btn-approve { background: var(--status-approved); color: white; border: none; height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+                .btn-approve { background: var(--status-approved); color: var(--primary-foreground); border: none; height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
                 .btn-deny { background: transparent; border: 1px solid var(--status-denied); color: var(--status-denied); height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
                 
                 .btn-ghost.delete:hover { background: rgba(255,59,48,0.1); color: var(--status-denied); border-color: rgba(255,59,48,0.2); }

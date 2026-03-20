@@ -40,6 +40,27 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
             fetchOrders();
             fetchMaterials();
             fetchSettings();
+
+            // Realtime subscription
+            const channel = supabase
+                .channel('orders-realtime')
+                .on(
+                    'postgres_changes',
+                    {
+                        event: '*',
+                        schema: 'public',
+                        table: 'orders',
+                        filter: `site_id=eq.${profile.site_id}`
+                    },
+                    () => {
+                        fetchOrders();
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                supabase.removeChannel(channel);
+            };
         }
     }, [profile]);
 
@@ -60,6 +81,15 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
     const fetchMaterials = async () => {
         const { data } = await supabase.from('materials').select('*').order('name');
         if (data) setMaterials(data);
+    };
+
+    const getOrderRef = (order: any) => {
+        if (!order || !order.created_at) return 'N/A';
+        const d = new Date(order.created_at);
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const seq = String(order.seq_number || 0).padStart(4, '0');
+        return `${dd}${mm}-${seq}`;
     };
 
     const handleAddItem = () => {
@@ -154,7 +184,10 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                             orders.map(order => (
                                 <div key={order.id} className="order-item-premium" onClick={() => setViewingOrder(order)}>
                                     <div className="order-status-line">
-                                        <StatusBadge status={order.status} />
+                                        <div className="status-with-ref">
+                                            <StatusBadge status={order.status} />
+                                            <span className="order-ref-text">{getOrderRef(order)}</span>
+                                        </div>
                                         <span className="order-date">{new Date(order.created_at).toLocaleDateString()}</span>
                                     </div>
                                     <div className="order-main">
@@ -330,6 +363,8 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .order-feed { display: flex; flex-direction: column; gap: 10px; }
                 .order-item-premium { background: var(--bg-dark); padding: 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; }
                 .order-status-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+                .status-with-ref { display: flex; align-items: center; gap: 8px; }
+                .order-ref-text { font-size: 11px; font-weight: 800; color: var(--text-primary); background: var(--bg-input); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
                 .order-date { font-size: 11px; color: var(--text-muted); font-weight: 700; }
                 .order-main { display: flex; justify-content: space-between; align-items: center; }
                 .order-materials { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
@@ -341,11 +376,11 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .sheet-header h2 { font-size: 20px; font-weight: 850; margin-bottom: 4px; }
                 .sheet-header p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
                 
-                .item-selector-box { background: var(--bg-dark); padding: 16px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 16px; }
+                .item-selector-box { background: var(--bg-dark); padding: 12px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 12px; }
                 .search-bar-mini { display: flex; align-items: center; gap: 8px; background: var(--bg-input); padding: 0 12px; height: 40px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 12px; }
                 .search-bar-mini input { background: transparent; border: none; color: var(--text-primary); width: 100%; outline: none; font-size: 13px; }
                 
-                .materials-grid-mini { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+                .materials-grid-mini { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
                 .mat-chip { padding: 8px 14px; border-radius: 10px; background: var(--bg-input); border: 1px solid var(--border); font-size: 12px; font-weight: 700; color: var(--text-secondary); }
                 .mat-chip.active { background: var(--primary); color: var(--bg-dark); border-color: var(--primary); }
                 .mat-chip.outline { border-style: dashed; }
@@ -355,9 +390,10 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .worker-input.qty { width: 80px; text-align: center; }
                 .btn-add-item { background: var(--text-primary); color: var(--bg-dark); border: none; border-radius: 12px; padding: 0 16px; font-weight: 800; font-size: 13px; }
                 
-                .added-items-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; min-height: 0; max-height: 420px; overflow-y: auto; }
-                .added-item { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 10px 14px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; color: var(--primary); }
-                .added-item button { color: var(--status-denied); background: transparent; border: none; font-size: 14px; padding: 4px; font-weight: bold; }
+                .added-items-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; min-height: 0; max-height: 340px; overflow-y: auto; }
+                .added-item { height: 32px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2); padding: 0 14px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 700; color: var(--primary); }
+                .added-item span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; padding-right: 8px; }
+                .added-item button { color: var(--status-denied); background: transparent; border: none; display: flex; align-items: center; padding: 4px; }
                 
                 .worker-textarea { width: 100%; min-height: 80px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; color: var(--text-primary); outline: none; font-size: 14px; margin-top: 12px; resize: none; }
                 
