@@ -99,11 +99,11 @@ const AdminOrders = () => {
     const columns = [
         {
             header: 'REF',
-            accessor: (order: any) => <span className="ref-badge">{getOrderRef(order)}</span>
+            accessor: (order: any) => <span className="ref-column-text">{getOrderRef(order)}</span>
         },
         {
             header: 'Obra',
-            accessor: (order: any) => <strong>{order.sites?.name || '—'}</strong>
+            accessor: (order: any) => <strong className="site-name-main">{order.sites?.name || '—'}</strong>
         },
         {
             header: 'Solicitado Por',
@@ -191,10 +191,16 @@ const AdminOrders = () => {
                 }
                 .search-bar-saas input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; }
 
-                .ref-badge { 
-                    font-family: var(--font-main); 
-                    background: var(--bg-dark); padding: 2px 6px; border-radius: 4px; color: var(--text-secondary); 
-                    font-size: 11px; font-weight: 600; 
+                .ref-column-text { 
+                    font-size: 14px; 
+                    font-weight: 850; 
+                    color: var(--text-primary);
+                    letter-spacing: -0.01em;
+                }
+                .site-name-main {
+                    font-size: 14px;
+                    font-weight: 850;
+                    text-transform: uppercase;
                 }
                 .items-count { font-size: 13px; color: var(--text-muted); }
                 

@@ -88,7 +88,10 @@ function ModernTable<T>({
                             <th className="checkbox-col">
                                 <div 
                                     className={`checkbox-custom ${isAllSelected || isIndeterminate ? 'active' : ''}`}
-                                    onClick={handleToggleAll}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleToggleAll();
+                                    }}
                                 >
                                     {isAllSelected && <Check size={12} strokeWidth={4} />}
                                     {isIndeterminate && <Minus size={12} strokeWidth={4} />}
@@ -115,7 +118,10 @@ function ModernTable<T>({
                                     <td className="checkbox-col">
                                         <div 
                                             className={`checkbox-custom ${isSelected ? 'active' : ''}`}
-                                            onClick={() => handleToggleRow(id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleToggleRow(id);
+                                            }}
                                         >
                                             {isSelected && <Check size={12} strokeWidth={4} />}
                                         </div>
