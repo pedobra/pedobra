@@ -158,11 +158,26 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                             Novo Pedido
                         </button>
                     )}
-                    <button className="menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ background: 'transparent', border: 'none' }}>
-                        {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    <button className="menu-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '8px' }}>
+                        {mobileMenuOpen ? <X size={24} color="var(--text-primary)" /> : <Menu size={24} color="var(--text-primary)" />}
                     </button>
                 </div>
             </header>
+            
+            {mobileMenuOpen && (
+                <div 
+                    className="mobile-sidebar-overlay" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        backgroundColor: 'rgba(0,0,0,0.4)',
+                        backdropFilter: 'blur(4px)',
+                        zIndex: 999,
+                        animation: 'fadeIn 0.3s ease'
+                    }}
+                />
+            )}
 
             <aside className={`sidebar-glass ${mobileMenuOpen ? 'mobile-open' : ''} ${isCollapsed ? 'collapsed' : ''}`}>
                 <div className="sidebar-brand">

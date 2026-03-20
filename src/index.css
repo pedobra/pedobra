@@ -699,11 +699,13 @@ h3,
     left: 0;
     right: 0;
     bottom: 0;
-    width: 100% !important;
+    width: 280px !important;
     z-index: 1000;
     transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     background-color: var(--bg-sidebar);
+    box-shadow: 20px 0 50px rgba(0,0,0,0.1);
+    display: flex !important; /* Force display when it was 'none' on desktop-small */
   }
 
   .sidebar-glass.mobile-open {
