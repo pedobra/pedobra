@@ -108,16 +108,10 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                                             <StatusBadge status={order.status} />
                                             <span className="order-ref-text">{getOrderRef(order)}</span>
                                         </div>
-                                        <span className="order-date">{new Date(order.created_at).toLocaleDateString()}</span>
-                                    </div>
-                                    <div className="order-main">
-                                        <div className="order-materials">
-                                            {order.items.slice(0, 2).map((it: any, i: number) => (
-                                                <span key={i}>{it.name}{i < 1 && order.items.length > 1 ? ', ' : ''}</span>
-                                            ))}
-                                            {order.items.length > 2 && <span className="more">+{order.items.length - 2} itens</span>}
+                                        <div className="order-right-meta">
+                                            <span className="order-date">{new Date(order.created_at).toLocaleDateString()}</span>
+                                            <ChevronRight size={16} color="var(--border)" />
                                         </div>
-                                        <ChevronRight size={18} color="var(--border)" />
                                     </div>
                                 </div>
                             ))
@@ -147,16 +141,14 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .hero-btn.secondary { background: var(--bg-card); color: var(--text-primary); }
                 .hero-btn:active { transform: scale(0.96); }
                 
-                .order-feed { display: flex; flex-direction: column; gap: 10px; }
-                .order-item-premium { background: var(--bg-dark); padding: 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
-                .order-item-premium:active { border-color: var(--primary); }
-                .order-status-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-                .status-with-ref { display: flex; align-items: center; gap: 8px; }
-                .order-ref-text { font-size: 11px; font-weight: 800; color: var(--text-primary); background: var(--bg-input); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
-                .order-date { font-size: 11px; color: var(--text-muted); font-weight: 700; }
-                .order-main { display: flex; justify-content: space-between; align-items: center; }
-                .order-materials { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
-                .order-materials .more { color: var(--primary); margin-left: 4px; }
+                .order-feed { display: flex; flex-direction: column; gap: 8px; }
+                .order-item-premium { background: var(--bg-card); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+                .order-item-premium:active { transform: scale(0.98); border-color: var(--primary); }
+                .order-status-line { display: flex; justify-content: space-between; align-items: center; }
+                .status-with-ref { display: flex; align-items: center; gap: 10px; }
+                .order-ref-text { font-size: 13px; font-weight: 900; color: var(--text-primary); }
+                .order-right-meta { display: flex; align-items: center; gap: 8px; }
+                .order-date { font-size: 11px; color: var(--text-muted); font-weight: 800; }
                 
                 .empty-state { padding: 40px 20px; text-align: center; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 12px; }
             `}</style>
