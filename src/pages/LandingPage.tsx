@@ -18,6 +18,14 @@ const LandingPage = () => {
     const [loading, setLoading] = useState(false);
     const [honey, setHoney] = useState(''); // Honeypot state
 
+    React.useEffect(() => {
+        const shouldOpenLogin = localStorage.getItem('openLogin');
+        if (shouldOpenLogin === 'true') {
+            setIsLogin(true);
+            localStorage.removeItem('openLogin');
+        }
+    }, []);
+
     const handleLogoClick = () => {
         const newClicks = logoClicks + 1;
         setLogoClicks(newClicks);
@@ -115,9 +123,12 @@ const LandingPage = () => {
                         });
                     if (profileError) throw profileError;
                     
-                    alert('Conta criada com sucesso! Você iniciou seu teste grátis de 7 dias.');
-                    setIsSignUp(false);
-                    setIsLogin(true);
+                    // Force logout so the user can log in normally as requested
+                    localStorage.setItem('openLogin', 'true');
+                    await supabase.auth.signOut();
+                    
+                    alert('Conta criada com sucesso! Agora você pode acessar o sistema.');
+                    // window.location.reload(); // App.tsx will handle the re-render when session is null
                 }
             } else {
                 const { error } = await supabase.auth.signInWithPassword({ email, password });
