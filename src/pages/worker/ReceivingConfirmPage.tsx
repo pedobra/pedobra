@@ -144,7 +144,8 @@ const ReceivingConfirmPage = ({ profile }: { profile: any }) => {
                         site_id: order.site_id,
                         user_id: order.user_id,
                         items: missingItems,
-                        status: 'new'
+                        status: 'new',
+                        parent_order_id: order.id
                     });
                 }
             }

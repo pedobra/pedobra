@@ -11,6 +11,7 @@ const OrderViewPage = () => {
     const navigate = useNavigate();
     const [order, setOrder] = useState<any>(null);
     const [complementaryOrder, setComplementaryOrder] = useState<any>(null);
+    const [parentOrder, setParentOrder] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [priceSuggestions, setPriceSuggestions] = useState<Record<string, { supplierName: string; unitValue: number }>>({});
 
@@ -54,15 +55,20 @@ const OrderViewPage = () => {
         const { data } = await supabase.from('orders').select('*, sites(*), profiles(*)').eq('id', id).single();
         if (data) {
             setOrder(data);
-            fetchComplementary(data);
+            fetchComplementary(data.id);
+            if (data.parent_order_id) fetchParent(data.parent_order_id);
             fetchPriceHints(data);
         }
         setLoading(false);
     };
 
-    const fetchComplementary = async (baseOrder: any) => {
-        const ref = getOrderRef(baseOrder);
-        const { data } = await supabase.from('orders').select('*').contains('items', [{ name: `[COMPLEMENTO REF ${ref}]` }]).single();
+    const fetchParent = async (parentId: string) => {
+        const { data } = await supabase.from('orders').select('*').eq('id', parentId).single();
+        if (data) setParentOrder(data);
+    };
+
+    const fetchComplementary = async (orderId: string) => {
+        const { data } = await supabase.from('orders').select('*').eq('parent_order_id', orderId).maybeSingle();
         if (data) setComplementaryOrder(data);
     };
 
@@ -197,14 +203,26 @@ const OrderViewPage = () => {
                     </StandardCard>
 
                     {complementaryOrder && (
-                        <div className="complementary-box animate-fade">
+                        <div className="complementary-box relation-box animate-fade">
                             <div className="comp-header">
                                 <History size={16} />
                                 <h3>Pedido Complementar Gerado</h3>
                                 <StatusBadge status={complementaryOrder.status} />
                             </div>
-                            <p>Este pedido foi gerado automaticamente devido a itens não entregues. REF: <strong>#{getOrderRef(complementaryOrder)}</strong></p>
+                            <p>Este pedido foi gerado para suprir os itens não entregues. REF: <strong>{getOrderRef(complementaryOrder)}</strong></p>
                             <button className="btn-text" onClick={() => navigate(`/admin/orders/visualizar/${complementaryOrder.id}`)}>Ver Pedido Complementar →</button>
+                        </div>
+                    )}
+
+                    {parentOrder && (
+                        <div className="parent-box relation-box animate-fade">
+                            <div className="comp-header">
+                                <History size={16} />
+                                <h3>Pedido Original (Base)</h3>
+                                <StatusBadge status={parentOrder.status} />
+                            </div>
+                            <p>Este pedido é um complemento do pedido original. REF: <strong>{getOrderRef(parentOrder)}</strong></p>
+                            <button className="btn-text" onClick={() => navigate(`/admin/orders/visualizar/${parentOrder.id}`)}>Ver Pedido de Origem →</button>
                         </div>
                     )}
 
@@ -280,7 +298,9 @@ const OrderViewPage = () => {
                 .price-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(39,174,96,0.1); color: var(--status-approved); padding: 4px 10px; border-radius: 8px; font-weight: 700; font-family: var(--font-main); }
                 .sup { font-size: 10px; opacity: 0.7; font-weight: 400; margin-left: 4px; }
                 
-                .complementary-box { background: var(--bg-card); border: 2px solid var(--border); border-left: 4px solid var(--primary); border-radius: 16px; padding: 24px; margin-top: 24px; }
+                .complementary-box { border-left: 4px solid var(--primary); }
+                .parent-box { border-left: 4px solid var(--text-muted); }
+                .relation-box { background: var(--bg-card); border: 2px solid var(--border); border-radius: 16px; padding: 24px; margin-top: 24px; }
                 .comp-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
                 .comp-header h3 { margin: 0; font-size: 16px; flex: 1; }
                 .btn-text { background: transparent; border: none; color: var(--primary); padding: 0; cursor: pointer; font-weight: 600; margin-top: 8px; }
