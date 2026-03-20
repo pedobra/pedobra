@@ -184,6 +184,17 @@ const OrderViewPage = () => {
                             <button className="btn-text" onClick={() => navigate(`/admin/orders/visualizar/${complementaryOrder.id}`)}>Ver Pedido Complementar →</button>
                         </div>
                     )}
+
+                    {(order.status === 'new' || order.status === 'pending') && (
+                        <div className="approval-actions animate-fade">
+                            <button className="btn-approve" onClick={() => updateStatus('approved')}>
+                                <CheckCircle size={18} /> Aprovar Solicitação
+                            </button>
+                            <button className="btn-deny" onClick={() => updateStatus('denied')}>
+                                <XCircle size={18} /> Negar
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 <div className="side-info">
@@ -201,17 +212,6 @@ const OrderViewPage = () => {
                             <strong>{new Date(order.created_at).toLocaleString('pt-BR')}</strong>
                         </div>
                     </StandardCard>
-
-                    {(order.status === 'new' || order.status === 'pending') && (
-                        <div className="approval-actions animate-fade">
-                            <button className="btn-approve" onClick={() => updateStatus('approved')}>
-                                <CheckCircle size={18} /> Aprovar Solicitação
-                            </button>
-                            <button className="btn-deny" onClick={() => updateStatus('denied')}>
-                                <XCircle size={18} /> Negar
-                            </button>
-                        </div>
-                    )}
                 </div>
             </div>
 
@@ -247,9 +247,11 @@ const OrderViewPage = () => {
                 .info-item-compact label { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px; }
                 .info-item-compact strong { font-size: 13px; color: var(--text-primary); text-transform: uppercase; display: block; }
                 
-                .approval-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 24px; }
-                .btn-approve { background: var(--status-approved); color: var(--primary-foreground); border: none; height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-                .btn-deny { background: transparent; border: 1px solid var(--status-denied); color: var(--status-denied); height: 44px; padding: 0 16px; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+                .approval-actions { display: flex; flex-direction: column; gap: 12px; margin-top: 32px; max-width: 400px; }
+                .btn-approve { background: var(--status-approved); color: var(--primary-foreground); border: none; height: 48px; padding: 0 24px; border-radius: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+                .btn-approve:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2); }
+                .btn-deny { background: transparent; border: 1px solid var(--status-denied); color: var(--status-denied); height: 48px; padding: 0 24px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+                .btn-deny:hover { background: rgba(255, 59, 48, 0.05); transform: translateY(-1px); }
                 
                 .btn-ghost.delete:hover { background: rgba(255,59,48,0.1); color: var(--status-denied); border-color: rgba(255,59,48,0.2); }
                 .loading-state, .error-state { padding: 100px; text-align: center; color: var(--text-muted); }
