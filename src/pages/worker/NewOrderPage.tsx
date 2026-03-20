@@ -122,30 +122,31 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
                             />
                         </div>
 
-                        <div className="materials-grid-mini">
-                            {filteredMaterials.slice(0, 9).map(m => (
-                                <button 
-                                    key={m.id} 
-                                    className={`mat-chip ${currentItem.material_id === m.id ? 'active' : ''}`}
-                                    onClick={() => {
+                        <div className="input-field-mobile" style={{ marginBottom: '16px' }}>
+                            <label className="section-label">Material do Catálogo</label>
+                            <select 
+                                className="worker-select"
+                                value={currentItem.material_id}
+                                onChange={e => {
+                                    const m = materials.find(mat => mat.id === e.target.value);
+                                    if (m) {
                                         setCurrentItem({ ...currentItem, material_id: m.id, name: m.name, unit: m.unit });
                                         setIsCustom(false);
-                                    }}
-                                >
-                                    {m.name}
-                                </button>
-                            ))}
-                            {allowCustom && (
-                                <button 
-                                    className={`mat-chip outline ${isCustom ? 'active' : ''}`}
-                                    onClick={() => {
+                                    } else if (e.target.value === 'custom') {
                                         setIsCustom(true);
                                         setCurrentItem({ ...currentItem, material_id: '', name: '' });
-                                    }}
-                                >
-                                    + Outro item
-                                </button>
-                            )}
+                                    } else {
+                                        setCurrentItem({ ...currentItem, material_id: '', name: '' });
+                                        setIsCustom(false);
+                                    }
+                                }}
+                            >
+                                <option value="">Selecione um material...</option>
+                                {filteredMaterials.map(m => (
+                                    <option key={m.id} value={m.id}>{m.name}</option>
+                                ))}
+                                {allowCustom && <option value="custom">+ Outro item (não listado)</option>}
+                            </select>
                         </div>
 
                         {isCustom && (
@@ -209,7 +210,7 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
             </main>
 
             <style>{`
-                .worker-app { min-height: 100vh; background: var(--bg-dark); padding: 88px 16px 120px; }
+                .worker-app { min-height: 100vh; background: var(--bg-dark); padding: 88px 16px 160px; }
                 .app-header { position: fixed; top: 0; left: 0; right: 0; height: 72px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; z-index: 100; border-bottom: 1px solid var(--border); }
                 .back-btn { background: transparent; border: none; color: var(--text-primary); display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; }
                 .worker-meta { display: flex; align-items: center; gap: 10px; font-size: 14px; }
@@ -229,7 +230,9 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
                 .mat-chip.outline { border-style: dashed; }
                 
                 .qty-row { display: flex; gap: 10px; }
-                .worker-input { background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; height: 48px; padding: 0 16px; color: var(--text-primary); outline: none; font-size: 14px; width: 100%; }
+                .worker-input, .worker-select { background: var(--bg-input); border: 1px solid var(--border); border-radius: 12px; height: 48px; padding: 0 16px; color: var(--text-primary); outline: none; font-size: 14px; width: 100%; transition: 0.2s; }
+                .worker-select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 18px; }
+                .worker-input:focus, .worker-select:focus { border-color: var(--primary); }
                 .worker-input.qty { width: 90px; text-align: center; }
                 .btn-add-item { flex: 1; background: var(--text-primary); color: var(--bg-dark); border: none; border-radius: 12px; font-weight: 800; font-size: 14px; }
                 
@@ -241,7 +244,7 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
                 .empty-items { padding: 20px; text-align: center; color: var(--text-muted); border: 1px dashed var(--border); border-radius: 12px; font-size: 13px; font-weight: 600; }
                 .delete-btn-mini { color: var(--status-denied); background: transparent; border: none; padding: 8px; }
                 
-                .obs-section { margin-top: 24px; }
+                .obs-section { margin-top: 32px; padding-bottom: 24px; }
                 .worker-textarea { width: 100%; min-height: 100px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 16px; padding: 16px; color: var(--text-primary); outline: none; font-size: 14px; resize: none; }
                 
                 .page-actions-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 20px; background: var(--bg-dark); border-top: 1px solid var(--border); z-index: 100; }
