@@ -216,15 +216,16 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
                     </div>
                 </StandardCard>
 
-                <div className="page-actions-footer">
-                    <button className="btn-primary-mobile" onClick={handleSubmitOrder} disabled={loading || items.length === 0}>
-                        <Send size={18} /> {loading ? 'Enviando...' : 'FINALIZAR PEDIDO'}
-                    </button>
-                </div>
             </main>
 
+            <div className="page-actions-footer">
+                <button className="btn-primary-mobile" onClick={handleSubmitOrder} disabled={loading || items.length === 0}>
+                    <Send size={18} /> {loading ? 'Enviando...' : 'FINALIZAR PEDIDO'}
+                </button>
+            </div>
+
             <style>{`
-                .worker-app { min-height: 100vh; background: var(--bg-dark); padding: 88px 16px 160px; }
+                .worker-app { min-height: 100vh; background: var(--bg-dark); padding: 88px 16px 260px; }
                 .app-header { position: fixed; top: 0; left: 0; right: 0; height: 72px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; z-index: 100; border-bottom: 1px solid var(--border); }
                 .back-btn { background: transparent; border: none; color: var(--text-primary); display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; }
                 .worker-meta { display: flex; align-items: center; gap: 10px; font-size: 14px; }
@@ -265,7 +266,7 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
                 .obs-section { margin-top: 32px; padding-bottom: 24px; }
                 .worker-textarea { width: 100%; min-height: 100px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 16px; padding: 16px; color: var(--text-primary); outline: none; font-size: 14px; resize: none; }
                 
-                .page-actions-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 20px; background: var(--bg-dark); border-top: 1px solid var(--border); z-index: 100; }
+                .page-actions-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 24px 20px; background: var(--bg-dark); border-top: 1px solid var(--border); z-index: 100; box-shadow: 0 -10px 30px rgba(0,0,0,0.5); }
                 .btn-primary-mobile { width: 100%; max-width: 560px; margin: 0 auto; height: 56px; background: var(--primary); color: var(--bg-dark); border: none; border-radius: 16px; font-weight: 900; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 8px 24px rgba(39, 201, 140, 0.3); }
                 .btn-primary-mobile:disabled { opacity: 0.5; box-shadow: none; }
             `}</style>
