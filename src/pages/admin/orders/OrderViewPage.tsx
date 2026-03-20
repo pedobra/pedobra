@@ -234,6 +234,12 @@ const OrderViewPage = () => {
                             <label><Clock size={10} /> DATA E HORA</label>
                             <strong>{new Date(order.created_at).toLocaleString('pt-BR')}</strong>
                         </div>
+                        {order.received_by_name && (
+                            <div className="info-item-compact animate-fade">
+                                <label><User size={10} /> RECEBIDO POR</label>
+                                <strong>{order.received_by_name}</strong>
+                            </div>
+                        )}
                     </StandardCard>
                 </div>
             </div>
