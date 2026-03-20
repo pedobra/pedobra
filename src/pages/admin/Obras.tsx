@@ -53,7 +53,7 @@ const AdminObras = () => {
                 
                 const items = (order.items as any[]) || [];
                 const orderTotal = items.reduce((acc, item) => {
-                    const price = parseFloat(item.price_hint) || 0;
+                    const price = parseFloat(item.unit_value || item.price_hint) || 0;
                     // Somamos apenas o que foi de fato recebido (received_quantity)
                     const qty = parseFloat(item.received_quantity || 0) || 0;
                     return acc + (price * qty);
