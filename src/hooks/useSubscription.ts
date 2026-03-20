@@ -55,7 +55,7 @@ export const useSubscription = () => {
                     setSubInfo({
                         isTrial: org.plan_id === 'trial',
                         daysRemaining: Math.max(0, diffDays),
-                        isExpired: diffTime < 0 && org.subscription_status !== 'active',
+                        isExpired: diffTime < 0,
                         planId: org.plan_id,
                         organizationName: org.name,
                         organizationId: org.id,

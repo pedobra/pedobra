@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
     Users,
@@ -25,6 +25,7 @@ import { useSubscription } from '../hooks/useSubscription';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { isExpired, loading: subLoading, systemMessage, systemMessageLevel } = useSubscription();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -132,17 +133,17 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
     if (subLoading) return null;
 
-    if (isExpired) {
+    if (isExpired && location.pathname !== '/admin/plans') {
         return (
             <div className="expired-overlay">
                 <div className="expired-card premium-card animate-fade">
                     <div className="expired-icon">
                         <ShieldAlert size={48} color="var(--status-denied)" />
                     </div>
-                    <h2>Seu período de teste expirou</h2>
+                    <h2>Seu período de acesso expirou</h2>
                     <p>Para continuar gerenciando suas obras e acessando seus dados, por favor selecione um plano de assinatura.</p>
                     <div className="expired-actions">
-                        <button className="btn-primary" onClick={() => window.location.href = '/admin/billing'}>
+                        <button className="btn-primary" onClick={() => navigate('/admin/plans')}>
                             Ver Planos de Assinatura
                         </button>
                         <button className="btn-secondary" onClick={handleLogout}>

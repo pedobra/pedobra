@@ -25,7 +25,7 @@ const OrganizationManageModal = ({ organization, onClose, onUpdate }: Organizati
                     subscription_status: status,
                     system_message: message,
                     system_message_level: messageLevel,
-                    trial_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+                    trial_end: new Date(Date.now() + (planId === 'trial' ? 7 : 30) * 24 * 60 * 60 * 1000).toISOString()
                 })
                 .eq('id', organization.id);
 
