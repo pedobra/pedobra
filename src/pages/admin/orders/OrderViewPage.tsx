@@ -137,6 +137,7 @@ const OrderViewPage = () => {
                                     <th>Material</th>
                                     <th>Qtd Solicitada</th>
                                     <th>Recebido</th>
+                                    {(order.status === 'completed' || order.status === 'partial') && <th>Valor Unit.</th>}
                                     {order.status === 'new' && <th className="hint-col">Sugestão R$</th>}
                                 </tr>
                             </thead>
@@ -145,6 +146,8 @@ const OrderViewPage = () => {
                                     const qty = parseFloat(it.quantity) || 0;
                                     const rec = parseFloat(it.received_quantity) || 0;
                                     const hint = priceSuggestions[it.name];
+                                    const unitValue = typeof it.unit_value === 'string' ? (parseFloat(it.unit_value.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0) : (it.unit_value || 0);
+
                                     return (
                                         <tr key={i}>
                                             <td>
@@ -155,6 +158,11 @@ const OrderViewPage = () => {
                                             </td>
                                             <td>{qty} {it.unit}</td>
                                             <td className={rec < qty ? 'pending' : 'done'}>{rec} {it.unit}</td>
+                                            {(order.status === 'completed' || order.status === 'partial') && (
+                                                <td className="value-cell">
+                                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(unitValue)}
+                                                </td>
+                                            )}
                                             {order.status === 'new' && (
                                                 <td className="hint-cell">
                                                     {hint ? (
@@ -171,6 +179,21 @@ const OrderViewPage = () => {
                                 })}
                             </tbody>
                         </table>
+
+                        {(order.status === 'completed' || order.status === 'partial') && (
+                            <div className="order-total-footer">
+                                <div className="total-label">VALOR TOTAL DO RECEBIMENTO</div>
+                                <div className="total-value">
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+                                        order.items?.reduce((acc: number, it: any) => {
+                                            const val = typeof it.unit_value === 'string' ? (parseFloat(it.unit_value.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0) : (it.unit_value || 0);
+                                            const rec = parseFloat(it.received_quantity) || 0;
+                                            return acc + (val * rec);
+                                        }, 0) || 0
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </StandardCard>
 
                     {complementaryOrder && (
@@ -226,7 +249,7 @@ const OrderViewPage = () => {
                 .status-container { margin-top: 6px; }
                 .header-actions { display: flex; gap: 12px; }
                 
-                .view-grid { display: grid; grid-template-columns: 1fr 340px; gap: 32px; }
+                .view-grid { display: grid; grid-template-columns: 1fr 280px; gap: 32px; }
                 
                 .details-table { width: 100%; border-collapse: collapse; }
                 .details-table th { text-align: left; font-size: 11px; text-transform: uppercase; color: var(--text-muted); padding: 12px; border-bottom: 1px solid var(--border); }
@@ -234,6 +257,11 @@ const OrderViewPage = () => {
                 .item-cell { display: flex; align-items: center; gap: 8px; }
                 .pending { color: var(--status-pending); font-weight: 700; }
                 .done { color: var(--status-approved); }
+                .value-cell { font-weight: 700; color: var(--text-primary); }
+                
+                .order-total-footer { margin-top: 24px; padding: 20px; background: rgba(var(--primary-rgb), 0.05); border: 2px solid var(--border); border-radius: 16px; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+                .total-label { font-size: 10px; font-weight: 850; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+                .total-value { font-size: 20px; font-weight: 900; color: var(--primary); }
                 
                 .price-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(39,174,96,0.1); color: var(--status-approved); padding: 4px 10px; border-radius: 8px; font-weight: 700; font-family: var(--font-main); }
                 .sup { font-size: 10px; opacity: 0.7; font-weight: 400; margin-left: 4px; }
