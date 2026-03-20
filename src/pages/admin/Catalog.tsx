@@ -293,6 +293,11 @@ const AdminCatalog = () => {
                             </label>
                         </>
                     )}
+                    {selectedIds.length > 0 && (
+                        <button className="btn-bulk-delete-header animate-pop-in" onClick={handleBulkDelete}>
+                            <Trash2 size={16} /> Excluir ({selectedIds.length})
+                        </button>
+                    )}
                     <button className="btn-primary" onClick={() => navigate(`/admin/${type}/novo`)}>
                         <Plus size={20} /> {type === 'materials' ? 'Novo Material' : 'Novo Fornecedor'}
                     </button>
@@ -450,6 +455,26 @@ const AdminCatalog = () => {
                 .btn-bulk-cancel:hover {
                     color: var(--text-primary);
                     background: rgba(255, 255, 255, 0.05);
+                }
+
+                .btn-bulk-delete-header {
+                    background: rgba(239, 68, 68, 0.1);
+                    color: #EF4444;
+                    border: 1px solid rgba(239, 68, 68, 0.2);
+                    height: 44px;
+                    padding: 0 16px;
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-weight: 700;
+                    font-size: 13px;
+                    cursor: pointer;
+                    transition: 0.2s;
+                }
+                .btn-bulk-delete-header:hover {
+                    background: #EF4444;
+                    color: white;
                 }
 
                 .animate-pop-in {

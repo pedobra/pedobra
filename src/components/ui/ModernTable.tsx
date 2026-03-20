@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, memo } from 'react';
 import { Check, Minus } from 'lucide-react';
 
 interface Column<T> {
@@ -19,6 +19,43 @@ interface ModernTableProps<T> {
     idField?: string;
 }
 
+// Memoized Row for high performance with thousands of records
+const TableRow = memo(({ 
+    item, 
+    id,
+    columns, 
+    selectable, 
+    isSelected, 
+    onToggle, 
+    onRowClick 
+}: any) => {
+    return (
+        <tr 
+            className={`${isSelected ? 'selected' : ''} ${onRowClick ? 'clickable' : ''}`}
+            onClick={() => onRowClick && onRowClick(item)}
+        >
+            {selectable && (
+                <td className="checkbox-col">
+                    <div 
+                        className={`checkbox-custom ${isSelected ? 'active' : ''}`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onToggle(id);
+                        }}
+                    >
+                        {isSelected && <Check size={12} strokeWidth={4} />}
+                    </div>
+                </td>
+            )}
+            {columns.map((col: any, colIdx: number) => (
+                <td key={colIdx} style={{ textAlign: col.align || 'center' }}>
+                    {col.accessor(item)}
+                </td>
+            ))}
+        </tr>
+    );
+});
+
 function ModernTable<T>({ 
     columns, 
     data, 
@@ -31,23 +68,33 @@ function ModernTable<T>({
     idField = 'id'
 }: ModernTableProps<T>) {
     
+    // We keep this memo for isAllSelected check, but use Set for row-level checks
+    const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+
     const handleToggleAll = () => {
         if (!onSelectionChange) return;
         if (selectedIds.length === data.length) {
             onSelectionChange([]);
         } else {
-            onSelectionChange(data.map((item: any) => item[idField]));
+            onSelectionChange(data.map((item: any) => (item as any)[idField]));
         }
     };
 
-    const handleToggleRow = (id: string) => {
+    // Stabilized toggle to prevent row re-renders
+    const handleToggleRow = React.useCallback((id: string) => {
         if (!onSelectionChange) return;
-        if (selectedIds.includes(id)) {
-            onSelectionChange(selectedIds.filter(sid => sid !== id));
-        } else {
-            onSelectionChange([...selectedIds, id]);
-        }
-    };
+        
+        // Check if the current state includes the ID
+        // Note: we use selectedIds from the closure which is fine as it's passed to map
+        // but it's safer to use the functional pattern if the parent supports it
+        // However, onSelectionChange is a prop. Let's stick to the simplest stable way.
+        
+        onSelectionChange(
+            selectedIds.includes(id) 
+                ? selectedIds.filter(sid => sid !== id)
+                : [...selectedIds, id]
+        );
+    }, [selectedIds, onSelectionChange]);
 
     if (loading) {
         return (
@@ -106,31 +153,17 @@ function ModernTable<T>({
                 <tbody>
                     {data.map((item: any, rowIdx) => {
                         const id = item[idField];
-                        const isSelected = selectedIds.includes(id);
-
                         return (
-                            <tr 
-                                key={id || rowIdx} 
-                                className={`${isSelected ? 'selected' : ''} ${onRowClick ? 'clickable' : ''}`}
-                                onClick={() => onRowClick && onRowClick(item)}
-                            >
-                                {selectable && (
-                                    <td className="checkbox-col">
-                                        <div 
-                                            className={`checkbox-custom ${isSelected ? 'active' : ''}`}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleToggleRow(id);
-                                            }}
-                                        >
-                                            {isSelected && <Check size={12} strokeWidth={4} />}
-                                        </div>
-                                    </td>
-                                )}
-                                {columns.map((col, colIdx) => (
-                                    <td key={colIdx} style={{ textAlign: col.align || 'center' }}>{col.accessor(item)}</td>
-                                ))}
-                            </tr>
+                            <TableRow 
+                                key={id || rowIdx}
+                                id={id}
+                                item={item}
+                                columns={columns}
+                                selectable={selectable}
+                                isSelected={selectedSet.has(id)}
+                                onToggle={handleToggleRow}
+                                onRowClick={onRowClick}
+                            />
                         );
                     })}
                 </tbody>
