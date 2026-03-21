@@ -11,8 +11,7 @@ import {
     FileText, 
     Users, 
     Zap, 
-    Globe, 
-    Smartphone 
+    Globe 
 } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 import { detectBot } from '../lib/security';
