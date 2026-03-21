@@ -157,13 +157,13 @@ const LandingPage = () => {
 
             <header className="hero-section text-center">
                 <div className="section-container">
-                    <div className="hero-badge animate-fade">INOVAÇÃO NA CONSTRUÇÃO CIVIL</div>
+                    <div className="hero-badge animate-fade">INOVAÇÃO & TECNOLOGIA</div>
                     <h1 className="hero-title animate-fade">
-                        Controle sua obra com <br />
-                        <span className="text-glow">precisão militar.</span>
+                        Pare de perder dinheiro na obra <br />
+                        <span className="text-glow">por falta de controle.</span>
                     </h1>
                     <p className="hero-subtitle mx-auto animate-fade">
-                        Abandone o caos das planilhas. Gerencie pedidos, materiais e equipes em uma plataforma desenhada para a alta performance do canteiro.
+                        Gerencie pedidos de materiais em tempo real com um sistema simples, rápido e feito para quem está na obra.
                     </p>
                     <div className="hero-actions justify-center animate-fade">
                         <button className="btn-main highlight-glow" onClick={() => setIsSignUp(true)}>
@@ -379,7 +379,7 @@ const LandingPage = () => {
 
                 .hero-section { 
                     padding: 180px 0 100px;
-                    background-image: linear-gradient(to bottom, rgba(23, 22, 20, 0.7), var(--bg-onyx)), url('https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/background_hero.png');
+                    background-image: linear-gradient(180deg, rgba(0,0,0,0.7), rgba(0,0,0,0.9)), url('/assets/pedobra_hero_v4.png');
                     background-attachment: fixed;
                     background-size: cover;
                     background-position: center;
