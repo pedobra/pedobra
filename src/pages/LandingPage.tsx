@@ -10,8 +10,7 @@ import {
     ShieldCheck, 
     FileText, 
     Users, 
-    Zap, 
-    Globe, 
+    Zap,
     ChevronLeft,
     ChevronRight
 } from 'lucide-react';
