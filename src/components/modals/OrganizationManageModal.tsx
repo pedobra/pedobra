@@ -13,6 +13,7 @@ const OrganizationManageModal = ({ organization, onClose, onUpdate }: Organizati
     const [status, setStatus] = useState(organization.subscription_status || 'trialing');
     const [message, setMessage] = useState(organization.system_message || '');
     const [messageLevel, setMessageLevel] = useState(organization.system_message_level || 'info');
+    const [customDays, setCustomDays] = useState(30);
     const [saving, setSaving] = useState(false);
 
     const handleSave = async () => {
@@ -25,7 +26,7 @@ const OrganizationManageModal = ({ organization, onClose, onUpdate }: Organizati
                     subscription_status: status,
                     system_message: message,
                     system_message_level: messageLevel,
-                    trial_end: new Date(Date.now() + (planId === 'trial' ? 7 : 30) * 24 * 60 * 60 * 1000).toISOString()
+                    trial_end: new Date(Date.now() + (planId === 'custom' ? customDays : (planId === 'trial' ? 7 : 30)) * 24 * 60 * 60 * 1000).toISOString()
                 })
                 .eq('id', organization.id);
 
@@ -72,8 +73,24 @@ const OrganizationManageModal = ({ organization, onClose, onUpdate }: Organizati
                             <option value="trial">Trial (Período de Teste)</option>
                             <option value="basic">Básico (R$ 147)</option>
                             <option value="pro">Profissional (R$ 297)</option>
+                            <option value="custom">Plano Personalizado (Flexível)</option>
                         </select>
                     </div>
+
+                    {planId === 'custom' && (
+                        <div className="input-field-saas animate-fade-in">
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-muted)' }}>
+                                <CreditCard size={14} /> Quantidade de Dias
+                            </label>
+                            <input 
+                                type="number"
+                                value={customDays}
+                                onChange={(e) => setCustomDays(Number(e.target.value))}
+                                style={{ width: '100%', height: '44px', background: 'var(--bg-dark)', border: '1.5px solid var(--border)', borderRadius: '8px', padding: '0 12px', color: 'var(--text-primary)', outline: 'none' }}
+                                placeholder="Ex: 90 para Trimestral"
+                            />
+                        </div>
+                    )}
 
                     {/* STATUS SELECTION */}
                     <div className="input-field-saas">

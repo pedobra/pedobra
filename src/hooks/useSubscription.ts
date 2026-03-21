@@ -47,7 +47,8 @@ export const useSubscription = () => {
                     const limits = {
                         trial: { maxSites: 1, maxWorkers: 1 },
                         basic: { maxSites: 2, maxWorkers: 2 },
-                        pro: { maxSites: Infinity, maxWorkers: Infinity }
+                        pro: { maxSites: Infinity, maxWorkers: Infinity },
+                        custom: { maxSites: Infinity, maxWorkers: Infinity }
                     };
 
                     const currentLimits = limits[org.plan_id as keyof typeof limits] || limits.trial;

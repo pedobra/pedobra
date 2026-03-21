@@ -2,8 +2,9 @@ import { CheckCircle2, Star } from 'lucide-react';
 import { useSubscription } from '../../hooks/useSubscription';
 
 const AdminPlans = () => {
-    const { planId, daysRemaining } = useSubscription();
+    const { planId, daysRemaining, organizationName } = useSubscription();
     const isTrial = planId === 'trial';
+    const isCustom = planId === 'custom';
     
     return (
         <div className="plans-view animate-fade">
@@ -15,7 +16,7 @@ const AdminPlans = () => {
             </header>
 
             <div className="trial-alert">
-                <span>Você está usando o <strong>{isTrial ? 'Plano de Teste' : `Plano ${planId?.toUpperCase()}`}</strong></span>
+                <span>Você está usando o <strong>{isCustom ? 'Plano Personalizado' : (isTrial ? 'Plano de Teste' : `Plano ${planId?.toUpperCase()}`)}</strong></span>
                 <span className="trial-badge-orange">{daysRemaining} dias restantes</span>
             </div>
 
@@ -64,6 +65,25 @@ const AdminPlans = () => {
                     <button className="btn-primary w-full" style={{ padding: '14px', fontSize: '15px', fontWeight: 700 }}>
                         ASSINAR AGORA
                     </button>
+                </div>
+            </div>
+
+            {/* Personalized Plan Contact Row */}
+            <div className="personalized-plan-card glass-premium animate-fade-in" style={{ marginTop: '32px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>PLANO PERSONALIZADO</h3>
+                        <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px' }}>ENTRE EM CONTATO PARA PLANOS TRIMESTAL, SEMESTRAL E ANUAL.</p>
+                    </div>
+                    <a 
+                        href={`https://wa.me/5585994119300?text=${encodeURIComponent(`OLÁ, QUERO SABER MAIS SOBRE OS PLANOS (TRIMESTRAL - SEMESTRAL - ANUAL) - ${organizationName}`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary" 
+                        style={{ padding: '14px 28px', fontSize: '15px', fontWeight: 800, textDecoration: 'none' }}
+                    >
+                        ENTRAR EM CONTATO
+                    </a>
                 </div>
             </div>
 
@@ -202,6 +222,14 @@ const AdminPlans = () => {
                 @media (max-width: 800px) {
                     .plans-grid { grid-template-columns: 1fr; gap: 48px; }
                     .trial-alert { flex-direction: column; gap: 12px; text-align: center; }
+                    .personalized-plan-card { text-align: center; }
+                    .personalized-plan-card div { flex-direction: column; }
+                    .personalized-plan-card .btn-primary { width: 100%; }
+                }
+
+                .personalized-plan-card {
+                    padding: 24px 32px;
+                    border-radius: 16px;
                 }
             `}</style>
         </div>

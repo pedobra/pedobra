@@ -71,7 +71,7 @@ const MasterDashboard = () => {
                     background: org.plan_id === 'pro' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(108, 117, 125, 0.1)',
                     color: org.plan_id === 'pro' ? 'var(--status-active)' : 'var(--text-muted)'
                 }}>
-                    {org.plan_id || 'TRIAL'}
+                    {org.plan_id === 'custom' ? 'PERSONALIZADO' : (org.plan_id?.toUpperCase() || 'TRIAL')}
                 </span>
             )
         },
