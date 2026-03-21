@@ -9,8 +9,7 @@ import {
     LayoutDashboard, 
     ShieldCheck, 
     FileText, 
-    Users, 
-    Zap,
+    Users,
     ChevronLeft,
     ChevronRight
 } from 'lucide-react';
