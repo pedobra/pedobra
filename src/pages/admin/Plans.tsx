@@ -26,6 +26,7 @@ const AdminPlans = () => {
                     <div className="plan-header-new">
                         <span className="plan-name-new">Plano Básico</span>
                         <span className="plan-price-new">Valor de R$ 97,00</span>
+                        <span className="plan-duration-new">30 DIAS</span>
                     </div>
                     <div className="plan-body-new">
                         <span className="plan-access-title">Terá acesso:</span>
@@ -51,6 +52,7 @@ const AdminPlans = () => {
                             </span>
                         </div>
                         <span className="plan-price-new">Valor de R$ 147,00</span>
+                        <span className="plan-duration-new">30 DIAS</span>
                     </div>
                     <div className="plan-body-new">
                         <span className="plan-access-title">Terá acesso:</span>
@@ -76,7 +78,7 @@ const AdminPlans = () => {
                         <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px' }}>ENTRE EM CONTATO PARA PLANOS TRIMESTAL, SEMESTRAL E ANUAL.</p>
                     </div>
                     <a 
-                        href={`https://wa.me/5585994119300?text=${encodeURIComponent(`OLÁ, QUERO SABER MAIS SOBRE OS PLANOS (TRIMESTRAL - SEMESTRAL - ANUAL) - ${organizationName}`)}`}
+                        href={`https://wa.me/5583996254920?text=${encodeURIComponent(`OLÁ, QUERO SABER MAIS SOBRE OS PLANOS (TRIMESTRAL - SEMESTRAL - ANUAL) - ${organizationName}`)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn-primary" 
@@ -198,6 +200,13 @@ const AdminPlans = () => {
                     font-size: 32px;
                     font-weight: 800;
                     color: var(--text-primary);
+                }
+                .plan-duration-new {
+                    font-size: 13px;
+                    font-weight: 800;
+                    color: var(--text-muted);
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
                 }
                 
                 .plan-body-new {
