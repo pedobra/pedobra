@@ -377,7 +377,13 @@ const LandingPage = () => {
                 .nav-login-btn { background: none; border: none; color: var(--text-main); font-weight: 600; cursor: pointer; }
                 .nav-cta-btn { background: var(--alabaster); color: var(--bg-onyx); padding: 10px 20px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; }
 
-                .hero-section { padding: 180px 0 100px; }
+                .hero-section { 
+                    padding: 180px 0 100px;
+                    background-image: linear-gradient(to bottom, rgba(23, 22, 20, 0.7), var(--bg-onyx)), url('https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/background_hero.png');
+                    background-attachment: fixed;
+                    background-size: cover;
+                    background-position: center;
+                }
                 .hero-badge { font-size: 12px; font-weight: 800; opacity: 0.5; letter-spacing: 2px; margin-bottom: 24px; }
                 .hero-title { font-size: clamp(40px, 8vw, 84px); font-weight: 900; line-height: 1.1; letter-spacing: -3px; margin-bottom: 32px; }
                 .text-glow { color: #fff; text-shadow: 0 0 40px rgba(255,255,255,0.3); }
