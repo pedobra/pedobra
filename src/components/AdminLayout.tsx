@@ -26,7 +26,7 @@ import { useSubscription } from '../hooks/useSubscription';
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { isExpired, loading: subLoading, systemMessage, systemMessageLevel } = useSubscription();
+    const { planId, isExpired, loading: subLoading, systemMessage, systemMessageLevel } = useSubscription();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [userName, setUserName] = useState('Admin Master');
@@ -254,9 +254,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                             <NavLink to="/admin/suppliers" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
                                 <Truck size={20} /> {!isCollapsed && <span>Fornecedores</span>}
                             </NavLink>
-                            <NavLink to="/admin/reports" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
-                                <PieChart size={20} /> {!isCollapsed && <span>Relatórios</span>}
-                            </NavLink>
+                            {planId !== 'basic' && (
+                                <NavLink to="/admin/reports" className={({ isActive }) => isActive ? 'menu-item active' : 'menu-item'} onClick={() => setMobileMenuOpen(false)}>
+                                    <PieChart size={20} /> {!isCollapsed && <span>Relatórios</span>}
+                                </NavLink>
+                            )}
                         </>
                     )}
 
