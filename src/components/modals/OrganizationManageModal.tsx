@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
-import { X, Shield, CreditCard, Send, Power } from 'lucide-react';
+import { X, Shield, CreditCard, Send, Power, Banknote } from 'lucide-react';
+import { maskCurrency, parseCurrencyToNumber } from '../../lib/masks';
 
 interface OrganizationManageModalProps {
     organization: any;
@@ -14,6 +15,7 @@ const OrganizationManageModal = ({ organization, onClose, onUpdate }: Organizati
     const [message, setMessage] = useState(organization.system_message || '');
     const [messageLevel, setMessageLevel] = useState(organization.system_message_level || 'info');
     const [customDays, setCustomDays] = useState(30);
+    const [customPrice, setCustomPrice] = useState(organization.custom_plan_price || 0);
     const [saving, setSaving] = useState(false);
 
     const handleSave = async () => {
@@ -26,6 +28,7 @@ const OrganizationManageModal = ({ organization, onClose, onUpdate }: Organizati
                     subscription_status: status,
                     system_message: message,
                     system_message_level: messageLevel,
+                    custom_plan_price: planId === 'custom' ? customPrice : 0,
                     trial_end: new Date(Date.now() + (planId === 'custom' ? customDays : (planId === 'trial' ? 7 : 30)) * 24 * 60 * 60 * 1000).toISOString()
                 })
                 .eq('id', organization.id);
@@ -44,7 +47,7 @@ const OrganizationManageModal = ({ organization, onClose, onUpdate }: Organizati
 
     return (
         <div className="modal-overlay animate-fade-in" style={{ zIndex: 1000, position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
-            <div className="modal-content-saas animate-scale-up" style={{ width: '500px', background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
+            <div className="modal-content-saas animate-scale-up" style={{ width: '95%', maxWidth: '500px', background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', margin: '20px' }}>
                 <header style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-dark)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#3b82f6' }}>
@@ -78,17 +81,31 @@ const OrganizationManageModal = ({ organization, onClose, onUpdate }: Organizati
                     </div>
 
                     {planId === 'custom' && (
-                        <div className="input-field-saas animate-fade-in">
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-muted)' }}>
-                                <CreditCard size={14} /> Quantidade de Dias
-                            </label>
-                            <input 
-                                type="number"
-                                value={customDays}
-                                onChange={(e) => setCustomDays(Number(e.target.value))}
-                                style={{ width: '100%', height: '44px', background: 'var(--bg-dark)', border: '1.5px solid var(--border)', borderRadius: '8px', padding: '0 12px', color: 'var(--text-primary)', outline: 'none' }}
-                                placeholder="Ex: 90 para Trimestral"
-                            />
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }} className="animate-fade-in">
+                            <div className="input-field-saas">
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-muted)' }}>
+                                    <CreditCard size={14} /> Quantidade de Dias
+                                </label>
+                                <input 
+                                    type="number"
+                                    value={customDays}
+                                    onChange={(e) => setCustomDays(Number(e.target.value))}
+                                    style={{ width: '100%', height: '44px', background: 'var(--bg-dark)', border: '1.5px solid var(--border)', borderRadius: '8px', padding: '0 12px', color: 'var(--text-primary)', outline: 'none' }}
+                                    placeholder="Ex: 90"
+                                />
+                            </div>
+                            <div className="input-field-saas">
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-muted)' }}>
+                                    <Banknote size={14} /> Valor do Plano
+                                </label>
+                                <input 
+                                    type="text"
+                                    value={maskCurrency(customPrice)}
+                                    onChange={(e) => setCustomPrice(parseCurrencyToNumber(e.target.value))}
+                                    style={{ width: '100%', height: '44px', background: 'var(--bg-dark)', border: '1.5px solid var(--border)', borderRadius: '8px', padding: '0 12px', color: 'var(--text-primary)', outline: 'none' }}
+                                    placeholder="R$ 0,00"
+                                />
+                            </div>
                         </div>
                     )}
 

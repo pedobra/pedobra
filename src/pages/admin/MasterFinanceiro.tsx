@@ -90,6 +90,8 @@ const MasterFinanceiro = () => {
                 } else if (plan === 'basic') {
                     acc.basicCount++;
                     acc.gross += config.plan_basic_price;
+                } else if (plan === 'custom') {
+                    acc.gross += Number(org.custom_plan_price || 0);
                 } else {
                     acc.freeCount++;
                 }
@@ -100,9 +102,17 @@ const MasterFinanceiro = () => {
         const gatewayFee = (stats.gross * config.gateway_fee_percent) / 100;
         const net = stats.gross - gatewayFee;
 
+        const customTotal = organizations.reduce((sum, org) => {
+            if (org.plan_id === 'custom' && org.subscription_status?.toLowerCase() === 'active') {
+                return sum + Number(org.custom_plan_price || 0);
+            }
+            return sum;
+        }, 0);
+
         const chartData = [
             { name: 'Profissional', value: stats.proCount * config.plan_pro_price, count: stats.proCount, key: 'pro' },
             { name: 'Básico', value: stats.basicCount * config.plan_basic_price, count: stats.basicCount, key: 'basic' },
+            { name: 'Personalizado', value: customTotal, count: organizations.filter(o => o.plan_id === 'custom').length, key: 'custom' },
             { name: 'Gratuito', value: 0, count: stats.freeCount, key: 'free' }
         ].filter(d => d.count > 0 || d.name === 'Gratuito');
 
@@ -138,8 +148,8 @@ const MasterFinanceiro = () => {
             align: 'center',
             accessor: (org: any) => {
                 const plan = (org.plan_id || 'free').toLowerCase();
-                const price = (plan === 'pro' || plan === 'professional') ? config.plan_pro_price : (plan === 'basic' ? config.plan_basic_price : 0);
-                return `R$ ${price.toFixed(2)}`;
+                const price = (plan === 'pro' || plan === 'professional') ? config.plan_pro_price : (plan === 'basic' ? config.plan_basic_price : (plan === 'custom' ? Number(org.custom_plan_price || 0) : 0));
+                return `R$ ${price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
             }
         },
         { 
