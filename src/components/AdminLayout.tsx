@@ -206,10 +206,19 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         </div>
                     )}
                     <div className="sidebar-brand-actions">
-                        <ThemeToggle />
-                        <button className="sidebar-toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
-                            <ChevronLeft size={16} style={{ transform: isCollapsed ? 'rotate(180deg)' : 'none' }} />
+                        {/* Botão de fechar visível apenas no mobile */}
+                        <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)}>
+                            <X size={24} />
                         </button>
+                        
+                        {!mobileMenuOpen && (
+                            <>
+                                <ThemeToggle />
+                                <button className="sidebar-toggle-btn" onClick={() => setIsCollapsed(!isCollapsed)}>
+                                    <ChevronLeft size={16} style={{ transform: isCollapsed ? 'rotate(180deg)' : 'none' }} />
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
 
@@ -269,6 +278,14 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         </>
                     )}
                 </nav>
+
+                {/* Botão de Sair fixo no rodapé apenas para Mobile */}
+                <div className="sidebar-footer-mobile">
+                    <button className="menu-item logout-mobile" onClick={handleLogout}>
+                        <LogOut size={20} />
+                        <span>Sair do Sistema</span>
+                    </button>
+                </div>
             </aside>
 
             <main className="admin-main-content">
