@@ -160,7 +160,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             <header className="admin-mobile-header">
                 <div className="brand-small">
                     <img 
-                        src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/LOGOOFICIAL.png" 
+                        src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" 
                         alt="PedObra Logo" 
                         style={{ height: '32px', width: 'auto', objectFit: 'contain' }}
                     />
@@ -201,7 +201,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 <div className="sidebar-brand">
                     <div className="brand-logo-img-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <img 
-                            src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/LOGOOFICIAL.png" 
+                            src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" 
                             alt="PedObra Logo" 
                             style={{ height: isCollapsed ? '28px' : '40px', width: 'auto', objectFit: 'contain', transition: 'height 0.2s' }}
                         />

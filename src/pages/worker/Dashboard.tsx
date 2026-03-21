@@ -116,7 +116,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 <div className="worker-meta">
                     <div className="app-logo">
                         <img 
-                            src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/LOGOOFICIAL.png" 
+                            src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" 
                             alt="PedObra Logo" 
                             style={{ height: '32px', width: 'auto', objectFit: 'contain' }}
                         />

@@ -145,7 +145,7 @@ const LandingPage = () => {
             <nav className="navbar animate-fade">
                 <div className="logo-wrapper" onClick={handleLogoClick}>
                     <img 
-                        src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/LOGOOFICIAL.png" 
+                        src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" 
                         alt="PedObra Logo" 
                         className="main-logo-img"
                     />
@@ -192,7 +192,7 @@ const LandingPage = () => {
                         <div className="auth-header">
                         <div className="mb-4 mx-auto" style={{ width: 'fit-content' }}>
                             <img 
-                                src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/LOGOOFICIAL.png" 
+                                src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" 
                                 alt="Logo" 
                                 style={{ height: '40px', width: 'auto' }}
                             />
