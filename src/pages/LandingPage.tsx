@@ -487,7 +487,8 @@ const LandingPage = () => {
                 .footer-brand p { font-size: 14px; color: var(--text-soft); }
                 .footer-bottom { margin-top: 60px; padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 12px; color: var(--text-soft); }
 
-                .auth-card { width: 100%; max-width: 400px; padding: 40px; border-radius: 24px; background: #1a1a1c; border: 1px solid var(--border); }
+                .auth-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 24px; }
+                .auth-card { width: 100%; max-width: 400px; padding: 40px; border-radius: 24px; background: #1a1a1c; border: 1px solid var(--border); position: relative; z-index: 2001; }
                 .auth-logo { height: 32px; margin: 0 auto 24px; display: block; }
                 .input-field { margin-bottom: 16px; text-align: left; }
                 .input-field label { font-size: 11px; font-weight: 800; color: var(--text-soft); margin-bottom: 6px; display: block; text-transform: uppercase; }
