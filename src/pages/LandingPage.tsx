@@ -160,7 +160,7 @@ const LandingPage = () => {
                     <div className="hero-badge animate-fade">INOVAÇÃO & TECNOLOGIA</div>
                     <h1 className="hero-title animate-fade">
                         Pare de perder dinheiro na obra <br />
-                        <span className="text-glow">por falta de controle.</span>
+                        por <span className="text-glow highlight-accent">falta de controle.</span>
                     </h1>
                     <p className="hero-subtitle mx-auto animate-fade">
                         Gerencie pedidos de materiais em tempo real com um sistema simples, rápido e feito para quem está na obra.
@@ -385,8 +385,16 @@ const LandingPage = () => {
                     background-position: center;
                 }
                 .hero-badge { font-size: 12px; font-weight: 800; opacity: 0.5; letter-spacing: 2px; margin-bottom: 24px; }
-                .hero-title { font-size: clamp(40px, 8vw, 84px); font-weight: 900; line-height: 1.1; letter-spacing: -3px; margin-bottom: 32px; }
+                .hero-title { 
+                    font-size: clamp(40px, 8vw, 84px); 
+                    font-weight: 900; 
+                    line-height: 1.1; 
+                    letter-spacing: -3px; 
+                    margin-bottom: 32px;
+                    text-shadow: 0 4px 15px rgba(0,0,0,0.8); /* Sombra em toda a headline */
+                }
                 .text-glow { color: #fff; text-shadow: 0 0 40px rgba(255,255,255,0.3); }
+                .highlight-accent { color: var(--alabaster); text-shadow: 0 0 30px rgba(234, 234, 234, 0.4); }
                 .hero-subtitle { font-size: 20px; color: var(--text-soft); max-width: 600px; margin-bottom: 48px; line-height: 1.6; }
                 .hero-actions { display: flex; gap: 16px; }
                 .btn-main { background: var(--alabaster); color: var(--bg-onyx); padding: 18px 36px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; gap: 12px; }
