@@ -173,15 +173,10 @@ const LandingPage = () => {
                 </div>
             </header>
 
-            <section className="mockup-display-section">
+            <section className="screenshots-carousel-section">
                 <div className="section-container">
-                    <div className="mockup-container glass animate-fade">
-                        <img 
-                            src="/assets/pedobra_monitor_mockup_v2.png" 
-                            alt="Mockup" 
-                            className="mockup-base"
-                        />
-                        <div className="monitor-screen">
+                    <div className="carousel-main-container glass animate-fade">
+                        <div className="carousel-view-area">
                             <div className="carousel-wrapper" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
                                 {screenshots.map((s, i) => (
                                     <div key={i} className="carousel-item">
@@ -391,27 +386,25 @@ const LandingPage = () => {
                 .btn-main { background: var(--alabaster); color: var(--bg-onyx); padding: 18px 36px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; gap: 12px; }
                 .highlight-glow { box-shadow: 0 0 50px rgba(255,255,255,0.1); }
 
-                /* Mockup Elite Section */
-                .mockup-display-section { padding-bottom: 120px; }
-                .mockup-container { 
+                /* Simplified Carousel Elite */
+                .screenshots-carousel-section { padding-bottom: 120px; }
+                .carousel-main-container { 
                     position: relative; 
                     max-width: 1000px; 
                     margin: 0 auto; 
-                    border-radius: 32px; 
-                    padding: 8px; 
+                    border-radius: 20px; 
+                    padding: 4px; 
                     overflow: hidden;
-                    box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+                    border: 1px solid rgba(234, 234, 234, 0.4); /* Borda neon discreta */
+                    box-shadow: 0 0 30px rgba(234, 234, 234, 0.15); /* Glow neon */
                 }
-                .mockup-base { width: 100%; display: block; filter: brightness(1.1); }
-                .monitor-screen { 
-                    position: absolute; 
-                    top: 4.8%; 
-                    left: 2.3%; 
-                    width: 95.4%; 
-                    height: 53.5%; 
-                    background: #000; 
+                .carousel-view-area { 
+                    position: relative; 
+                    width: 100%; 
+                    aspect-ratio: 16 / 9; /* Mantém proporção padrão desktop */
+                    background: #1e1e21; 
                     overflow: hidden; 
-                    border-radius: 2px;
+                    border-radius: 16px;
                 }
                 .carousel-wrapper { 
                     display: flex; 
@@ -423,9 +416,14 @@ const LandingPage = () => {
                     min-width: 100%; 
                     height: 100%; 
                     position: relative; 
-                    background: #1e1e21;
+                    background: #fff; /* Fundo branco para não ter contraste negativo nos prints */
                 }
-                .screen-content { width: 100%; height: 100%; object-fit: cover; }
+                .screen-content { 
+                    width: 100%; 
+                    height: 100%; 
+                    object-fit: contain; /* GARANTE QUE A IMAGEM INTEIRA APAREÇA */
+                    display: block;
+                }
                 .screenshot-watermark { 
                     position: absolute; 
                     inset: 0; 
@@ -436,7 +434,7 @@ const LandingPage = () => {
                     opacity: 0.15;
                     transform: rotate(-15deg);
                 }
-                .screenshot-watermark img { width: 300px; filter: grayscale(1) invert(1); }
+                .screenshot-watermark img { width: 300px; filter: grayscale(1) contrast(1.2); }
                 .carousel-controls { 
                     position: absolute; 
                     top: 50%; 
@@ -445,11 +443,11 @@ const LandingPage = () => {
                     transform: translateY(-50%); 
                     display: flex; 
                     justify-content: space-between; 
-                    padding: 0 10px; 
+                    padding: 0 20px; 
                 }
-                .control-btn { background: rgba(0,0,0,0.4); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-                .control-btn:hover { background: rgba(0,0,0,0.8); }
-                .slide-indicator { position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; color: #fff; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+                .control-btn { background: rgba(0,0,0,0.5); border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; z-index: 10; }
+                .control-btn:hover { background: rgba(0,0,0,0.8); transform: scale(1.1); }
+                .slide-indicator { position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; color: #000; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: rgba(234, 234, 234, 0.7); display: inline-block; width: fit-content; margin: 0 auto; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1); }
 
                 .section-title { font-size: 36px; font-weight: 850; margin-bottom: 60px; letter-spacing: -1px; }
                 .steps-section { padding: 100px 0; background: rgba(255,255,255,0.01); }
