@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Construction, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 import { detectBot } from '../lib/security';
 import { maskCPF_CNPJ } from '../lib/masks';
@@ -144,10 +144,11 @@ const LandingPage = () => {
         <div className="landing-page">
             <nav className="navbar animate-fade">
                 <div className="logo-wrapper" onClick={handleLogoClick}>
-                    <div className="logo-icon-bg">
-                        <Construction size={22} color="var(--bg-dark)" />
-                    </div>
-                    <span className="logo-text">PedObra</span>
+                    <img 
+                        src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/LOGOOFICIAL.png" 
+                        alt="PedObra Logo" 
+                        className="main-logo-img"
+                    />
                 </div>
                 <div className="nav-links">
                     <ThemeToggle />
@@ -189,9 +190,13 @@ const LandingPage = () => {
                 <div className="auth-overlay glass" onClick={() => { setIsLogin(false); setIsSignUp(false); setShowAdminModal(false); }}>
                     <div className="auth-card premium-card animate-fade" onClick={e => e.stopPropagation()}>
                         <div className="auth-header">
-                            <div className="logo-icon-bg mb-4 mx-auto" style={{ width: 'fit-content' }}>
-                                <Construction size={24} color="var(--bg-dark)" />
-                            </div>
+                        <div className="mb-4 mx-auto" style={{ width: 'fit-content' }}>
+                            <img 
+                                src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/LOGOOFICIAL.png" 
+                                alt="Logo" 
+                                style={{ height: '40px', width: 'auto' }}
+                            />
+                        </div>
                             <h2 className="auth-title">
                                 {showAdminModal ? 'Registro Privado Master' : 
                                  isSignUp ? 'Crie sua conta PedObra' : 'Insira suas credenciais'}
@@ -264,9 +269,11 @@ const LandingPage = () => {
           position: relative;
           z-index: 10;
         }
-        .logo-wrapper { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .logo-icon-bg { background: var(--primary); padding: 8px; border-radius: 10px; display: flex; }
-        .logo-text { font-size: 26px; font-weight: 800; }
+        .logo-wrapper { display: flex; align-items: center; cursor: pointer; }
+        .main-logo-img { height: 48px; width: auto; object-fit: contain; }
+        @media (max-width: 768px) {
+          .main-logo-img { height: 36px; }
+        }
         .nav-links { display: flex; align-items: center; gap: 32px; }
         .login-trigger { background: transparent; color: var(--text-primary); border: none; font-weight: 600; cursor: pointer; }
         

@@ -4,7 +4,6 @@ import {
     Plus,
     Package,
     LogOut,
-    Construction,
     ChevronRight,
     FileText,
     Search
@@ -115,7 +114,13 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
         <div className="worker-app">
             <header className="app-header glass">
                 <div className="worker-meta">
-                    <div className="app-logo"><Construction size={18} color="var(--bg-dark)" /></div>
+                    <div className="app-logo">
+                        <img 
+                            src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/LOGOOFICIAL.png" 
+                            alt="PedObra Logo" 
+                            style={{ height: '32px', width: 'auto', objectFit: 'contain' }}
+                        />
+                    </div>
                     <div className="user-info-text">
                         <strong>{profile?.name}</strong>
                         <span>{profile?.sites?.name || 'Obra não vinculada'}</span>
@@ -191,7 +196,7 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
                 .worker-app { min-height: 100vh; background: var(--bg-dark); padding: 88px 16px 40px; }
                 .app-header { position: fixed; top: 0; left: 0; right: 0; height: 72px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; z-index: 100; border-bottom: 1px solid var(--border); }
                 .worker-meta { display: flex; align-items: center; gap: 12px; }
-                .app-logo { background: var(--primary); padding: 6px; border-radius: 8px; }
+                .app-logo { display: flex; align-items: center; }
                 .user-info-text { display: flex; flex-direction: column; }
                 .user-info-text strong { font-size: 14px; font-weight: 800; color: var(--text-primary); }
                 .user-info-text span { font-size: 11px; color: var(--text-muted); font-weight: 600; }

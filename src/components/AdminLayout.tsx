@@ -158,9 +158,12 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className="admin-wrapper">
             <header className="admin-mobile-header">
-                <div className="brand-small" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Construction size={18} color="var(--primary)" />
-                    <strong>PedObra</strong>
+                <div className="brand-small">
+                    <img 
+                        src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/LOGOOFICIAL.png" 
+                        alt="PedObra Logo" 
+                        style={{ height: '32px', width: 'auto', objectFit: 'contain' }}
+                    />
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <ThemeToggle />
@@ -196,15 +199,13 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
             <aside className={`sidebar-glass ${mobileMenuOpen ? 'mobile-open' : ''} ${isCollapsed ? 'collapsed' : ''}`}>
                 <div className="sidebar-brand">
-                    <div className="brand-logo">
-                        <Construction size={20} color="var(--primary-foreground)" />
+                    <div className="brand-logo-img-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <img 
+                            src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/LOGOOFICIAL.png" 
+                            alt="PedObra Logo" 
+                            style={{ height: isCollapsed ? '28px' : '40px', width: 'auto', objectFit: 'contain', transition: 'height 0.2s' }}
+                        />
                     </div>
-                    {!isCollapsed && (
-                        <div className="brand-text">
-                            <strong>PedObra</strong>
-                            <span>Admin</span>
-                        </div>
-                    )}
                     <div className="sidebar-brand-actions">
                         {/* Botão de fechar visível apenas no mobile */}
                         <button className="mobile-close-btn" onClick={() => setMobileMenuOpen(false)}>
