@@ -289,7 +289,7 @@ const AdminCatalog = () => {
                     <h1 className="page-title">{type === 'materials' ? 'Catálogo de Insumos' : 'Fornecedores'}</h1>
                     <p className="page-subtitle">Gerencie os recursos e fornecedores da sua empresa.</p>
                 </div>
-                <div className="header-actions">
+                <div className="header-actions catalog-actions-mobile">
                     <div className="search-bar-glass">
                         <Search size={16} color="var(--text-muted)" />
                         <input 
@@ -299,25 +299,23 @@ const AdminCatalog = () => {
                             onChange={e => setSearchTerm(e.target.value)} 
                         />
                     </div>
-                    {type === 'materials' && (
-                        <>
-                            <button className="btn-secondary" onClick={downloadCSVTemplate} title="Baixar Modelo CSV">
-                                <Download size={16} /> Modelo
-                            </button>
-                            <label className="btn-secondary" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Upload size={16} /> Importar Planilha
-                                <input type="file" accept=".csv" onChange={handleCSVImport} style={{ display: 'none' }} />
-                            </label>
-                        </>
-                    )}
-                    {selectedIds.length > 0 && (
-                        <button className="btn-bulk-delete-header animate-fade-in-scale" onClick={handleBulkDelete}>
-                            <Trash2 size={16} /> Excluir ({selectedIds.length})
+                    
+                    <div className="btns-row-mobile">
+                        {type === 'materials' && (
+                            <>
+                                <button className="btn-secondary btn-mini-mobile" onClick={downloadCSVTemplate} title="Modelo">
+                                    <Download size={16} /> <span className="txt-mobile">Modelo</span>
+                                </button>
+                                <label className="btn-secondary btn-mini-mobile" style={{ cursor: 'pointer' }}>
+                                    <Upload size={16} /> <span className="txt-mobile">Importar</span>
+                                    <input type="file" accept=".csv" onChange={handleCSVImport} style={{ display: 'none' }} />
+                                </label>
+                            </>
+                        )}
+                        <button className="btn-primary btn-main-mobile" onClick={() => navigate(`/admin/${type}/novo`)}>
+                            <Plus size={18} /> <span>{type === 'materials' ? 'Novo Material' : 'Novo Fornecedor'}</span>
                         </button>
-                    )}
-                    <button className="btn-primary" onClick={() => navigate(`/admin/${type}/novo`)}>
-                        <Plus size={20} /> {type === 'materials' ? 'Novo Material' : 'Novo Fornecedor'}
-                    </button>
+                    </div>
                 </div>
             </header>
 
@@ -508,6 +506,32 @@ const AdminCatalog = () => {
                 @keyframes fadeInScale {
                     from { opacity: 0; transform: scale(0.9); }
                     to { opacity: 1; transform: scale(1); }
+                }
+
+                @media (max-width: 768px) {
+                    .view-header { flex-direction: column !important; align-items: stretch !important; gap: 16px !important; }
+                    .catalog-actions-mobile { 
+                        flex-direction: column !important; 
+                        align-items: stretch !important; 
+                        width: 100%; 
+                        gap: 12px !important; 
+                    }
+                    .search-bar-glass { width: 100% !important; }
+                    .btns-row-mobile { 
+                        display: flex !important; 
+                        flex-direction: row !important; 
+                        flex-wrap: nowrap !important;
+                        gap: 8px !important; 
+                        width: 100%;
+                    }
+                    .btn-mini-mobile { padding: 0 10px !important; flex-shrink: 1 !important; }
+                    .btn-main-mobile { flex: 2 !important; padding: 0 10px !important; font-size: 13px !important; white-space: nowrap !important; }
+                    .txt-mobile { display: block; font-size: 11px; }
+                    
+                    /* Se o texto "Importar" ainda for grande, podemos esconder em telas minusculas */
+                    @media (max-width: 360px) {
+                        .txt-mobile { display: none; }
+                    }
                 }
             `}</style>
         </div>

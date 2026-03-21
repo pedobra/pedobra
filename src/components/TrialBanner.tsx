@@ -38,7 +38,7 @@ export const TrialBanner = () => {
                     -webkit-backdrop-filter: blur(12px);
                     border-bottom: 2px solid ${isUrgent ? '#FF9500' : 'var(--border)'};
                     padding: 8px 24px;
-                    z-index: 1000;
+                    z-index: 900;
                     position: relative;
                 }
                 .banner-content {

@@ -343,6 +343,28 @@ const AdminObras = () => {
                     cursor: not-allowed;
                     filter: grayscale(1);
                 }
+
+                @media (max-width: 768px) {
+                    .header-info { text-align: left; margin-bottom: 0; }
+                    .header-actions { 
+                        flex-direction: row !important; 
+                        flex-wrap: nowrap !important; 
+                        width: 100%; 
+                        gap: 8px !important;
+                        justify-content: space-between;
+                    }
+                    .search-bar-saas { 
+                        flex: 1; 
+                        min-width: 0; 
+                        width: auto !important;
+                    }
+                    .btn-primary { 
+                        padding: 0 12px; 
+                        font-size: 13px; 
+                        height: 44px;
+                    }
+                    .limit-warning { display: none; } /* Hide to save space on mobile row */
+                }
             `}</style>
         </div>
     );
