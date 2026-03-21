@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { 
     ArrowRight, 
@@ -11,11 +11,25 @@ import {
     FileText, 
     Users, 
     Zap, 
-    Globe 
+    Globe, 
+    ChevronLeft,
+    ChevronRight
 } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 import { detectBot } from '../lib/security';
 import { maskCPF_CNPJ } from '../lib/masks';
+
+const screenshots = [
+    { url: "/assets/screenshots/dashboard.png", title: "Painel Estratégico" },
+    { url: "/assets/screenshots/obras.png", title: "Gestão de Obras" },
+    { url: "/assets/screenshots/pedidos.png", title: "Controle de Pedidos" },
+    { url: "/assets/screenshots/materiais.png", title: "Catálogo de Insumos" },
+    { url: "/assets/screenshots/fornecedores.png", title: "Gestão de Fornecedores" },
+    { url: "/assets/screenshots/relatorios.png", title: "Inteligência de Dados" },
+    { url: "/assets/screenshots/usuarios.png", title: "Controle de Acessos" },
+    { url: "/assets/screenshots/configuracoes.png", title: "Personalização" },
+    { url: "/assets/screenshots/logs.png", title: "Auditoria Completa" },
+];
 
 const LandingPage = () => {
     const [logoClicks, setLogoClicks] = useState(0);
@@ -30,8 +44,16 @@ const LandingPage = () => {
     const [loading, setLoading] = useState(false);
     const [honey, setHoney] = useState('');
     const [activeFaq, setActiveFaq] = useState<number | null>(null);
+    const [currentSlide, setCurrentSlide] = useState(0);
 
-    React.useEffect(() => {
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentSlide((prev) => (prev + 1) % screenshots.length);
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
         const shouldOpenLogin = localStorage.getItem('openLogin');
         if (shouldOpenLogin === 'true') {
             setIsLogin(true);
@@ -135,44 +157,67 @@ const LandingPage = () => {
                 </div>
             </nav>
 
-            <header className="hero-section">
-                <div className="hero-bg-accent"></div>
-                <div className="grid-container animate-fade">
-                    <div className="hero-content">
-                        <div className="hero-badge">PLATAFORMA PREMIUM DE ENGENHARIA</div>
-                        <h1 className="hero-title">
-                            Controle total da sua obra <br />
-                            <span className="text-glow">sem planilhas e sem caos.</span>
-                        </h1>
-                        <p className="hero-subtitle">
-                            PedObra é a solução SaaS de alto nível que transforma o canteiro de obras em uma operação fluida, rastreável e lucrativa.
-                        </p>
-                        <div className="hero-actions">
-                            <button className="btn-main highlight-glow" onClick={() => setIsSignUp(true)}>
-                                Iniciar Teste Grátis <ArrowRight size={20} />
-                            </button>
-                            <button className="btn-outline" onClick={() => {
-                                const el = document.getElementById('how-it-works');
-                                el?.scrollIntoView({ behavior: 'smooth' });
-                            }}>Ver como funciona</button>
-                        </div>
-                    </div>
-                    <div className="hero-visual">
-                        <div className="mockup-frame glass">
-                            <img src="/assets/pedobra_mockup_v1.png" alt="Mockup Dashboard PedObra" />
-                        </div>
+            <header className="hero-section text-center">
+                <div className="section-container">
+                    <div className="hero-badge animate-fade">INOVAÇÃO NA CONSTRUÇÃO CIVIL</div>
+                    <h1 className="hero-title animate-fade">
+                        Controle sua obra com <br />
+                        <span className="text-glow">precisão militar.</span>
+                    </h1>
+                    <p className="hero-subtitle mx-auto animate-fade">
+                        Abandone o caos das planilhas. Gerencie pedidos, materiais e equipes em uma plataforma desenhada para a alta performance do canteiro.
+                    </p>
+                    <div className="hero-actions justify-center animate-fade">
+                        <button className="btn-main highlight-glow" onClick={() => setIsSignUp(true)}>
+                            Iniciar Teste Grátis <ArrowRight size={20} />
+                        </button>
                     </div>
                 </div>
             </header>
 
-            <section id="how-it-works" className="how-it-works-section">
+            <section className="mockup-display-section">
                 <div className="section-container">
-                    <h2 className="section-title text-center">Simples. Direto. Eficiente.</h2>
+                    <div className="mockup-container glass animate-fade">
+                        <img 
+                            src="/assets/pedobra_monitor_mockup_v2.png" 
+                            alt="Mockup" 
+                            className="mockup-base"
+                        />
+                        <div className="monitor-screen">
+                            <div className="carousel-wrapper" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
+                                {screenshots.map((s, i) => (
+                                    <div key={i} className="carousel-item">
+                                        <img src={s.url} alt={s.title} className="screen-content" />
+                                        <div className="screenshot-watermark">
+                                            <img src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" alt="Watermark" />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="carousel-controls">
+                                <button className="control-btn" onClick={() => setCurrentSlide((currentSlide - 1 + screenshots.length) % screenshots.length)}>
+                                    <ChevronLeft size={24} />
+                                </button>
+                                <button className="control-btn" onClick={() => setCurrentSlide((currentSlide + 1) % screenshots.length)}>
+                                    <ChevronRight size={24} />
+                                </button>
+                            </div>
+                            <div className="slide-indicator">
+                                {screenshots[currentSlide].title}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="how-it-works" className="steps-section">
+                <div className="section-container">
+                    <h2 className="section-title text-center">Fluxo Inteligente em 3 Etapas</h2>
                     <div className="steps-grid">
                         {[
-                            { step: "01", title: "Cadastre sua obra", desc: "Configure os detalhes, equipe e prazos em segundos." },
-                            { step: "02", title: "Equipe faz pedidos", desc: "Mestres de obra solicitam materiais pelo app de campo." },
-                            { step: "03", title: "Controle tudo", desc: "Monitore custos e aprove pedidos em tempo real." }
+                            { step: "01", title: "Configuração Rápida", desc: "Cadastre suas obras e convide sua equipe em minutos." },
+                            { step: "02", title: "Pedidos de Campo", desc: "Mestres de obra solicitam insumos direto pelo celular." },
+                            { step: "03", title: "Aprovação & Controle", desc: "Aprove compras e monitore o orçamento em tempo real." }
                         ].map((s, i) => (
                             <div key={i} className="step-card glass">
                                 <span className="step-num">{s.step}</span>
@@ -186,7 +231,7 @@ const LandingPage = () => {
 
             <section className="features-section">
                 <div className="section-container">
-                    <h2 className="section-title">Infraestrutura completa para sua gestão</h2>
+                    <h2 className="section-title">Tecnologia para resultados reais</h2>
                     <div className="features-grid">
                         {features.map((f, i) => (
                             <div key={i} className="feature-card glass-hover">
@@ -201,15 +246,14 @@ const LandingPage = () => {
 
             <section className="plans-section">
                 <div className="section-container">
-                    <h2 className="section-title text-center">Planos que acompanham seu crescimento</h2>
+                    <h2 className="section-title text-center">Planos Transparentes</h2>
                     <div className="plans-grid">
                         {[
-                            { name: "Starter", price: "79", tag: "Essencial", features: ["1 Obra Ativa", "Gestão de Pedidos", "App do Operário", "Suporte E-mail"] },
-                            { name: "Profissional", price: "147", tag: "Mais Popular", highlight: true, features: ["Obras Ilimitadas", "Relatórios Interativos", "Geração de PDF", "Suporte WhatsApp"] },
-                            { name: "Empresarial", price: "Custom", tag: "Escala Total", features: ["Multi-Empresa", "API de Integração", "SLA Dedicado", "Gestor de Contas"] }
+                            { name: "Starter", price: "79", features: ["1 Obra Ativa", "Gestão de Pedidos", "App do Operário", "Suporte E-mail"] },
+                            { name: "Profissional", price: "147", highlight: true, features: ["Obras Ilimitadas", "Relatórios Interativos", "Geração de PDF", "Suporte WhatsApp"] },
+                            { name: "Empresarial", price: "Custom", features: ["Multi-Empresa", "API de Integração", "SLA Dedicado", "Gestor de Contas"] }
                         ].map((p, i) => (
                             <div key={i} className={`plan-card glass ${p.highlight ? 'plan-highlight' : ''}`}>
-                                <span className="plan-tag">{p.tag}</span>
                                 <h3 className="plan-name">{p.name}</h3>
                                 <div className="plan-price">
                                     {p.price !== 'Custom' && <span className="currency">R$</span>}
@@ -226,28 +270,9 @@ const LandingPage = () => {
                 </div>
             </section>
 
-            <section className="white-label-section">
-                <div className="section-container">
-                    <div className="white-label-grid">
-                        <div className="wl-card glass">
-                            <Zap size={32} color="var(--primary)" />
-                            <h3>White Label & Personalização</h3>
-                            <p>Sua plataforma, sua identidade. Customize logos, cores e domínios para seus clientes.</p>
-                            <button className="btn-link" onClick={() => setIsSignUp(true)}>Consultar planos corporativos</button>
-                        </div>
-                        <div className="wl-card glass">
-                            <Globe size={32} color="var(--primary)" />
-                            <h3>API Pronta para Integração</h3>
-                            <p>Conecte o PedObra ao seu ERP, sistema financeiro ou ferramentas de BI de forma robusta.</p>
-                            <button className="btn-link" onClick={() => setIsSignUp(true)}>Documentação API em breve</button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <section className="faq-section">
                 <div className="section-container-small">
-                    <h2 className="section-title text-center">Perguntas Frequentes</h2>
+                    <h2 className="section-title text-center">FAQ</h2>
                     <div className="faq-accordion">
                         {faqs.map((f, i) => (
                             <div key={i} className={`faq-item glass ${activeFaq === i ? 'active' : ''}`} onClick={() => setActiveFaq(activeFaq === i ? null : i)}>
@@ -267,28 +292,12 @@ const LandingPage = () => {
                     <div className="footer-top">
                         <div className="footer-brand">
                             <img src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" alt="Logo" />
-                            <p>Software de gestão premium para o seu canteiro.</p>
-                        </div>
-                        <div className="footer-links">
-                            <div>
-                                <h4>Produto</h4>
-                                <a href="#">Funcionalidades</a>
-                                <a href="#">Planos</a>
-                                <a href="#">Segurança</a>
-                            </div>
-                            <div>
-                                <h4>Suporte</h4>
-                                <a href="#">Central de Ajuda</a>
-                                <a href="#">API</a>
-                                <a href="#">Status</a>
-                            </div>
+                            <p>Gestão de obras inteligente.</p>
                         </div>
                     </div>
                     <div className="footer-bottom">
                         <p>&copy; 2026 PedObra. Todos os direitos reservados.</p>
-                        <div className="footer-socials">
-                            <span>Segurança Nível Bancário SSL 256 bits</span>
-                        </div>
+                        <div className="footer-socials">SSL 256 bits</div>
                     </div>
                 </div>
             </footer>
@@ -350,161 +359,156 @@ const LandingPage = () => {
             <style>{`
                 :root {
                     --bg-onyx: #171614;
-                    --bg-violet: #2e1c2b;
                     --alabaster: #eaeaea;
-                    --parchment: #f4f3ee;
-                    --floral: #fffcf2;
-                    --primary: #f4f3ee; /* Parchment high-level highlight */
-                    --primary-glow: rgba(244, 243, 238, 0.2);
-                    --border: rgba(255, 255, 255, 0.08);
-                    --glass: rgba(255, 255, 255, 0.03);
-                    --text-main: var(--parchment);
-                    --text-soft: rgba(244,243,238, 0.7);
-                    --gradient-main: radial-gradient(circle at 10% 20%, var(--bg-violet) 0%, var(--bg-onyx) 100%);
+                    --primary: #eaeaea;
+                    --text-main: #eaeaea;
+                    --text-soft: rgba(234, 234, 234, 0.6);
+                    --border: rgba(234, 234, 234, 0.1);
+                    --glass: rgba(234, 234, 234, 0.03);
                 }
 
-                .landing-wrapper {
-                    background: var(--bg-onyx);
-                    background-image: var(--gradient-main);
-                    color: var(--text-main);
-                    min-height: 100vh;
-                    font-family: 'Inter', system-ui, sans-serif;
-                    overflow-x: hidden;
-                }
-
+                .landing-wrapper { background: var(--bg-onyx); color: var(--text-main); min-height: 100vh; font-family: 'Inter', sans-serif; overflow-x: hidden; }
                 .section-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
                 .section-container-small { max-width: 800px; margin: 0 auto; padding: 0 24px; }
                 .text-center { text-align: center; }
-                .animate-fade { animation: fadeIn 0.8s ease-out forwards; }
-                @keyframes fadeIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+                .mx-auto { margin-left: auto; margin-right: auto; }
+                .justify-center { justify-content: center; }
+                .w-full { width: 100%; }
+                .mt-4 { margin-top: 16px; }
 
-                /* Nav */
-                .lp-nav { position: fixed; top: 0; left: 0; right: 0; height: 80px; z-index: 1000; border-bottom: 2px solid var(--border); }
+                .lp-nav { position: fixed; top: 0; left: 0; right: 0; height: 80px; z-index: 1000; border-bottom: 1px solid var(--border); }
                 .nav-container-limit { max-width: 1400px; margin: 0 auto; height: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
-                .lp-logo { height: 40px; cursor: pointer; }
-                .lp-logo img { height: 100%; width: auto; }
+                .lp-logo { height: 32px; cursor: pointer; }
+                .lp-logo img { height: 100%; }
                 .nav-right { display: flex; align-items: center; gap: 24px; }
                 .nav-login-btn { background: none; border: none; color: var(--text-main); font-weight: 600; cursor: pointer; }
-                .nav-cta-btn { background: var(--parchment); color: var(--bg-onyx); padding: 10px 20px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; font-size: 14px; }
+                .nav-cta-btn { background: var(--alabaster); color: var(--bg-onyx); padding: 10px 20px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; }
 
-                /* Hero */
-                .hero-section { padding-top: 180px; padding-bottom: 120px; position: relative; overflow: hidden; }
-                .hero-bg-accent { position: absolute; top: 0px; right: 0; width: 600px; height: 600px; background: var(--bg-violet); filter: blur(150px); opacity: 0.3; z-index: 0; border-radius: 50%; }
-                .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; max-width: 1400px; margin: 0 auto; padding: 0 40px; position: relative; z-index: 1; }
-                .hero-badge { display: inline-block; padding: 6px 14px; background: rgba(244,243,238, 0.05); border: 1px solid var(--border); border-radius: 100px; font-size: 12px; font-weight: 800; letter-spacing: 1px; color: var(--text-soft); margin-bottom: 24px; }
-                .hero-title { font-size: clamp(40px, 6vw, 76px); line-height: 1; font-weight: 900; margin-bottom: 32px; letter-spacing: -2px; }
-                .text-glow { color: var(--parchment); text-shadow: 0 0 30px rgba(244,243,238, 0.4); }
-                .hero-subtitle { font-size: 20px; color: var(--text-soft); max-width: 540px; margin-bottom: 48px; line-height: 1.6; }
-                .hero-actions { display: flex; gap: 20px; }
-                .btn-main { background: var(--parchment); color: var(--bg-onyx); padding: 16px 32px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 16px; transition: 0.3s; }
-                .btn-outline { background: none; border: 1px solid var(--border); color: var(--text-main); padding: 16px 32px; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 16px; transition: 0.3s; }
-                .btn-outline:hover { background: var(--glass); }
-                .highlight-glow { box-shadow: 0 0 40px var(--primary-glow); }
-                .hero-visual { position: relative; }
-                .mockup-frame { border-radius: 24px; padding: 12px; border: 1px solid var(--border); overflow: hidden; transform: perspective(1000px) rotateY(-5deg) rotateX(2deg); box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5); }
-                .mockup-frame img { width: 100%; border-radius: 12px; display: block; filter: brightness(0.9); }
+                .hero-section { padding: 180px 0 100px; }
+                .hero-badge { font-size: 12px; font-weight: 800; opacity: 0.5; letter-spacing: 2px; margin-bottom: 24px; }
+                .hero-title { font-size: clamp(40px, 8vw, 84px); font-weight: 900; line-height: 1.1; letter-spacing: -3px; margin-bottom: 32px; }
+                .text-glow { color: #fff; text-shadow: 0 0 40px rgba(255,255,255,0.3); }
+                .hero-subtitle { font-size: 20px; color: var(--text-soft); max-width: 600px; margin-bottom: 48px; line-height: 1.6; }
+                .hero-actions { display: flex; gap: 16px; }
+                .btn-main { background: var(--alabaster); color: var(--bg-onyx); padding: 18px 36px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; gap: 12px; }
+                .highlight-glow { box-shadow: 0 0 50px rgba(255,255,255,0.1); }
 
-                /* Sections General */
-                .section-title { font-size: 42px; font-weight: 850; margin-bottom: 60px; letter-spacing: -1.5px; }
-                .how-it-works-section { padding: 100px 0; background: rgba(0,0,0,0.2); }
-                .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-                .step-card { padding: 48px; border-radius: 20px; border: 1px solid var(--border); transition: 0.3s; }
-                .step-num { font-size: 14px; font-weight: 900; color: var(--text-soft); display: block; margin-bottom: 24px; opacity: 0.4; }
-                .step-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
-                .step-card p { color: var(--text-soft); line-height: 1.6; font-size: 15px; }
+                /* Mockup Elite Section */
+                .mockup-display-section { padding-bottom: 120px; }
+                .mockup-container { 
+                    position: relative; 
+                    max-width: 1000px; 
+                    margin: 0 auto; 
+                    border-radius: 32px; 
+                    padding: 8px; 
+                    overflow: hidden;
+                    box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+                }
+                .mockup-base { width: 100%; display: block; filter: brightness(1.1); }
+                .monitor-screen { 
+                    position: absolute; 
+                    top: 4.8%; 
+                    left: 2.3%; 
+                    width: 95.4%; 
+                    height: 53.5%; 
+                    background: #000; 
+                    overflow: hidden; 
+                    border-radius: 2px;
+                }
+                .carousel-wrapper { 
+                    display: flex; 
+                    width: 100%; 
+                    height: 100%; 
+                    transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+                }
+                .carousel-item { 
+                    min-width: 100%; 
+                    height: 100%; 
+                    position: relative; 
+                    background: #1e1e21;
+                }
+                .screen-content { width: 100%; height: 100%; object-fit: cover; }
+                .screenshot-watermark { 
+                    position: absolute; 
+                    inset: 0; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    pointer-events: none; 
+                    opacity: 0.15;
+                    transform: rotate(-15deg);
+                }
+                .screenshot-watermark img { width: 300px; filter: grayscale(1) invert(1); }
+                .carousel-controls { 
+                    position: absolute; 
+                    top: 50%; 
+                    left: 0; 
+                    right: 0; 
+                    transform: translateY(-50%); 
+                    display: flex; 
+                    justify-content: space-between; 
+                    padding: 0 10px; 
+                }
+                .control-btn { background: rgba(0,0,0,0.4); border: none; color: #fff; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+                .control-btn:hover { background: rgba(0,0,0,0.8); }
+                .slide-indicator { position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; color: #fff; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+
+                .section-title { font-size: 36px; font-weight: 850; margin-bottom: 60px; letter-spacing: -1px; }
+                .steps-section { padding: 100px 0; background: rgba(255,255,255,0.01); }
+                .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+                .step-card { padding: 40px; border-radius: 20px; text-align: left; }
+                .step-num { font-size: 12px; font-weight: 900; opacity: 0.3; margin-bottom: 20px; display: block; }
+                .step-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+                .step-card p { font-size: 14px; color: var(--text-soft); line-height: 1.6; }
 
                 .features-section { padding: 120px 0; }
-                .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+                .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
                 .feature-card { padding: 32px; border-radius: 16px; border: 1px solid var(--border); transition: 0.3s; }
-                .glass-hover:hover { background: var(--glass); border-color: rgba(244,243,238, 0.2); transform: translateY(-5px); }
-                .feature-icon { width: 48px; height: 48px; background: var(--glass); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 24px; color: var(--parchment); }
-                .feature-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
-                .feature-card p { font-size: 14px; color: var(--text-soft); line-height: 1.5; }
+                .feature-icon { margin-bottom: 24px; color: var(--alabaster); opacity: 0.8; }
+                .glass-hover:hover { background: var(--glass); transform: translateY(-4px); }
 
-                /* Plans */
-                .plans-section { padding: 100px 0; background: rgba(0,0,0,0.4); }
-                .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 40px; }
-                .plan-card { padding: 48px 32px; border-radius: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; position: relative; }
-                .plan-highlight { border-color: rgba(244,243,238, 0.3); background: rgba(244,243,238, 0.02); }
-                .plan-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--text-soft); background: var(--glass); padding: 4px 12px; border-radius: 100px; width: fit-content; margin-bottom: 20px; }
-                .plan-name { font-size: 24px; font-weight: 700; margin-bottom: 16px; }
-                .plan-price { margin-bottom: 32px; display: flex; align-items: baseline; gap: 4px; }
-                .price-val { font-size: 48px; font-weight: 850; }
-                .currency, .period { font-size: 16px; color: var(--text-soft); font-weight: 600; }
-                .plan-features { list-style: none; padding: 0; margin: 0 0 40px 0; flex: 1; }
-                .plan-features li { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; font-size: 15px; color: var(--text-soft); font-weight: 500; }
-                .plan-btn { width: 100%; height: 52px; border-radius: 12px; font-weight: 800; cursor: pointer; transition: 0.3s; 
-                             background: var(--glass); color: var(--text-main); border: 1px solid var(--border); }
-                .plan-btn.highlight-glow { background: var(--parchment); color: var(--bg-onyx); border: none; }
+                .plans-section { padding: 100px 0; background: rgba(0,0,0,0.2); }
+                .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+                .plan-card { padding: 40px; border-radius: 24px; text-align: center; }
+                .plan-highlight { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); }
+                .plan-name { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+                .plan-price { font-size: 40px; font-weight: 900; margin-bottom: 32px; }
+                .plan-features { list-style: none; padding: 0; margin-bottom: 40px; text-align: left; }
+                .plan-features li { display: flex; align-items: center; gap: 12px; font-size: 14px; margin-bottom: 12px; color: var(--text-soft); }
+                .plan-btn { width: 100%; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; background: var(--glass); color: #fff; border: 1px solid var(--border); }
+                .plan-btn.highlight-glow { background: #fff; color: #000; border: none; }
 
-                /* WL */
-                .white-label-section { padding: 100px 0; }
-                .white-label-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
-                .wl-card { padding: 40px; border-radius: 24px; border: 1px solid var(--border); }
-                .wl-card h3 { font-size: 22px; font-weight: 700; margin: 24px 0 16px; }
-                .wl-card p { color: var(--text-soft); font-size: 15px; margin-bottom: 24px; line-height: 1.6; }
-                .btn-link { background: none; border: none; color: var(--parchment); font-weight: 700; cursor: pointer; border-bottom: 1.5px solid var(--parchment); padding-bottom: 2px; transition: 0.3s; }
-                .btn-link:hover { opacity: 0.7; }
-
-                /* FAQ */
-                .faq-section { padding: 120px 0; }
-                .faq-accordion { display: flex; flex-direction: column; gap: 12px; margin-top: 40px; }
-                .faq-item { border-radius: 16px; border: 1px solid var(--border); transition: 0.3s; cursor: pointer; }
-                .faq-header { padding: 24px; display: flex; align-items: center; justify-content: space-between; font-weight: 700; font-size: 16px; }
-                .faq-body { padding: 0 24px 24px; color: var(--text-soft); line-height: 1.6; font-size: 15px; }
-                .faq-item:hover, .faq-item.active { border-color: rgba(244,243,238, 0.2); background: var(--glass); }
-                .faq-arrow { transition: transform 0.3s; }
+                .faq-section { padding: 100px 0; }
+                .faq-accordion { display: flex; flex-direction: column; gap: 12px; }
+                .faq-item { border-radius: 12px; cursor: pointer; }
+                .faq-header { padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; font-weight: 700; }
+                .faq-body { padding: 0 24px 20px; color: var(--text-soft); font-size: 14px; }
+                .faq-arrow { transition: 0.3s; }
                 .active .faq-arrow { transform: rotate(180deg); }
 
-                /* Footer */
-                .lp-footer { background: var(--bg-onyx); border-top: 1px solid var(--border); padding: 80px 40px 40px; }
-                .footer-container { max-width: 1400px; margin: 0 auto; }
-                .footer-top { display: flex; justify-content: space-between; margin-bottom: 80px; }
-                .footer-brand img { height: 32px; margin-bottom: 20px; }
-                .footer-brand p { color: var(--text-soft); font-size: 14px; max-width: 260px; }
-                .footer-links { display: flex; gap: 60px; }
-                .footer-links h4 { font-size: 14px; font-weight: 850; margin-bottom: 24px; color: var(--parchment); }
-                .footer-links a { display: block; text-decoration: none; color: var(--text-soft); font-size: 14px; margin-bottom: 12px; transition: 0.2s; }
-                .footer-links a:hover { color: var(--parchment); }
-                .footer-bottom { padding-top: 40px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-                .footer-bottom p { font-size: 12px; color: var(--text-soft); }
-                .footer-socials { font-size: 12px; color: var(--text-soft); opacity: 0.6; }
+                .lp-footer { padding: 80px 40px 40px; border-top: 1px solid var(--border); }
+                .footer-brand img { height: 28px; margin-bottom: 16px; }
+                .footer-brand p { font-size: 14px; color: var(--text-soft); }
+                .footer-bottom { margin-top: 60px; padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 12px; color: var(--text-soft); }
 
-                /* Heavy Glass for Auth */
-                .glass-heavy { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
-                .auth-logo { height: 36px; margin-bottom: 24px; margin-left: auto; margin-right: auto; }
-                .auth-card { width: 440px; padding: 48px; border-radius: 24px; border: 1.5px solid var(--border); background: #1a1a1c; }
-                .auth-title { font-size: 24px; font-weight: 850; margin-bottom: 32px; }
-                .input-field { margin-bottom: 20px; }
-                .input-field label { display: block; font-size: 11px; font-weight: 800; color: var(--text-soft); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-                .input-field input { width: 100%; background: #0c0c0d; border: 1px solid var(--border); padding: 14px 16px; border-radius: 10px; color: #fff; outline: none; transition: 0.3s; }
-                .input-field input:focus { border-color: var(--parchment); box-shadow: 0 0 20px rgba(244,243,238, 0.1); }
-                .auth-switch { text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-soft); }
-                .auth-switch button { background: none; border: none; color: var(--parchment); font-weight: 700; cursor: pointer; border-bottom: 1px solid var(--parchment); margin-left: 4px; }
-                .auth-overlay { position: fixed; inset: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+                .auth-card { width: 100%; max-width: 400px; padding: 40px; border-radius: 24px; background: #1a1a1c; border: 1px solid var(--border); }
+                .auth-logo { height: 32px; margin: 0 auto 24px; display: block; }
+                .input-field { margin-bottom: 16px; text-align: left; }
+                .input-field label { font-size: 11px; font-weight: 800; color: var(--text-soft); margin-bottom: 6px; display: block; text-transform: uppercase; }
+                .input-field input { width: 100%; padding: 12px; border-radius: 8px; background: #0c0c0d; border: 1px solid var(--border); color: #fff; outline: none; }
+                .auth-switch { margin-top: 24px; font-size: 14px; color: var(--text-soft); }
+                .auth-switch button { background: none; border: none; color: #fff; font-weight: 700; cursor: pointer; border-bottom: 1px solid #fff; margin-left: 4px; }
 
-                /* Responsiveness */
                 @media (max-width: 1024px) {
-                    .grid-container { grid-template-columns: 1fr; text-align: center; gap: 40px; }
-                    .hero-content { display: flex; flex-direction: column; align-items: center; }
-                    .hero-actions { justify-content: center; }
-                    .hero-visual { display: none; }
-                    .steps-grid, .features-grid, .plans-grid { grid-template-columns: 1fr; }
-                    .white-label-grid { grid-template-columns: 1fr; }
-                    .nav-container-limit { padding: 0 24px; }
-                    .hero-section { padding-top: 140px; }
                     .hero-title { font-size: 48px; }
+                    .steps-grid, .features-grid, .plans-grid { grid-template-columns: 1fr; }
+                    .mockup-container { border-radius: 16px; }
                 }
 
-                @media (max-width: 768px) {
-                    .nav-right button:not(.nav-cta-btn) { display: none; }
-                    .section-title { font-size: 32px; }
-                    .footer-top { flex-direction: column; gap: 40px; }
-                    .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
-                }
-
-                /* Standard Glass UI Component Override */
-                .glass { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); }
+                .animate-fade { animation: fadeIn 0.8s ease-out forwards; }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                .glass { background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+                .glass-heavy { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
             `}</style>
         </div>
     );
