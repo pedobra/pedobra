@@ -241,7 +241,7 @@ const MasterFinanceiro = () => {
             </div>
 
             {/* CHARTS SECTION */}
-            <div className="charts-layout" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '24px', margin: '24px 0' }}>
+            <div className="charts-layout">
                 <StandardCard title="Distribuição de Receita" subtitle="Clique em uma fatia para filtrar os clientes abaixo.">
                     <div style={{ height: '300px', width: '100%' }}>
                         <ResponsiveContainer>
@@ -341,9 +341,38 @@ const MasterFinanceiro = () => {
                 .summary-info strong { font-size: 24px; font-weight: 800; display: block; margin-top: 4px; }
                 .trend-icon { position: absolute; top: 16px; right: 16px; color: var(--status-active); opacity: 0.6; }
 
+                .charts-layout { 
+                    display: grid; 
+                    grid-template-columns: 1.5fr 1fr; 
+                    gap: 24px; 
+                    margin: 24px 0; 
+                }
+
                 @media (max-width: 1200px) {
                     .finance-grid { grid-template-columns: 1fr; }
                     .charts-layout { grid-template-columns: 1fr !important; }
+                }
+
+                @media (max-width: 768px) {
+                    .financeiro-master { padding: 0; }
+                    .dashboard-header { flex-direction: column; align-items: flex-start !important; gap: 12px; }
+                    .page-title { font-size: 20px !important; }
+                    
+                    .summary-cards { 
+                        grid-template-columns: 1fr !important; 
+                        gap: 12px; 
+                    }
+                    .summary-card { 
+                        padding: 16px; 
+                        gap: 12px; 
+                    }
+                    .summary-icon { width: 44px; height: 44px; }
+                    .summary-info strong { font-size: 20px; }
+                    
+                    .charts-layout { gap: 16px !important; }
+                    
+                    .input-group-saas input { font-size: 16px; } /* Prevent iOS zoom */
+                    .btn-primary { width: 100%; justify-content: center; }
                 }
             `}</style>
         </div>
