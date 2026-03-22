@@ -141,6 +141,24 @@ const LandingPage = () => {
         },
     ];
 
+    const testimonials = [
+        { name: "Ricardo Silva", role: "Gestor de Obras", company: "Construtora Alpha", content: "O PedObra reduziu nosso desperdício de materiais em 20% no primeiro mês. O controle de pedidos é imbatível.", stars: 5, featured: true },
+        { name: "Ana Oliveira", role: "Engenheira Civil", company: "Engenharia S.A.", content: "A facilidade de aprovação pelo app mudou nossa rotina. O mestre pede no campo e eu aprovo em segundos da sede.", stars: 5 },
+        { name: "Marcos Torres", role: "Sócio", company: "Projetos & Canteiros", content: "Finalmente tenho visão clara de onde está indo o dinheiro de cada obra. O suporte é excelente.", stars: 5 },
+        { name: "Julia Mendes", role: "Suprimentos", company: "Pedra & Cal", content: "Gerar ordens de compra em PDF com um clique economiza horas do meu dia. Indispensável.", stars: 5 },
+        { name: "Carlos Eduardo", role: "Mestre de Obras", company: "Urbaniza", content: "O app é tão simples que até quem não tem tecnologia aprende em minutos. Recomendo.", stars: 5 }
+    ];
+
+    const partners = ["Engenharia S.A.", "Construtora Alpha", "Mestre de Obras Ltd", "Projetos & Canteiros", "Pedra & Cal", "Urbaniza", "BuildMaster", "Canteiro Digital"];
+    const [testiIndex, setTestiIndex] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTestiIndex(prev => (prev + 1) % testimonials.length);
+        }, 5000);
+        return () => clearInterval(timer);
+    }, [testimonials.length]);
+
     const faqs = [
         { q: "O sistema funciona em celular?", a: "Sim! O PedObra é totalmente responsivo e foi desenhado para funcionar perfeitamente em smartphones, tablets e computadores." },
         { q: "Como funciona o período de teste de 7 dias?", a: "Ao se cadastrar, você ganha acesso total a todas as funcionalidades do plano Professional por 7 dias. Nenhuma cobrança é feita durante este período." },
@@ -308,6 +326,54 @@ const LandingPage = () => {
                         </div>
                         <div className="flow-cta-wrapper text-center">
                             <button className="btn-venda highlight-glow" onClick={() => setIsSignUp(true)}>QUERO COMEÇAR AGORA</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="logo-marquee-section">
+                <div className="section-container">
+                    <p className="marquee-title text-center">Empresas que já organizaram suas obras com o PedObra</p>
+                    <div className="marquee-container">
+                        <div className="marquee-content">
+                            {[...partners, ...partners].map((p, i) => (
+                                <div key={i} className="marquee-item">
+                                    <Construction size={20} className="marquee-icon" />
+                                    <span>{p}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section className="testimonials-section">
+                <div className="section-container">
+                    <h2 className="section-title text-center">Quem usa, não volta atrás</h2>
+                    <div className="testimonials-carousel">
+                        <div className="testimonials-wrapper" style={{ transform: `translateX(-${testiIndex * 100}%)` }}>
+                            {testimonials.map((t, i) => (
+                                <div key={i} className={`testimonial-card-container ${testiIndex === i ? 'active' : ''}`}>
+                                    <div className={`testimonial-card glass ${t.featured ? 'featured' : ''}`}>
+                                        <div className="stars">
+                                            {[...Array(t.stars)].map((_, si) => <CheckCircle key={si} size={14} className="star-icon" />)}
+                                        </div>
+                                        <p className="testimonial-content">"{t.content}"</p>
+                                        <div className="testimonial-footer">
+                                            <div className="user-avatar">{t.name[0]}</div>
+                                            <div className="user-info">
+                                                <span className="user-name">{t.name}</span>
+                                                <span className="user-meta">{t.role} • {t.company}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="carousel-nav">
+                            {testimonials.map((_, i) => (
+                                <button key={i} className={`nav-dot ${testiIndex === i ? 'active' : ''}`} onClick={() => setTestiIndex(i)} />
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -912,6 +978,49 @@ const LandingPage = () => {
                 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
                 .glass { background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
                 .glass-heavy { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+
+                /* Marquee & Testimonials V11 */
+                .logo-marquee-section { padding: 60px 0; background: #0d0d0d; border-top: 1px solid rgba(255,255,255,0.05); }
+                .marquee-title { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.4); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 1px; }
+                .marquee-container { 
+                    position: relative; 
+                    overflow: hidden; 
+                    mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+                    -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+                }
+                .marquee-content { display: flex; gap: 60px; animation: marquee-scroll 40s linear infinite; width: max-content; }
+                .marquee-container:hover .marquee-content { animation-play-state: paused; }
+                .marquee-item { display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 850; color: rgba(255,255,255,0.2); white-space: nowrap; }
+                .marquee-icon { opacity: 0.5; }
+                @keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+                .testimonials-section { padding: 120px 0; background: #0d0d0d; overflow: hidden; }
+                .testimonials-carousel { position: relative; max-width: 800px; margin: 0 auto; min-height: 400px; }
+                .testimonials-wrapper { display: flex; transition: cubic-bezier(0.165, 0.84, 0.44, 1) 0.8s; }
+                .testimonial-card-container { min-width: 100%; padding: 20px; transition: 0.5s; opacity: 0.4; transform: scale(0.9); }
+                .testimonial-card-container.active { opacity: 1; transform: scale(1); }
+                .testimonial-card { padding: 48px; border-radius: 32px; background: #151515; border: 1px solid rgba(255,255,255,0.05); transition: 0.4s; height: 100%; display: flex; flex-direction: column; justify-content: space-between; }
+                .testimonial-card.featured { border-color: rgba(255,255,255,0.1); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+                .testimonial-card:hover { border-color: var(--primary); box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.1); transform: translateY(-5px); }
+                
+                .stars { display: flex; gap: 4px; margin-bottom: 24px; }
+                .star-icon { color: var(--primary); }
+                .testimonial-content { font-size: 20px; font-weight: 600; line-height: 1.6; color: #fff; margin-bottom: 32px; font-style: italic; }
+                .testimonial-footer { display: flex; align-items: center; gap: 16px; margin-top: auto; }
+                .user-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--primary); color: #000; display: flex; align-items: center; justify-content: center; font-weight: 950; font-size: 18px; flex-shrink: 0; }
+                .user-info { display: flex; flex-direction: column; }
+                .user-name { font-weight: 800; color: #fff; }
+                .user-meta { font-size: 13px; color: var(--text-soft); }
+
+                .carousel-nav { display: flex; justify-content: center; gap: 8px; margin-top: 40px; }
+                .nav-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; cursor: pointer; transition: 0.3s; }
+                .nav-dot.active { background: var(--primary); width: 24px; border-radius: 4px; }
+
+                @media (max-width: 768px) {
+                    .testimonial-card { padding: 32px; }
+                    .testimonial-content { font-size: 16px; }
+                    .testimonials-carousel { min-height: 300px; }
+                }
             `}</style>
         </div>
     );
