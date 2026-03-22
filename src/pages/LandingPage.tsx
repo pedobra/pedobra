@@ -1053,10 +1053,8 @@ const LandingPage = () => {
                 .cycle-btn { flex: 1; padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 700; border: none; background: transparent; color: rgba(255,255,255,0.5); cursor: pointer; transition: 0.2s; }
                 .cycle-btn.active { background: #fff; color: #000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
                 
-                .plan-btn { width: 100%; padding: 18px; border-radius: 14px; font-size: 16px; font-weight: 900; cursor: pointer; transition: 0.3s; background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 1px; }
-                .plan-btn.highlight-glow { background: #000; color: #fff; border: 2px solid #000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-                .plan-btn:hover { background: #fff; color: #000; border-color: #fff; transform: translateY(-3px); }
-                .plan-highlight .plan-btn.highlight-glow:hover { background: #fff; color: #000; border-color: #fff; }
+                .plan-btn { width: 100%; padding: 18px; border-radius: 14px; font-size: 16px; font-weight: 950; cursor: pointer; transition: 0.3s; background: #fff; color: #000 !important; border: 2px solid #fff; text-transform: uppercase; letter-spacing: 1px; }
+                .plan-btn:hover { background: #10B981; border-color: #10B981; transform: translateY(-3px); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); }
 
                 .white-label-banner {
                     margin-top: 60px;
@@ -1084,8 +1082,14 @@ const LandingPage = () => {
                     text-transform: uppercase;
                     letter-spacing: 1px;
                     font-size: 14px;
+                    border: 2px solid #fff;
                 }
-                .wl-cta:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+                .wl-cta:hover { 
+                    background: #10B981;
+                    border-color: #10B981;
+                    transform: scale(1.05); 
+                    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); 
+                }
 
                 @media (max-width: 768px) {
                     .white-label-banner { flex-direction: column; text-align: center; padding: 40px 24px; margin-top: 40px; }
