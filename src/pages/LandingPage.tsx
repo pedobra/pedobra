@@ -489,7 +489,13 @@ const LandingPage = () => {
                                     <ul className="plan-features">
                                         {p.features.map((f, fi) => <li key={fi}><Check size={16} color={p.highlight ? "#10B981" : "var(--text-soft)"} /> {f}</li>)}
                                     </ul>
-                                    <button className={`plan-btn ${p.highlight ? 'highlight-glow' : ''}`} onClick={() => setIsSignUp(true)}>ASSINAR AGORA</button>
+                                    <button className={`plan-btn ${p.highlight ? 'highlight-glow' : ''}`} onClick={() => {
+                                        if (p.isCustom) {
+                                            window.open(`https://wa.me/5583996254920?text=Olá, quero saber mais sobre o Plano ${planCycle}`, '_blank');
+                                        } else {
+                                            setIsSignUp(true);
+                                        }
+                                    }}>ASSINAR AGORA</button>
                                 </div>
                             ))}
                         </div>
@@ -1023,8 +1029,10 @@ const LandingPage = () => {
 
                 .plans-section { padding: 120px 0; background: rgba(0,0,0,0.3); }
                 .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; max-width: 1200px; margin: 0 auto; align-items: stretch; }
-                .plan-card { padding: 48px 40px; border-radius: 32px; text-align: center; position: relative; display: flex; flex-direction: column; transition: 0.4s; }
+                .plan-card { padding: 48px 40px; border-radius: 32px; text-align: center; position: relative; display: flex; flex-direction: column; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+                .plan-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.2); }
                 .plan-highlight { border: 2px solid #fff; scale: 1.05; z-index: 10; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+                .plan-highlight:hover { transform: translateY(-10px) scale(1.06); }
                 
                 .plan-badge-top { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 6px 20px; border-radius: 12px; font-size: 12px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
                 .benefit-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.1); color: #10B981; padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 800; margin: 0 auto 24px; text-transform: uppercase; border: 1px solid rgba(16, 185, 129, 0.2); }
