@@ -11,7 +11,8 @@ import {
     FileText, 
     Users,
     ChevronLeft,
-    ChevronRight
+    ChevronRight,
+    CheckCircle
 } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 import { detectBot } from '../lib/security';
@@ -173,30 +174,47 @@ const LandingPage = () => {
                 </div>
             </header>
 
-            <section className="screenshots-carousel-section">
+            <section id="venda-mockup" className="venda-section">
                 <div className="section-container">
-                    <div className="carousel-main-container glass animate-fade">
-                        <div className="carousel-view-area">
-                            <div className="carousel-wrapper" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
-                                {screenshots.map((s, i) => (
-                                    <div key={i} className="carousel-item">
-                                        <img src={s.url} alt={s.title} className="screen-content" />
-                                        <div className="screenshot-watermark">
-                                            <img src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" alt="Watermark" />
-                                        </div>
+                    <div className="venda-grid">
+                        <div className="venda-content animate-fade">
+                            <h2 className="venda-title">Controle absoluto da sua obra, em tempo real</h2>
+                            <p className="venda-subtitle">
+                                Tudo que acontece no seu canteiro, na palma da sua mão. Sem achismo. Sem atraso. Sem prejuízo.
+                            </p>
+                            <ul className="venda-bullets">
+                                <li><CheckCircle size={20} className="bullet-icon" /> Acompanhe pedidos em tempo real</li>
+                                <li><CheckCircle size={20} className="bullet-icon" /> Controle materiais e custos</li>
+                                <li><CheckCircle size={20} className="bullet-icon" /> Evite erros e desperdícios</li>
+                            </ul>
+                            <div className="venda-actions">
+                                <button className="btn-venda highlight-glow" onClick={() => setIsSignUp(true)}>
+                                    👉 Testar agora
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="venda-mockup-area animate-fade">
+                            <div className="mockup-parallax-layer">
+                                <div className="mockup-floating-card glass-heavy">
+                                    <div className="mockup-screen-header">
+                                        <div className="dots"><span></span><span></span><span></span></div>
                                     </div>
-                                ))}
-                            </div>
-                            <div className="carousel-controls">
-                                <button className="control-btn" onClick={() => setCurrentSlide((currentSlide - 1 + screenshots.length) % screenshots.length)}>
-                                    <ChevronLeft size={24} />
-                                </button>
-                                <button className="control-btn" onClick={() => setCurrentSlide((currentSlide + 1) % screenshots.length)}>
-                                    <ChevronRight size={24} />
-                                </button>
-                            </div>
-                            <div className="slide-indicator">
-                                {screenshots[currentSlide].title}
+                                    <img 
+                                        src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/screenshots/pedidos_lista.png" 
+                                        alt="Sistema PedObra" 
+                                        className="mockup-img"
+                                    />
+                                    <div className="floating-element card-stats glass animate-float-slow">
+                                        <div className="stat-label">Economia mensal</div>
+                                        <div className="stat-value">+R$ 12.450</div>
+                                    </div>
+                                    <div className="floating-element card-alert glass animate-float-fast">
+                                        <div className="stat-label">Material pendente</div>
+                                        <div className="stat-value">Cimento CP-II</div>
+                                    </div>
+                                </div>
+                                <div className="mockup-glow-effect"></div>
                             </div>
                         </div>
                     </div>
@@ -384,6 +402,112 @@ const LandingPage = () => {
                     background-size: cover;
                     background-position: center;
                 }
+                /* Venda Section v6.0 */
+                .venda-section { padding: 120px 0; background: linear-gradient(180deg, #171614 0%, #000 100%); overflow: hidden; }
+                .venda-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center; }
+                .venda-title { 
+                    font-size: clamp(32px, 4vw, 56px); 
+                    font-weight: 900; 
+                    line-height: 1.1; 
+                    margin-bottom: 24px; 
+                    letter-spacing: -1px;
+                }
+                .venda-subtitle { 
+                    font-size: 18px; 
+                    color: var(--text-soft); 
+                    margin-bottom: 40px; 
+                    line-height: 1.6; 
+                    max-width: 500px;
+                }
+                .venda-bullets { list-style: none; padding: 0; margin-bottom: 48px; }
+                .venda-bullets li { 
+                    display: flex; 
+                    align-items: center; 
+                    gap: 16px; 
+                    font-size: 16px; 
+                    font-weight: 600; 
+                    margin-bottom: 20px; 
+                    color: var(--alabaster);
+                }
+                .bullet-icon { color: #fff; filter: drop-shadow(0 0 10px rgba(255,255,255,0.4)); }
+                
+                .btn-venda { 
+                    background: #fff; 
+                    color: #000; 
+                    padding: 20px 44px; 
+                    border-radius: 12px; 
+                    font-weight: 850; 
+                    font-size: 18px; 
+                    border: none; 
+                    cursor: pointer;
+                    transition: 0.3s;
+                }
+                .btn-venda:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+
+                .venda-mockup-area { position: relative; perspective: 2000px; }
+                .mockup-parallax-layer { 
+                    position: relative; 
+                    transform-style: preserve-3d;
+                    transform: rotateY(-15deg) rotateX(10deg);
+                    transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+                }
+                .mockup-parallax-layer:hover { transform: rotateY(-5deg) rotateX(5deg) scale(1.02); }
+                
+                .mockup-floating-card { 
+                    position: relative;
+                    border-radius: 24px;
+                    border: 1px solid rgba(255,255,255,0.15);
+                    box-shadow: 
+                        -50px 50px 100px rgba(0,0,0,0.8),
+                        0 0 60px rgba(255,255,255,0.05);
+                    overflow: hidden;
+                    background: #111;
+                }
+                .mockup-screen-header { 
+                    height: 40px; 
+                    padding: 0 20px; 
+                    display: flex; 
+                    align-items: center; 
+                    background: rgba(255,255,255,0.05);
+                    border-bottom: 1px solid rgba(255,255,255,0.05);
+                }
+                .mockup-screen-header .dots { display: flex; gap: 8px; }
+                .mockup-screen-header .dots span { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+                .mockup-img { width: 100%; display: block; filter: contrast(1.1); }
+                
+                .floating-element {
+                    position: absolute;
+                    padding: 16px 24px;
+                    border-radius: 16px;
+                    border: 1px solid rgba(255,255,255,0.1);
+                    backdrop-filter: blur(20px);
+                    z-index: 10;
+                    box-shadow: 20px 20px 40px rgba(0,0,0,0.4);
+                }
+                .card-stats { bottom: 60px; left: -40px; transform: translateZ(50px); }
+                .card-alert { top: 60px; right: -30px; transform: translateZ(80px); }
+                .stat-label { font-size: 11px; font-weight: 800; color: #a1a1aa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+                .stat-value { font-size: 18px; font-weight: 900; color: #fff; }
+
+                .animate-float-slow { animation: float 6s ease-in-out infinite; }
+                .animate-float-fast { animation: float 4s ease-in-out infinite reverse; }
+                @keyframes float {
+                    0%, 100% { transform: translateY(0) translateZ(50px); }
+                    50% { transform: translateY(-20px) translateZ(50px); }
+                }
+
+                @media (max-width: 1024px) {
+                    .venda-grid { grid-template-columns: 1fr; gap: 60px; text-align: center; }
+                    .venda-content { display: flex; flex-direction: column; align-items: center; }
+                    .venda-mockup-area { padding: 0 40px; margin-top: 40px; }
+                    .mockup-parallax-layer { transform: rotateY(0) rotateX(0); }
+                    .card-stats, .card-alert { display: none; }
+                }
+                @media (max-width: 640px) {
+                    .venda-mockup-area { padding: 0 10px; }
+                    .mockup-floating-card { border-radius: 16px; }
+                }
+
                 .hero-badge { font-size: 12px; font-weight: 800; opacity: 0.5; letter-spacing: 2px; margin-bottom: 24px; }
                 .hero-title { 
                     font-size: clamp(40px, 8vw, 84px); 
