@@ -263,19 +263,21 @@ const LandingPage = () => {
                         </div>
                         <div className="steps-grid-v9">
                             {[
-                                { step: "01", icon: <Construction size={32} />, title: "Pedido em Campo", desc: "Mestres de obra solicitam insumos direto pelo celular." },
-                                { step: "02", icon: <Package size={32} />, title: "Gestão Inteligente", desc: "Cotações e aprovações rápidas em um só lugar." },
-                                { step: "03", icon: <ShieldCheck size={32} />, title: "Controle Total", desc: "Acompanhe orçamentos e custos em tempo real." }
+                                { icon: <Construction size={32} />, title: "Pedido em Campo", desc: "Mestres de obra solicitam insumos direto pelo celular." },
+                                { icon: <Package size={32} />, title: "Gestão Inteligente", desc: "Recebimentos e aprovações rápidas dos pedidos em um só lugar." },
+                                { icon: <ShieldCheck size={32} />, title: "Controle Total", desc: "Acompanhe materiais e custos em tempo real." }
                             ].map((s, i) => (
                                 <div key={i} className={`step-card-v9 glass step-index-${i}`}>
                                     <div className="step-icon-inner">
                                         {s.icon}
                                     </div>
-                                    <span className="step-num-v9">{s.step}</span>
                                     <h3>{s.title}</h3>
                                     <p>{s.desc}</p>
                                 </div>
                             ))}
+                        </div>
+                        <div className="flow-cta-wrapper text-center">
+                            <button className="btn-venda highlight-glow" onClick={() => setIsSignUp(true)}>QUERO COMEÇAR AGORA</button>
                         </div>
                     </div>
                 </div>
@@ -698,6 +700,13 @@ const LandingPage = () => {
                     padding: 140px 0; 
                     background: radial-gradient(circle at center, #111 0%, #000 100%); 
                     overflow: hidden; 
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .flow-cta-wrapper {
+                    margin-top: 60px;
+                    width: 100%;
                 }
 
                 @media (max-width: 768px) {
