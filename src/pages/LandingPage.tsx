@@ -426,7 +426,7 @@ const LandingPage = () => {
                     background-position: center;
                 }
                 /* Venda Section v6.0 */
-                .venda-section { padding: 120px 0; background: linear-gradient(180deg, #171614 0%, #000 100%); overflow: hidden; }
+                .venda-section { padding: 120px 0; background: radial-gradient(circle at 75% 50%, #1a1a1a 0%, #000000 100%); overflow: hidden; }
                 .venda-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center; }
                 .venda-title { 
                     font-size: clamp(32px, 4vw, 56px); 
