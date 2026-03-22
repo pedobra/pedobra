@@ -999,10 +999,10 @@ const LandingPage = () => {
                     mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
                     -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
                 }
-                .marquee-content { display: flex; gap: 60px; animation: marquee-scroll 40s linear infinite; width: max-content; }
+                .marquee-content { display: flex; gap: 120px; animation: marquee-scroll 50s linear infinite; width: max-content; }
                 .marquee-container:hover .marquee-content { animation-play-state: paused; }
-                .marquee-item { display: flex; align-items: center; justify-content: center; width: 280px; height: 80px; pointer-events: none; border-right: 1px solid rgba(255,255,255,0.02); }
-                .partner-logo { max-width: 90%; max-height: 85%; object-fit: contain; mix-blend-mode: screen; opacity: 0.6; filter: grayscale(1) brightness(1.8) contrast(1.2); transition: 0.3s; }
+                .marquee-item { display: flex; align-items: center; justify-content: center; height: 80px; width: auto; min-width: 250px; pointer-events: none; }
+                .partner-logo { max-width: 400px; height: 80px; min-height: 80px; object-fit: contain; mix-blend-mode: screen; opacity: 0.6; filter: grayscale(1) brightness(1.8) contrast(1.2); transition: 0.3s; }
                 .marquee-container:hover .partner-logo { opacity: 1; filter: grayscale(0) brightness(2) contrast(1.3); }
                 @keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
