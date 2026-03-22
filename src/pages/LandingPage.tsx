@@ -255,19 +255,28 @@ const LandingPage = () => {
 
             <section id="how-it-works" className="steps-section">
                 <div className="section-container">
-                    <h2 className="section-title text-center">Fluxo Inteligente em 3 Etapas</h2>
-                    <div className="steps-grid">
-                        {[
-                            { step: "01", title: "Configuração Rápida", desc: "Cadastre suas obras e convide sua equipe em minutos." },
-                            { step: "02", title: "Pedidos de Campo", desc: "Mestres de obra solicitam insumos direto pelo celular." },
-                            { step: "03", title: "Aprovação & Controle", desc: "Aprove compras e monitore o orçamento em tempo real." }
-                        ].map((s, i) => (
-                            <div key={i} className="step-card glass">
-                                <span className="step-num">{s.step}</span>
-                                <h3>{s.title}</h3>
-                                <p>{s.desc}</p>
-                            </div>
-                        ))}
+                    <h2 className="section-title text-center">Do pedido ao controle total, sem ruído</h2>
+                    <div className="flow-container">
+                        <div className="energy-line-wrapper">
+                            <div className="energy-line"></div>
+                            <div className="energy-pulse"></div>
+                        </div>
+                        <div className="steps-grid-v9">
+                            {[
+                                { step: "01", icon: <Construction size={32} />, title: "Pedido em Campo", desc: "Mestres de obra solicitam insumos direto pelo celular." },
+                                { step: "02", icon: <Package size={32} />, title: "Gestão Inteligente", desc: "Cotações e aprovações rápidas em um só lugar." },
+                                { step: "03", icon: <ShieldCheck size={32} />, title: "Controle Total", desc: "Acompanhe orçamentos e custos em tempo real." }
+                            ].map((s, i) => (
+                                <div key={i} className={`step-card-v9 glass step-index-${i}`}>
+                                    <div className="step-icon-inner">
+                                        {s.icon}
+                                    </div>
+                                    <span className="step-num-v9">{s.step}</span>
+                                    <h3>{s.title}</h3>
+                                    <p>{s.desc}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
@@ -588,6 +597,109 @@ const LandingPage = () => {
                 .btn-main { background: var(--alabaster); color: var(--bg-onyx); padding: 18px 36px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; gap: 12px; }
                 .highlight-glow { box-shadow: 0 0 50px rgba(255,255,255,0.1); }
 
+                /* Steps Section V9 */
+                .flow-container { 
+                    position: relative; 
+                    margin-top: 80px; 
+                    padding: 40px 0;
+                }
+                .energy-line-wrapper {
+                    position: absolute;
+                    top: 50%;
+                    left: 15%;
+                    right: 15%;
+                    height: 1px;
+                    background: rgba(255,255,255,0.05);
+                    transform: translateY(-50%);
+                    z-index: 1;
+                    display: block;
+                }
+                .energy-pulse {
+                    position: absolute;
+                    top: 0;
+                    height: 100%;
+                    width: 150px;
+                    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+                    filter: blur(2px);
+                    box-shadow: 0 0 15px var(--primary);
+                    animation: pulse-move 4s linear infinite;
+                }
+                @keyframes pulse-move {
+                    0% { left: -20%; opacity: 0; }
+                    10% { opacity: 1; }
+                    90% { opacity: 1; }
+                    100% { left: 110%; opacity: 0; }
+                }
+
+                .steps-grid-v9 {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 32px;
+                    position: relative;
+                    z-index: 2;
+                }
+                .step-card-v9 {
+                    padding: 40px 24px;
+                    text-align: center;
+                    border-radius: 24px;
+                    background: rgba(255,255,255,0.02);
+                    border: 1px solid rgba(255,255,255,0.05);
+                    transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+                    animation: card-hit-glow 4s infinite;
+                }
+                .step-index-0 { animation-delay: 0.5s; }
+                .step-index-1 { animation-delay: 2s; }
+                .step-index-2 { animation-delay: 3.5s; }
+
+                @keyframes card-hit-glow {
+                    0%, 10%, 30%, 100% { 
+                        border-color: rgba(255,255,255,0.05);
+                        box-shadow: none;
+                        transform: scale(1);
+                    }
+                    20% { 
+                        border-color: var(--primary);
+                        box-shadow: 0 0 30px rgba(var(--primary-rgb), 0.2);
+                        transform: scale(1.02);
+                        background: rgba(var(--primary-rgb), 0.05);
+                    }
+                }
+
+                .step-icon-inner {
+                    width: 64px;
+                    height: 64px;
+                    background: rgba(255,255,255,0.03);
+                    border-radius: 16px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    margin: 0 auto 24px;
+                    color: var(--primary);
+                    border: 1px solid rgba(255,255,255,0.05);
+                    transition: 0.3s;
+                }
+                .step-card-v9:hover .step-icon-inner {
+                    transform: translateY(-5px) rotate(5deg);
+                    background: var(--primary);
+                    color: #fff;
+                }
+                .step-num-v9 {
+                    font-family: 'Inter', sans-serif;
+                    font-weight: 900;
+                    font-size: 14px;
+                    color: var(--primary);
+                    opacity: 0.5;
+                    margin-bottom: 8px;
+                    display: block;
+                }
+                .steps-section { padding: 120px 0; background: #000; overflow: hidden; }
+
+                @media (max-width: 768px) {
+                    .energy-line-wrapper { display: none; }
+                    .steps-grid-v9 { grid-template-columns: 1fr; }
+                    .step-card-v9 { animation: none; }
+                }
+
                 /* Simplified Carousel Elite */
                 .screenshots-carousel-section { padding-bottom: 120px; }
                 .carousel-main-container { 
@@ -652,12 +764,6 @@ const LandingPage = () => {
                 .slide-indicator { position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; color: #000; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: rgba(234, 234, 234, 0.7); display: inline-block; width: fit-content; margin: 0 auto; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1); }
 
                 .section-title { font-size: 36px; font-weight: 850; margin-bottom: 60px; letter-spacing: -1px; }
-                .steps-section { padding: 100px 0; background: rgba(255,255,255,0.01); }
-                .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-                .step-card { padding: 40px; border-radius: 20px; text-align: left; }
-                .step-num { font-size: 12px; font-weight: 900; opacity: 0.3; margin-bottom: 20px; display: block; }
-                .step-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
-                .step-card p { font-size: 14px; color: var(--text-soft); line-height: 1.6; }
 
                 .features-section { padding: 120px 0; }
                 .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
