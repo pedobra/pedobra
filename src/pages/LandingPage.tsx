@@ -565,10 +565,10 @@ const LandingPage = () => {
                         <div className="footer-nav">
                             <h4 className="footer-title">Navegação</h4>
                             <ul className="footer-links">
-                                <li><a href="#">Início</a></li>
-                                <li><a href="#venda-mockup">Funcionalidades</a></li>
-                                <li><a href="#venda-mockup">Como funciona</a></li>
-                                <li><a href="https://wa.me/5583996254920" target="_blank" rel="noopener noreferrer">Contato</a></li>
+                                <li><span onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Início</span></li>
+                                <li><span onClick={() => document.getElementById('venda-mockup')?.scrollIntoView({ behavior: 'smooth' })}>Funcionalidades</span></li>
+                                <li><span onClick={() => document.getElementById('venda-mockup')?.scrollIntoView({ behavior: 'smooth' })}>Como funciona</span></li>
+                                <li><span onClick={() => window.open('https://wa.me/5583996254920', '_blank')}>Contato</span></li>
                             </ul>
                         </div>
 
@@ -1171,7 +1171,7 @@ const LandingPage = () => {
                 .footer-title { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; color: #fff; opacity: 0.9; }
                 .footer-links { list-style: none; padding: 0; margin: 0; }
                 .footer-links li { margin-bottom: 12px; }
-                .footer-links a { 
+                .footer-links a, .footer-links span { 
                     color: var(--text-soft); 
                     text-decoration: none; 
                     font-size: 14px; 
@@ -1179,8 +1179,9 @@ const LandingPage = () => {
                     transition: 0.3s; 
                     position: relative;
                     display: inline-block;
+                    cursor: pointer;
                 }
-                .footer-links a:after {
+                .footer-links a:after, .footer-links span:after {
                     content: '';
                     position: absolute;
                     width: 0;
@@ -1190,8 +1191,8 @@ const LandingPage = () => {
                     background-color: #FFC300;
                     transition: width 0.3s ease;
                 }
-                .footer-links a:hover { color: #FFC300; }
-                .footer-links a:hover:after { width: 100%; }
+                .footer-links a:hover, .footer-links span:hover { color: #FFC300; }
+                .footer-links a:hover:after, .footer-links span:hover:after { width: 100%; }
                 
                 .footer-cta { display: flex; flex-direction: column; align-items: flex-end; gap: 16px; }
                 .footer-btn-pulse { 
