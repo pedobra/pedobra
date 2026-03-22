@@ -1194,7 +1194,7 @@ const LandingPage = () => {
                 .footer-links a:hover, .footer-links span:hover { color: #FFC300; }
                 .footer-links a:hover:after, .footer-links span:hover:after { width: 100%; }
                 
-                .footer-cta { display: flex; flex-direction: column; align-items: flex-end; gap: 16px; }
+                .footer-cta { display: flex; flex-direction: column; align-items: center; gap: 16px; }
                 .footer-btn-pulse { 
                     background: #fff; 
                     color: #000 !important; 
@@ -1217,7 +1217,7 @@ const LandingPage = () => {
                 }
                 .footer-btn-pulse:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,255,255,0.2); background: #eee; }
                 
-                .footer-security { display: flex; align-items: center; gap: 6px; color: #10B981; font-size: 11px; font-weight: 950; letter-spacing: 1px; }
+                .footer-security { display: flex; align-items: center; gap: 6px; color: #fff; opacity: 0.8; font-size: 11px; font-weight: 950; letter-spacing: 1px; }
                 
                 .footer-bottom { 
                     padding-top: 32px; 
