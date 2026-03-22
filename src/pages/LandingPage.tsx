@@ -145,7 +145,7 @@ const LandingPage = () => {
         { name: "Ricardo Silva", role: "Gestor de Obras", company: "Construtora Alpha", content: "O PedObra reduziu nosso desperdício de materiais em 20% no primeiro mês. O controle de pedidos é imbatível.", stars: 5, featured: true },
         { name: "Ana Oliveira", role: "Engenheira Civil", company: "Engenharia S.A.", content: "A facilidade de aprovação pelo app mudou nossa rotina. O mestre pede no campo e eu aprovo em segundos da sede.", stars: 5 },
         { name: "Marcos Torres", role: "Sócio", company: "Projetos & Canteiros", content: "Finalmente tenho visão clara de onde está indo o dinheiro de cada obra. O suporte é excelente.", stars: 5 },
-        { name: "Julia Mendes", role: "Suprimentos", company: "Pedra & Cal", content: "Gerar ordens de compra em PDF com um clique economiza horas do meu dia. Indispensável.", stars: 5 },
+        { name: "Julia Mendes", role: "Suprimentos", company: "Pedra & Cal", content: "Gerar pedidos em PDF com um clique, economiza horas de meu dia.", stars: 5 },
         { name: "Carlos Eduardo", role: "Mestre de Obras", company: "Urbaniza", content: "O app é tão simples que até quem não tem tecnologia aprende em minutos. Recomendo.", stars: 5 }
     ];
 
