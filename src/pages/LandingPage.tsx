@@ -553,16 +553,42 @@ const LandingPage = () => {
             </section>
 
             <footer className="lp-footer">
-                <div className="footer-container">
-                    <div className="footer-top">
+                <div className="section-container">
+                    <div className="footer-grid">
+                        {/* BLOCO 1: Branding */}
                         <div className="footer-brand">
-                            <img src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" alt="Logo" />
-                            <p>Gestão de obras inteligente.</p>
+                            <img src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" alt="PedObra Logo" className="footer-logo-img" />
+                            <p className="footer-tagline">Controle total da sua obra, sem caos e sem perda de pedidos.</p>
+                        </div>
+
+                        {/* BLOCO 2: Navegação */}
+                        <div className="footer-nav">
+                            <h4 className="footer-title">Navegação</h4>
+                            <ul className="footer-links">
+                                <li><a href="#">Início</a></li>
+                                <li><a href="#venda-mockup">Funcionalidades</a></li>
+                                <li><a href="#venda-mockup">Como funciona</a></li>
+                                <li><a href="https://wa.me/5583996254920" target="_blank" rel="noopener noreferrer">Contato</a></li>
+                            </ul>
+                        </div>
+
+                        {/* BLOCO 3: Conversão */}
+                        <div className="footer-cta">
+                            <button className="footer-btn-pulse" onClick={() => setIsSignUp(true)}>Teste grátis</button>
+                            <div className="footer-security">
+                                <ShieldCheck size={14} />
+                                <span>100% SEGURO</span>
+                            </div>
                         </div>
                     </div>
+
                     <div className="footer-bottom">
-                        <p>&copy; 2026 PedObra. Todos os direitos reservados.</p>
-                        <div className="footer-socials">SSL 256 bits</div>
+                        <div className="footer-copyright">
+                            <p>© 2026 Pedobra App</p>
+                        </div>
+                        <div className="footer-privacy">
+                            <span>Dados protegidos • SSL 256 bits</span>
+                        </div>
                     </div>
                 </div>
             </footer>
