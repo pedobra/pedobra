@@ -16,18 +16,6 @@ import ThemeToggle from '../components/ThemeToggle';
 import { detectBot } from '../lib/security';
 import { maskCPF_CNPJ } from '../lib/masks';
 
-const screenshots = [
-    { url: "/assets/screenshots/dashboard.png", title: "Painel Estratégico" },
-    { url: "/assets/screenshots/obras.png", title: "Gestão de Obras" },
-    { url: "/assets/screenshots/pedidos.png", title: "Controle de Pedidos" },
-    { url: "/assets/screenshots/materiais.png", title: "Catálogo de Insumos" },
-    { url: "/assets/screenshots/fornecedores.png", title: "Gestão de Fornecedores" },
-    { url: "/assets/screenshots/relatorios.png", title: "Inteligência de Dados" },
-    { url: "/assets/screenshots/usuarios.png", title: "Controle de Acessos" },
-    { url: "/assets/screenshots/configuracoes.png", title: "Personalização" },
-    { url: "/assets/screenshots/logs.png", title: "Auditoria Completa" },
-];
-
 const LandingPage = () => {
     const [logoClicks, setLogoClicks] = useState(0);
     const [showAdminModal, setShowAdminModal] = useState(false);
