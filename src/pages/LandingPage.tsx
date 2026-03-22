@@ -149,7 +149,19 @@ const LandingPage = () => {
         { name: "Carlos Eduardo", role: "Mestre de Obras", company: "Urbaniza", content: "O app é tão simples que até quem não tem tecnologia aprende em minutos. Recomendo.", stars: 5 }
     ];
 
-    const partners = ["Engenharia S.A.", "Construtora Alpha", "Mestre de Obras Ltd", "Projetos & Canteiros", "Pedra & Cal", "Urbaniza", "BuildMaster", "Canteiro Digital"];
+    const partners = [
+        "/assets/logos/logo_nova_base_1774198066894.png",
+        "/assets/logos/logo_prime_estruturas_1774198084283.png",
+        "/assets/logos/logo_forteobra_1774198100075.png",
+        "/assets/logos/logo_atlas_engenharia_1774198115698.png",
+        "/assets/logos/logo_horizonte_obras_1774198131367.png",
+        "/assets/logos/logo_alfabuild_1774198146933.png",
+        "/assets/logos/logo_pedra_forte_1774198161312.png",
+        "/assets/logos/logo_nexus_engenharia_1774198176416.png",
+        "/assets/logos/logo_obramax_solucoes_1774198191073.png",
+        "/assets/logos/logo_construtora_pilar_1774198207165.png",
+        "/assets/logos/logo_vertice_engenharia_1774198222092.png"
+    ];
     const [testiIndex, setTestiIndex] = useState(0);
 
     useEffect(() => {
@@ -338,8 +350,7 @@ const LandingPage = () => {
                         <div className="marquee-content">
                             {[...partners, ...partners].map((p, i) => (
                                 <div key={i} className="marquee-item">
-                                    <Construction size={20} className="marquee-icon" />
-                                    <span>{p}</span>
+                                    <img src={p} alt="Parceiro" className="partner-logo" />
                                 </div>
                             ))}
                         </div>
@@ -990,8 +1001,9 @@ const LandingPage = () => {
                 }
                 .marquee-content { display: flex; gap: 60px; animation: marquee-scroll 40s linear infinite; width: max-content; }
                 .marquee-container:hover .marquee-content { animation-play-state: paused; }
-                .marquee-item { display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 850; color: rgba(255,255,255,0.2); white-space: nowrap; }
-                .marquee-icon { opacity: 0.5; }
+                .marquee-item { display: flex; align-items: center; justify-content: center; width: 180px; height: 60px; pointer-events: none; }
+                .partner-logo { max-width: 100%; max-height: 100%; object-fit: contain; mix-blend-mode: screen; opacity: 0.6; filter: grayscale(1) brightness(1.5); transition: 0.3s; }
+                .marquee-container:hover .partner-logo { opacity: 0.9; filter: grayscale(0) brightness(1.8); }
                 @keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
                 .testimonials-section { padding: 120px 0; background: #0d0d0d; overflow: hidden; }
