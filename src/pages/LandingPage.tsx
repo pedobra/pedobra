@@ -159,12 +159,13 @@ const LandingPage = () => {
                         <div className="venda-content animate-fade">
                             <h2 className="venda-title">Controle absoluto da sua obra, em tempo real</h2>
                             <p className="venda-subtitle">
-                                Tudo que acontece no seu canteiro, na palma da sua mão. Sem achismo. Sem atraso. Sem prejuízo.
+                                Tudo que acontece na sua obra, na palma da sua mão. Sem achismo. Sem atraso. Sem prejuízo.
                             </p>
                             <ul className="venda-bullets">
                                 <li><CheckCircle size={20} className="bullet-icon" /> Acompanhe pedidos em tempo real</li>
                                 <li><CheckCircle size={20} className="bullet-icon" /> Controle materiais e custos</li>
                                 <li><CheckCircle size={20} className="bullet-icon" /> Evite erros e desperdícios</li>
+                                <li><CheckCircle size={20} className="bullet-icon" /> Tela exclusiva para o operador na obra</li>
                             </ul>
                             <div className="venda-actions">
                                 <button className="btn-venda highlight-glow" onClick={() => setIsSignUp(true)}>
@@ -198,7 +199,7 @@ const LandingPage = () => {
                                             <div className="dots"><span></span><span></span><span></span></div>
                                         </div>
                                         <div className="mockup-img-wrapper">
-                                            <img src="/assets/screenshots/obras.png" alt="Campo" className="mockup-img" />
+                                            <img src="/assets/screenshots/operador.png" alt="Campo" className="mockup-img" />
                                             <div className="floating-element card-alert glass animate-float-fast">
                                                 <div className="stat-label">Recebimento</div>
                                                 <div className="stat-value">Aprovado</div>
@@ -238,6 +239,14 @@ const LandingPage = () => {
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            
+                            {/* Badges Row */}
+                            <div className="venda-badges-row animate-fade">
+                                <span className="badge-pill">Simples</span>
+                                <span className="badge-pill">Rápido</span>
+                                <span className="badge-pill">Fácil Manuseio</span>
+                                <span className="badge-pill">Redução de Perdas</span>
                             </div>
                         </div>
                     </div>
@@ -499,8 +508,33 @@ const LandingPage = () => {
                         0 20px 50px rgba(0,0,0,0.8),
                         0 0 40px rgba(255, 255, 255, 0.3);
                 }
-                .mockup-img-wrapper { position: relative; width: 100%; }
+                .mockup-img-wrapper { position: relative; width: 100%; border-radius: 0 0 12px 12px; overflow: hidden; }
                 .mockup-img { width: 100%; display: block; filter: contrast(1.1); }
+                
+                .venda-badges-row {
+                    display: flex;
+                    justify-content: center;
+                    gap: 12px;
+                    margin-top: 40px;
+                    flex-wrap: wrap;
+                }
+                .badge-pill {
+                    background: rgba(255,255,255,0.05);
+                    border: 1px solid rgba(255,255,255,0.1);
+                    padding: 8px 16px;
+                    border-radius: 100px;
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: rgba(255,255,255,0.6);
+                    letter-spacing: 0.5px;
+                    text-transform: uppercase;
+                    transition: 0.3s;
+                }
+                .badge-pill:hover {
+                    background: rgba(255,255,255,0.1);
+                    color: #fff;
+                    transform: translateY(-2px);
+                }
                 
                 .mockup-screen-header { 
                     height: 24px; 
