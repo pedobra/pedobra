@@ -174,63 +174,70 @@ const LandingPage = () => {
                         </div>
 
                         <div className="venda-mockup-area animate-fade">
-                            <div className="mockup-multi-grid">
+                            <div className="venda-mockup-grid-v7">
                                 {/* Mockup 1: Dashboard */}
-                                <div className="mockup-parallax-layer mockup-1">
+                                <div className="mockup-card-v7">
                                     <div className="mockup-floating-card glass-heavy">
                                         <div className="mockup-screen-header">
                                             <div className="dots"><span></span><span></span><span></span></div>
                                         </div>
-                                        <img src="/assets/screenshots/dashboard.png" alt="Dashboard" className="mockup-img" />
-                                        <div className="floating-element card-stats glass animate-float-slow">
-                                            <div className="stat-label">Economia mensal</div>
-                                            <div className="stat-value">+R$ 12.450</div>
+                                        <div className="mockup-img-wrapper">
+                                            <img src="/assets/screenshots/dashboard.png" alt="Dashboard" className="mockup-img" />
+                                            <div className="floating-element card-stats glass animate-float-slow">
+                                                <div className="stat-label">Economia mensal</div>
+                                                <div className="stat-value">+R$ 12.450</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Mockup 2: Operações de Campo */}
-                                <div className="mockup-parallax-layer mockup-2">
+                                <div className="mockup-card-v7">
                                     <div className="mockup-floating-card glass-heavy">
                                         <div className="mockup-screen-header">
                                             <div className="dots"><span></span><span></span><span></span></div>
                                         </div>
-                                        <img src="/assets/screenshots/obras.png" alt="Campo" className="mockup-img" />
-                                        <div className="floating-element card-alert glass animate-float-fast">
-                                            <div className="stat-label">Recebimento</div>
-                                            <div className="stat-value">Aprovado</div>
+                                        <div className="mockup-img-wrapper">
+                                            <img src="/assets/screenshots/obras.png" alt="Campo" className="mockup-img" />
+                                            <div className="floating-element card-alert glass animate-float-fast">
+                                                <div className="stat-label">Recebimento</div>
+                                                <div className="stat-value">Aprovado</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Mockup 3: Gestão de Pedidos */}
-                                <div className="mockup-parallax-layer mockup-3">
+                                <div className="mockup-card-v7">
                                     <div className="mockup-floating-card glass-heavy">
                                         <div className="mockup-screen-header">
                                             <div className="dots"><span></span><span></span><span></span></div>
                                         </div>
-                                        <img src="/assets/screenshots/pedidos.png" alt="Pedidos" className="mockup-img" />
-                                        <div className="floating-element card-stats glass animate-float-slow">
-                                            <div className="stat-label">Aguardando</div>
-                                            <div className="stat-value">3 Pedidos</div>
+                                        <div className="mockup-img-wrapper">
+                                            <img src="/assets/screenshots/pedidos.png" alt="Pedidos" className="mockup-img" />
+                                            <div className="floating-element card-stats glass animate-float-slow">
+                                                <div className="stat-label">Aguardando</div>
+                                                <div className="stat-value">3 Pedidos</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Mockup 4: Relatórios */}
-                                <div className="mockup-parallax-layer mockup-4">
+                                <div className="mockup-card-v7">
                                     <div className="mockup-floating-card glass-heavy">
                                         <div className="mockup-screen-header">
                                             <div className="dots"><span></span><span></span><span></span></div>
                                         </div>
-                                        <img src="/assets/screenshots/relatorios.png" alt="Relatórios" className="mockup-img" />
-                                        <div className="floating-element card-alert glass animate-float-fast">
-                                            <div className="stat-label">Gasto Total</div>
-                                            <div className="stat-value">92% Obra</div>
+                                        <div className="mockup-img-wrapper">
+                                            <img src="/assets/screenshots/relatorios.png" alt="Relatórios" className="mockup-img" />
+                                            <div className="floating-element card-alert glass animate-float-fast">
+                                                <div className="stat-label">Gasto Total</div>
+                                                <div className="stat-value">92% Obra</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="mockup-glow-effect-main"></div>
                             </div>
                         </div>
                     </div>
@@ -460,63 +467,66 @@ const LandingPage = () => {
                 }
                 .btn-venda:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
 
-                .venda-mockup-area { position: relative; perspective: 3000px; height: 600px; }
-                .mockup-multi-grid { 
-                    position: relative; 
-                    width: 100%; 
-                    height: 100%; 
-                    transform-style: preserve-3d;
+                .venda-mockup-area { position: relative; }
+                .venda-mockup-grid-v7 { 
+                    display: grid; 
+                    grid-template-columns: repeat(2, 1fr); 
+                    gap: 32px; 
+                    perspective: 2000px;
                 }
                 
-                .mockup-parallax-layer { 
-                    position: absolute;
-                    width: 70%;
+                .mockup-card-v7 { 
                     transform-style: preserve-3d;
-                    transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+                    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+                    cursor: pointer;
                 }
+                .mockup-card-v7:hover { transform: rotateY(-10deg) rotateX(5deg) scale(1.02); z-index: 10; }
 
-                .mockup-1 { top: 0; left: 0; z-index: 4; transform: rotateY(-15deg) rotateX(10deg) translateZ(0); }
-                .mockup-2 { top: 10%; left: 30%; z-index: 3; transform: rotateY(-20deg) rotateX(15deg) translateZ(-100px); }
-                .mockup-3 { top: 40%; left: 10%; z-index: 2; transform: rotateY(-10deg) rotateX(5deg) translateZ(-200px); }
-                .mockup-4 { top: 35%; left: 40%; z-index: 1; transform: rotateY(-25deg) rotateX(20deg) translateZ(-300px); }
-
-                .mockup-parallax-layer:hover { 
-                    z-index: 50 !important;
-                    transform: rotateY(-5deg) rotateX(5deg) translateZ(100px) scale(1.05); 
-                }
-                
                 .mockup-floating-card { 
                     position: relative;
-                    border-radius: 16px;
-                    border: 1px solid rgba(255,255,255,0.15);
-                    box-shadow: -30px 30px 60px rgba(0,0,0,0.8);
+                    border-radius: 12px;
+                    border: 1px solid rgba(255,255,255,0.1);
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
                     overflow: hidden;
                     background: #111;
                 }
+                .mockup-img-wrapper { position: relative; width: 100%; }
                 .mockup-img { width: 100%; display: block; filter: contrast(1.1); }
                 
-                .mockup-glow-effect-main {
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    width: 120%;
-                    height: 120%;
-                    background: radial-gradient(circle, rgba(234, 234, 234, 0.05) 0%, transparent 70%);
-                    pointer-events: none;
+                .mockup-screen-header { 
+                    height: 24px; 
+                    padding: 0 12px; 
+                    display: flex; 
+                    align-items: center; 
+                    background: rgba(255,255,255,0.05);
+                    border-bottom: 1px solid rgba(255,255,255,0.05);
                 }
+                .mockup-screen-header .dots { display: flex; gap: 4px; }
+                .mockup-screen-header .dots span { width: 4px; height: 4px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+
+                .floating-element {
+                    position: absolute;
+                    padding: 8px 12px;
+                    border-radius: 8px;
+                    border: 1px solid rgba(255,255,255,0.1);
+                    backdrop-filter: blur(10px);
+                    z-index: 20;
+                    box-shadow: 10px 10px 20px rgba(0,0,0,0.4);
+                }
+                .card-stats { bottom: 20px; right: -20px; transform: translateZ(30px); }
+                .card-alert { top: 20px; right: -15px; transform: translateZ(40px); }
+                .stat-label { font-size: 9px; font-weight: 800; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+                .stat-value { font-size: 14px; font-weight: 900; color: #fff; }
 
                 @media (max-width: 1024px) {
                     .venda-grid { grid-template-columns: 1fr; gap: 60px; text-align: center; }
                     .venda-content { display: flex; flex-direction: column; align-items: center; }
-                    .venda-mockup-area { height: 900px; padding: 0 40px; }
-                    .mockup-parallax-layer { position: relative; width: 100%; margin-bottom: -150px; left: 0 !important; transform: rotateY(0) rotateX(0) translateZ(0) !important; }
-                    .mockup-4 { margin-bottom: 0; }
+                    .venda-mockup-grid-v7 { grid-template-columns: repeat(2, 1fr); gap: 24px; }
                     .card-stats, .card-alert { display: none; }
                 }
                 @media (max-width: 640px) {
-                    .venda-mockup-area { height: 750px; }
-                    .mockup-parallax-layer { margin-bottom: -120px; }
+                    .venda-mockup-grid-v7 { grid-template-columns: 1fr; }
+                    .mockup-card-v7:hover { transform: none; }
                 }
 
                 .hero-badge { font-size: 12px; font-weight: 800; opacity: 0.5; letter-spacing: 2px; margin-bottom: 24px; }
