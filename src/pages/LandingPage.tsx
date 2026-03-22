@@ -1157,10 +1157,77 @@ const LandingPage = () => {
                 .faq-arrow { transition: 0.3s; }
                 .active .faq-arrow { transform: rotate(180deg); }
 
-                .lp-footer { padding: 80px 40px 40px; border-top: 1px solid var(--border); }
-                .footer-brand img { height: 28px; margin-bottom: 16px; }
-                .footer-brand p { font-size: 14px; color: var(--text-soft); }
-                .footer-bottom { margin-top: 60px; padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-size: 12px; color: var(--text-soft); }
+                .lp-footer { 
+                    padding: 80px 0 40px; 
+                    background: linear-gradient(180deg, #0D0D0D 0%, #000 100%); 
+                    border-top: 1px solid rgba(255,255,255,0.08); 
+                }
+                .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 60px; margin-bottom: 60px; }
+                
+                .footer-logo-img { height: 42px; margin-bottom: 20px; transition: 0.3s; cursor: pointer; }
+                .footer-logo-img:hover { transform: scale(1.05); filter: brightness(1.2); }
+                .footer-tagline { font-size: 15px; font-weight: 500; color: var(--text-soft); line-height: 1.6; max-width: 320px; }
+                
+                .footer-title { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; color: #fff; opacity: 0.9; }
+                .footer-links { list-style: none; padding: 0; margin: 0; }
+                .footer-links li { margin-bottom: 12px; }
+                .footer-links a { 
+                    color: var(--text-soft); 
+                    text-decoration: none; 
+                    font-size: 14px; 
+                    font-weight: 500; 
+                    transition: 0.3s; 
+                    position: relative;
+                    display: inline-block;
+                }
+                .footer-links a:after {
+                    content: '';
+                    position: absolute;
+                    width: 0;
+                    height: 1px;
+                    bottom: -2px;
+                    left: 0;
+                    background-color: #FFC300;
+                    transition: width 0.3s ease;
+                }
+                .footer-links a:hover { color: #FFC300; }
+                .footer-links a:hover:after { width: 100%; }
+                
+                .footer-cta { display: flex; flex-direction: column; align-items: flex-end; gap: 16px; }
+                .footer-btn-pulse { 
+                    background: #fff; 
+                    color: #000 !important; 
+                    padding: 14px 36px; 
+                    border-radius: 10px; 
+                    font-weight: 950; 
+                    text-transform: uppercase; 
+                    border: none; 
+                    cursor: pointer; 
+                    transition: 0.3s;
+                    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+                    animation: footerPulse 3s infinite;
+                    font-size: 13px;
+                    letter-spacing: 1px;
+                }
+                @keyframes footerPulse {
+                    0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.4); }
+                    70% { box-shadow: 0 0 0 15px rgba(255,255,255,0); }
+                    100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+                }
+                .footer-btn-pulse:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,255,255,0.2); background: #eee; }
+                
+                .footer-security { display: flex; align-items: center; gap: 6px; color: #10B981; font-size: 11px; font-weight: 950; letter-spacing: 1px; }
+                
+                .footer-bottom { 
+                    padding-top: 32px; 
+                    border-top: 1px solid rgba(255,255,255,0.05); 
+                    display: flex; 
+                    justify-content: space-between; 
+                    align-items: center;
+                    color: rgba(255,255,255,0.3);
+                    font-size: 12px;
+                }
+                .footer-privacy { font-weight: 600; letter-spacing: 0.5px; }
 
                 .auth-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 24px; }
                 .auth-card { width: 100%; max-width: 400px; padding: 40px; border-radius: 24px; background: #1a1a1c; border: 1px solid var(--border); position: relative; z-index: 2001; }
