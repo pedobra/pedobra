@@ -10,8 +10,8 @@ import {
     ShieldCheck, 
     FileText, 
     Users,
-    ChevronLeft,
-    ChevronRight,
+    FileText, 
+    Users,
     CheckCircle
 } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
