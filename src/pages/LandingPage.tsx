@@ -94,16 +94,28 @@ const LandingPage = () => {
                     const { data: isFraud } = await supabase.rpc('check_fraud_existence', { p_cpf: cpfCnpj, p_ip: userIp });
                     if (isFraud) throw new Error('Limite de teste gratuito atingido para este CPF / CNPJ.');
 
+                    const { error: initialProfileError } = await supabase.from('profiles').insert({
+                        id: authData.user.id, 
+                        name, 
+                        email, 
+                        role: 'admin', 
+                        cpf: cpfCnpj, 
+                        signup_ip: userIp
+                    });
+                    if (initialProfileError) throw initialProfileError;
+
                     const slug = companyName.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Math.random().toString(36).substring(2, 7);
                     const { data: orgData, error: orgError } = await supabase.from('organizations').insert({
-                        name: companyName, slug, owner_id: authData.user.id
+                        name: companyName, 
+                        slug, 
+                        owner_id: authData.user.id
                     }).select().single();
                     if (orgError) throw orgError;
 
-                    const { error: profileError } = await supabase.from('profiles').insert({
-                        id: authData.user.id, name, email, role: 'admin', organization_id: orgData.id, cpf: cpfCnpj, signup_ip: userIp
-                    });
-                    if (profileError) throw profileError;
+                    const { error: updateProfileError } = await supabase.from('profiles')
+                        .update({ organization_id: orgData.id })
+                        .eq('id', authData.user.id);
+                    if (updateProfileError) throw updateProfileError;
                     
                     localStorage.setItem('openLogin', 'true');
                     await supabase.auth.signOut();
