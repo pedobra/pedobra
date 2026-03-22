@@ -493,6 +493,21 @@ const LandingPage = () => {
                                 </div>
                             ))}
                         </div>
+
+                        <div className="white-label-banner glass animate-fade">
+                            <div className="wl-content">
+                                <h3 className="wl-title">Compre o Sistema como White Label.</h3>
+                                <p className="wl-subtitle">Personalize com sua marca e revenda.</p>
+                            </div>
+                            <a 
+                                href="https://wa.me/5583996254920?text=Olá,%20Tenho%20interesse%20em%20adquirir%20como%20White%20Label." 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="wl-cta"
+                            >
+                                Saiba Como
+                            </a>
+                        </div>
                 </div>
             </section>
 
@@ -1034,6 +1049,41 @@ const LandingPage = () => {
                 .plan-btn.highlight-glow { background: #000; color: #fff; border: 2px solid #000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
                 .plan-btn:hover { background: #fff; color: #000; border-color: #fff; transform: translateY(-3px); }
                 .plan-highlight .plan-btn.highlight-glow:hover { background: #fff; color: #000; border-color: #fff; }
+
+                .white-label-banner {
+                    margin-top: 60px;
+                    padding: 40px 60px;
+                    border-radius: 32px;
+                    border: 3px solid #fff;
+                    box-shadow: 0 0 40px rgba(255,255,255,0.1);
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 32px;
+                    text-align: left;
+                }
+                .wl-title { font-size: 28px; font-weight: 900; margin-bottom: 8px; color: #fff; letter-spacing: -1px; }
+                .wl-subtitle { font-size: 16px; color: var(--text-soft); font-weight: 500; }
+                .wl-cta { 
+                    background: #fff; 
+                    color: #000 !important; 
+                    padding: 16px 40px; 
+                    border-radius: 12px; 
+                    font-weight: 950; 
+                    text-decoration: none; 
+                    transition: 0.3s; 
+                    white-space: nowrap;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    font-size: 14px;
+                }
+                .wl-cta:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+
+                @media (max-width: 768px) {
+                    .white-label-banner { flex-direction: column; text-align: center; padding: 40px 24px; margin-top: 40px; }
+                    .wl-title { font-size: 22px; }
+                    .wl-cta { width: 100%; text-align: center; }
+                }
 
                 .faq-section { padding: 100px 0; }
                 .faq-accordion { display: flex; flex-direction: column; gap: 12px; }
