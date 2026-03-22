@@ -600,7 +600,7 @@ const LandingPage = () => {
                 /* Steps Section V9 */
                 .flow-container { 
                     position: relative; 
-                    margin-top: 80px; 
+                    margin-top: 60px; 
                     padding: 40px 0;
                 }
                 .energy-line-wrapper {
@@ -608,8 +608,8 @@ const LandingPage = () => {
                     top: 50%;
                     left: 15%;
                     right: 15%;
-                    height: 1px;
-                    background: rgba(255,255,255,0.05);
+                    height: 2px;
+                    background: rgba(255,255,255,0.1);
                     transform: translateY(-50%);
                     z-index: 1;
                     display: block;
@@ -634,16 +634,18 @@ const LandingPage = () => {
                 .steps-grid-v9 {
                     display: grid;
                     grid-template-columns: repeat(3, 1fr);
-                    gap: 32px;
+                    gap: 40px;
                     position: relative;
                     z-index: 2;
+                    max-width: 1000px;
+                    margin: 0 auto;
                 }
                 .step-card-v9 {
-                    padding: 40px 24px;
+                    padding: 30px 20px;
                     text-align: center;
-                    border-radius: 24px;
-                    background: rgba(255,255,255,0.02);
-                    border: 1px solid rgba(255,255,255,0.05);
+                    border-radius: 20px;
+                    background: rgba(0,0,0,0.4);
+                    border: 2px solid rgba(255,255,255,0.1);
                     transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
                     animation: card-hit-glow 4s infinite;
                 }
@@ -666,14 +668,14 @@ const LandingPage = () => {
                 }
 
                 .step-icon-inner {
-                    width: 64px;
-                    height: 64px;
+                    width: 52px;
+                    height: 52px;
                     background: rgba(255,255,255,0.03);
-                    border-radius: 16px;
+                    border-radius: 12px;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    margin: 0 auto 24px;
+                    margin: 0 auto 20px;
                     color: var(--primary);
                     border: 1px solid rgba(255,255,255,0.05);
                     transition: 0.3s;
@@ -681,18 +683,22 @@ const LandingPage = () => {
                 .step-card-v9:hover .step-icon-inner {
                     transform: translateY(-5px) rotate(5deg);
                     background: var(--primary);
-                    color: #fff;
+                    color: #000;
                 }
                 .step-num-v9 {
                     font-family: 'Inter', sans-serif;
                     font-weight: 900;
-                    font-size: 14px;
+                    font-size: 11px;
                     color: var(--primary);
                     opacity: 0.5;
-                    margin-bottom: 8px;
+                    margin-bottom: 6px;
                     display: block;
                 }
-                .steps-section { padding: 120px 0; background: #000; overflow: hidden; }
+                .steps-section { 
+                    padding: 140px 0; 
+                    background: radial-gradient(circle at center, #111 0%, #000 100%); 
+                    overflow: hidden; 
+                }
 
                 @media (max-width: 768px) {
                     .energy-line-wrapper { display: none; }
