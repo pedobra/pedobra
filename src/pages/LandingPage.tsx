@@ -485,10 +485,19 @@ const LandingPage = () => {
                 .mockup-floating-card { 
                     position: relative;
                     border-radius: 12px;
-                    border: 1px solid rgba(255,255,255,0.1);
-                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                    border: 1px solid rgba(255, 255, 255, 0.4);
+                    box-shadow: 
+                        0 10px 30px rgba(0,0,0,0.5),
+                        0 0 20px rgba(255, 255, 255, 0.1);
                     overflow: hidden;
                     background: #111;
+                    transition: border 0.3s, box-shadow 0.3s;
+                }
+                .mockup-card-v7:hover .mockup-floating-card {
+                    border: 1px solid rgba(255, 255, 255, 0.8);
+                    box-shadow: 
+                        0 10px 40px rgba(0,0,0,0.6),
+                        0 0 30px rgba(255, 255, 255, 0.2);
                 }
                 .mockup-img-wrapper { position: relative; width: 100%; }
                 .mockup-img { width: 100%; display: block; filter: contrast(1.1); }
