@@ -10,8 +10,6 @@ import {
     ShieldCheck, 
     FileText, 
     Users,
-    FileText, 
-    Users,
     CheckCircle
 } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
@@ -43,14 +41,7 @@ const LandingPage = () => {
     const [loading, setLoading] = useState(false);
     const [honey, setHoney] = useState('');
     const [activeFaq, setActiveFaq] = useState<number | null>(null);
-    const [currentSlide, setCurrentSlide] = useState(0);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % screenshots.length);
-        }, 5000);
-        return () => clearInterval(interval);
-    }, []);
 
     useEffect(() => {
         const shouldOpenLogin = localStorage.getItem('openLogin');
