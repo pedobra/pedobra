@@ -991,7 +991,7 @@ const LandingPage = () => {
                 .glass-heavy { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
 
                 /* Marquee & Testimonials V11 */
-                .logo-marquee-section { padding: 60px 0; background: #0d0d0d; border-top: 1px solid rgba(255,255,255,0.05); }
+                .logo-marquee-section { padding: 60px 0; background: #000; border-top: 1px solid rgba(255,255,255,0.05); }
                 .marquee-title { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.4); margin-bottom: 32px; text-transform: uppercase; letter-spacing: 1px; }
                 .marquee-container { 
                     position: relative; 
@@ -1001,9 +1001,9 @@ const LandingPage = () => {
                 }
                 .marquee-content { display: flex; gap: 60px; animation: marquee-scroll 40s linear infinite; width: max-content; }
                 .marquee-container:hover .marquee-content { animation-play-state: paused; }
-                .marquee-item { display: flex; align-items: center; justify-content: center; width: 180px; height: 60px; pointer-events: none; }
-                .partner-logo { max-width: 100%; max-height: 100%; object-fit: contain; mix-blend-mode: screen; opacity: 0.6; filter: grayscale(1) brightness(1.5); transition: 0.3s; }
-                .marquee-container:hover .partner-logo { opacity: 0.9; filter: grayscale(0) brightness(1.8); }
+                .marquee-item { display: flex; align-items: center; justify-content: center; width: 240px; height: 80px; pointer-events: none; border-right: 1px solid rgba(255,255,255,0.02); }
+                .partner-logo { max-width: 80%; max-height: 55%; object-fit: contain; mix-blend-mode: screen; opacity: 0.6; filter: grayscale(1) brightness(1.8) contrast(1.2); transition: 0.3s; }
+                .marquee-container:hover .partner-logo { opacity: 1; filter: grayscale(0) brightness(2) contrast(1.3); }
                 @keyframes marquee-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
                 .testimonials-section { padding: 120px 0; background: #0d0d0d; overflow: hidden; }
