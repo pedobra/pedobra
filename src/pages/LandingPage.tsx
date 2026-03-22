@@ -521,9 +521,9 @@ const LandingPage = () => {
                 .badge-pill {
                     background: rgba(255,255,255,0.05);
                     border: 1px solid rgba(255,255,255,0.1);
-                    padding: 8px 16px;
+                    padding: 6px 12px;
                     border-radius: 100px;
-                    font-size: 12px;
+                    font-size: 10px;
                     font-weight: 700;
                     color: rgba(255,255,255,0.6);
                     letter-spacing: 0.5px;
