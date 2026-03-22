@@ -168,7 +168,7 @@ const LandingPage = () => {
                             </ul>
                             <div className="venda-actions">
                                 <button className="btn-venda highlight-glow" onClick={() => setIsSignUp(true)}>
-                                    👉 Testar agora
+                                    Testar agora
                                 </button>
                             </div>
                         </div>
@@ -180,8 +180,8 @@ const LandingPage = () => {
                                         <div className="dots"><span></span><span></span><span></span></div>
                                     </div>
                                     <img 
-                                        src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/screenshots/pedidos_lista.png" 
-                                        alt="Sistema PedObra" 
+                                        src="/assets/screenshots/dashboard.png" 
+                                        alt="Dashboard PedObra" 
                                         className="mockup-img"
                                     />
                                     <div className="floating-element card-stats glass animate-float-slow">
