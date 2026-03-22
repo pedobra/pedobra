@@ -28,6 +28,7 @@ const LandingPage = () => {
     const [isSignUp, setIsSignUp] = useState(false);
     const [loading, setLoading] = useState(false);
     const [honey, setHoney] = useState('');
+    const [planCycle, setPlanCycle] = useState('Mensal');
     const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
 
@@ -413,26 +414,85 @@ const LandingPage = () => {
             <section className="plans-section">
                 <div className="section-container">
                     <h2 className="section-title text-center">Planos Transparentes</h2>
-                    <div className="plans-grid">
-                        {[
-                            { name: "Starter", price: "79", features: ["1 Obra Ativa", "Gestão de Pedidos", "App do Operário", "Suporte E-mail"] },
-                            { name: "Profissional", price: "147", highlight: true, features: ["Obras Ilimitadas", "Relatórios Interativos", "Geração de PDF", "Suporte WhatsApp"] },
-                            { name: "Empresarial", price: "Custom", features: ["Multi-Empresa", "API de Integração", "SLA Dedicado", "Gestor de Contas"] }
-                        ].map((p, i) => (
-                            <div key={i} className={`plan-card glass ${p.highlight ? 'plan-highlight' : ''}`}>
-                                <h3 className="plan-name">{p.name}</h3>
-                                <div className="plan-price">
-                                    {p.price !== 'Custom' && <span className="currency">R$</span>}
-                                    <span className="price-val">{p.price}</span>
-                                    {p.price !== 'Custom' && <span className="period">/mês</span>}
+                        <div className="plans-grid">
+                            {[
+                                { 
+                                    name: "Plano Básico", 
+                                    price: "97,00", 
+                                    period: "30 DIAS",
+                                    features: [
+                                        "2 obras",
+                                        "2 dois usuários (Operários)",
+                                        "Suporte Via WhatsApp"
+                                    ]
+                                },
+                                { 
+                                    name: "Plano Profissional", 
+                                    price: "147,00", 
+                                    period: "30 DIAS",
+                                    highlight: true,
+                                    recommended: true,
+                                    badge: "MELHOR CUSTO BENEFÍCIO",
+                                    features: [
+                                        "Obras Ilimitadas",
+                                        "Usuários Ilimitados (Operários)",
+                                        "Pedidos Ilimitados",
+                                        "Cadastro de Materiais Ilimitado",
+                                        "Relatórios Interativos",
+                                        "Suporte Via WhatsApp"
+                                    ]
+                                },
+                                { 
+                                    name: "Plano Personalizado", 
+                                    price: "Consultar", 
+                                    isCustom: true,
+                                    features: [
+                                        "Obras Ilimitadas",
+                                        "Usuários Ilimitados (Operários)",
+                                        "Pedidos Ilimitados",
+                                        "Cadastro de Materiais Ilimitado",
+                                        "Relatórios Interativos",
+                                        "Suporte Via WhatsApp"
+                                    ],
+                                    durations: ["Trimestral", "Semestral", "Anual"]
+                                }
+                            ].map((p, i) => (
+                                <div key={i} className={`plan-card glass ${p.highlight ? 'plan-highlight' : ''}`}>
+                                    {p.recommended && <div className="plan-badge-top">RECOMENDADO</div>}
+                                    <h3 className="plan-name">{p.name}</h3>
+                                    
+                                    {p.badge && <div className="benefit-pill"><CheckCircle size={12} /> {p.badge}</div>}
+                                    
+                                    <div className="plan-price-v13">
+                                        <div className="price-label">Valor de R$</div>
+                                        <div className="price-row">
+                                            <span className="price-val">{p.price}</span>
+                                        </div>
+                                        <div className="price-period">{p.isCustom ? planCycle.toUpperCase() : p.period}</div>
+                                    </div>
+
+                                    {p.isCustom && (
+                                        <div className="plan-cycle-selector">
+                                            {p.durations.map(d => (
+                                                <button 
+                                                    key={d} 
+                                                    className={`cycle-btn ${planCycle === d ? 'active' : ''}`}
+                                                    onClick={() => setPlanCycle(d)}
+                                                >
+                                                    {d}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    <div className="plan-features-header">TERÁ ACESSO:</div>
+                                    <ul className="plan-features">
+                                        {p.features.map((f, fi) => <li key={fi}><Check size={16} color={p.highlight ? "#10B981" : "var(--text-soft)"} /> {f}</li>)}
+                                    </ul>
+                                    <button className={`plan-btn ${p.highlight ? 'highlight-glow' : ''}`} onClick={() => setIsSignUp(true)}>ASSINAR AGORA</button>
                                 </div>
-                                <ul className="plan-features">
-                                    {p.features.map((f, fi) => <li key={fi}><Check size={16} color="var(--primary)" /> {f}</li>)}
-                                </ul>
-                                <button className={`plan-btn ${p.highlight ? 'highlight-glow' : ''}`} onClick={() => setIsSignUp(true)}>Começar Agora</button>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
                 </div>
             </section>
 
@@ -946,16 +1006,34 @@ const LandingPage = () => {
                     .feature-card-grande h3 { font-size: 24px; }
                 }
 
-                .plans-section { padding: 100px 0; background: rgba(0,0,0,0.2); }
-                .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-                .plan-card { padding: 40px; border-radius: 24px; text-align: center; }
-                .plan-highlight { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); }
-                .plan-name { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
-                .plan-price { font-size: 40px; font-weight: 900; margin-bottom: 32px; }
-                .plan-features { list-style: none; padding: 0; margin-bottom: 40px; text-align: left; }
-                .plan-features li { display: flex; align-items: center; gap: 12px; font-size: 14px; margin-bottom: 12px; color: var(--text-soft); }
-                .plan-btn { width: 100%; padding: 14px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.3s; background: var(--glass); color: #fff; border: 1px solid var(--border); }
-                .plan-btn.highlight-glow { background: #fff; color: #000; border: none; }
+                .plans-section { padding: 120px 0; background: rgba(0,0,0,0.3); }
+                .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; max-width: 1200px; margin: 0 auto; align-items: stretch; }
+                .plan-card { padding: 48px 40px; border-radius: 32px; text-align: center; position: relative; display: flex; flex-direction: column; transition: 0.4s; }
+                .plan-highlight { border: 2px solid #fff; scale: 1.05; z-index: 10; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+                
+                .plan-badge-top { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); background: #000; color: #fff; padding: 6px 20px; border-radius: 12px; font-size: 12px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
+                .benefit-pill { display: inline-flex; align-items: center; gap: 6px; background: rgba(16, 185, 129, 0.1); color: #10B981; padding: 6px 14px; border-radius: 100px; font-size: 11px; font-weight: 800; margin: 0 auto 24px; text-transform: uppercase; border: 1px solid rgba(16, 185, 129, 0.2); }
+                
+                .plan-name { font-size: 24px; font-weight: 800; margin-bottom: 24px; }
+                .plan-price-v13 { margin-bottom: 40px; }
+                .price-label { font-size: 18px; font-weight: 700; opacity: 0.9; margin-bottom: 8px; }
+                .price-row { display: flex; align-items: center; justify-content: center; gap: 4px; }
+                .price-val { font-size: 56px; font-weight: 950; letter-spacing: -2px; }
+                .price-period { font-size: 14px; font-weight: 900; opacity: 0.6; margin-top: 8px; letter-spacing: 1px; }
+                
+                .plan-features-header { font-size: 12px; font-weight: 900; color: var(--text-soft); text-align: left; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.05); }
+                .plan-features { list-style: none; padding: 0; margin-bottom: 40px; text-align: left; flex: 1; }
+                .plan-features li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; margin-bottom: 16px; color: #fff; font-weight: 500; }
+                .plan-features li svg { flex-shrink: 0; margin-top: 2px; }
+                
+                .plan-cycle-selector { display: flex; background: rgba(255,255,255,0.05); padding: 4px; border-radius: 12px; margin-bottom: 32px; gap: 4px; }
+                .cycle-btn { flex: 1; padding: 8px; border-radius: 8px; font-size: 12px; font-weight: 700; border: none; background: transparent; color: rgba(255,255,255,0.5); cursor: pointer; transition: 0.2s; }
+                .cycle-btn.active { background: #fff; color: #000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+                
+                .plan-btn { width: 100%; padding: 18px; border-radius: 14px; font-size: 16px; font-weight: 900; cursor: pointer; transition: 0.3s; background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.1); text-transform: uppercase; letter-spacing: 1px; }
+                .plan-btn.highlight-glow { background: #000; color: #fff; border: 2px solid #000; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+                .plan-btn:hover { background: #fff; color: #000; border-color: #fff; transform: translateY(-3px); }
+                .plan-highlight .plan-btn.highlight-glow:hover { background: #fff; color: #000; border-color: #fff; }
 
                 .faq-section { padding: 100px 0; }
                 .faq-accordion { display: flex; flex-direction: column; gap: 12px; }
