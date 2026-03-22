@@ -30,6 +30,7 @@ const LandingPage = () => {
     const [honey, setHoney] = useState('');
     const [planCycle, setPlanCycle] = useState('Mensal');
     const [activeFaq, setActiveFaq] = useState<number | null>(null);
+    const [visibleFaqs, setVisibleFaqs] = useState<Set<number>>(new Set());
 
 
     useEffect(() => {
@@ -38,6 +39,18 @@ const LandingPage = () => {
             setIsLogin(true);
             localStorage.removeItem('openLogin');
         }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const index = Number(entry.target.getAttribute('data-index'));
+                    setVisibleFaqs(prev => new Set(prev).add(index));
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.faq-item').forEach(el => observer.observe(el));
+        return () => observer.disconnect();
     }, []);
 
     const handleLogoClick = () => {
@@ -175,7 +188,7 @@ const LandingPage = () => {
     const faqs = [
         { q: "O sistema funciona em celular?", a: "Sim! O PedObra é totalmente responsivo e foi desenhado para funcionar perfeitamente em smartphones, tablets e computadores." },
         { q: "Como funciona o período de teste de 7 dias?", a: "Ao se cadastrar, você ganha acesso total a todas as funcionalidades do plano Professional por 7 dias. Nenhuma cobrança é feita durante este período." },
-        { q: "Posso exportar meus dados para PDF?", a: "Com certeza. Todos os pedidos, materiais e históricos podem ser exportados em PDFs profissionais com um clique." },
+        { q: "Posso exportar meus pedidos para PDF?", a: "Com certeza. Todos os pedidos podem ser exportados para PDF, assim você pode enviar o anexo via WhatsApp." },
         { q: "O suporte está incluso nos planos?", a: "Sim, oferecemos suporte premium via WhatsApp e e-mail para todos os nossos parceiros." },
         { q: "Quantas obras posso gerenciar?", a: "Oferecemos planos flexíveis que atendem desde o pequeno construtor (1 obra) até grandes incorporadoras (obras ilimitadas)." },
         { q: "Posso cancelar a assinatura quando quiser?", a: "Sim, não trabalhamos com contratos de fidelidade. Você pode cancelar sua assinatura a qualquer momento diretamente pelo painel." },
@@ -519,10 +532,15 @@ const LandingPage = () => {
 
             <section className="faq-section">
                 <div className="section-container-small">
-                    <h2 className="section-title text-center">FAQ</h2>
+                    <div className="hero-badge mx-auto mb-8 animate-fade" style={{ width: 'fit-content' }}>FAQ</div>
                     <div className="faq-accordion">
                         {faqs.map((f, i) => (
-                            <div key={i} className={`faq-item glass ${activeFaq === i ? 'active' : ''}`} onClick={() => setActiveFaq(activeFaq === i ? null : i)}>
+                            <div 
+                                key={i} 
+                                data-index={i}
+                                className={`faq-item glass ${activeFaq === i ? 'active' : ''} ${visibleFaqs.has(i) ? 'in-view' : ''}`} 
+                                onClick={() => setActiveFaq(activeFaq === i ? null : i)}
+                            >
                                 <div className="faq-header">
                                     <span>{f.q}</span>
                                     <ChevronDown size={18} className="faq-arrow" />
@@ -1099,7 +1117,15 @@ const LandingPage = () => {
 
                 .faq-section { padding: 100px 0; }
                 .faq-accordion { display: flex; flex-direction: column; gap: 12px; }
-                .faq-item { border-radius: 12px; cursor: pointer; }
+                .faq-item { 
+                    border-radius: 12px; 
+                    cursor: pointer; 
+                    opacity: 0;
+                    transform: translateY(30px);
+                    transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+                }
+                .faq-item.in-view { opacity: 1; transform: translateY(0); }
+                .faq-item:hover { background: rgba(255,255,255,0.05); transform: scale(1.01); border-color: rgba(255,255,255,0.2); }
                 .faq-header { padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; font-weight: 700; }
                 .faq-body { padding: 0 24px 20px; color: var(--text-soft); font-size: 14px; }
                 .faq-arrow { transition: 0.3s; }
