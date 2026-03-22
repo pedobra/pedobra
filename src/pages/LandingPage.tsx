@@ -103,12 +103,42 @@ const LandingPage = () => {
     };
 
     const features = [
-        { icon: <Package size={24} />, title: "Gestão de Pedidos", desc: "Fluxo de aprovação inteligente e histórico completo de cada solicitação." },
-        { icon: <Construction size={24} />, title: "Controle de Materiais", desc: "Catálogo unificado e inventário automatizado para evitar desperdícios." },
-        { icon: <LayoutDashboard size={24} />, title: "Painel Multi-obra", desc: "Gerencie múltiplos canteiros de forma centralizada e eficiente." },
-        { icon: <ShieldCheck size={24} />, title: "Auditoria Completa", desc: "Rastreabilidade total: saiba quem pediu, quem aprovou e quando chegou." },
-        { icon: <FileText size={24} />, title: "Geração de PDF", desc: "Relatórios profissionais e ordens de compra prontos para envio ou impressão." },
-        { icon: <Users size={24} />, title: "Controle de Equipes", desc: "Níveis de acesso personalizados para mestres de obra e gestores." },
+        { 
+            type: "grande",
+            icon: <Package size={32} />, 
+            title: "Nunca mais perca um pedido na obra", 
+            desc: "Controle total do fluxo de aprovação e histórico completo de cada solicitação em tempo real." 
+        },
+        { 
+            type: "medio",
+            icon: <Construction size={24} />, 
+            title: "Evite desperdício de material", 
+            desc: "Catálogo unificado e inventário automatizado para evitar que materiais sumam sem explicação." 
+        },
+        { 
+            type: "medio",
+            icon: <LayoutDashboard size={24} />, 
+            title: "Painel Multi-obra", 
+            desc: "Gerencie múltiplos canteiros de forma centralizada. Visão panorâmica de toda sua operação." 
+        },
+        { 
+            type: "pequeno",
+            icon: <ShieldCheck size={24} />, 
+            title: "Auditoria Completa", 
+            desc: "Saiba quem pediu, quem aprovou e quando chegou." 
+        },
+        { 
+            type: "pequeno",
+            icon: <FileText size={24} />, 
+            title: "Relatórios Instantâneos", 
+            desc: "PDFs prontos para envio ou impressão em segundos." 
+        },
+        { 
+            type: "pequeno",
+            icon: <Users size={24} />, 
+            title: "Gestão de Equipes", 
+            desc: "Acesso controlado para mestres e gestores." 
+        },
     ];
 
     const faqs = [
@@ -286,12 +316,17 @@ const LandingPage = () => {
             <section className="features-section">
                 <div className="section-container">
                     <h2 className="section-title">Tecnologia para resultados reais</h2>
-                    <div className="features-grid">
+                    <div className="features-grid-v9">
                         {features.map((f, i) => (
-                            <div key={i} className="feature-card glass-hover">
+                            <div key={i} className={`feature-card-v9 glass-hover feature-card-${f.type}`}>
                                 <div className="feature-icon">{f.icon}</div>
                                 <h3>{f.title}</h3>
                                 <p>{f.desc}</p>
+                                {f.type === 'grande' && (
+                                    <div className="hero-mockup-mini">
+                                        <img src="/assets/screenshots/pedidos.png" alt="Interface Pedidos" />
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -779,12 +814,60 @@ const LandingPage = () => {
                 .slide-indicator { position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; color: #000; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; background: rgba(234, 234, 234, 0.7); display: inline-block; width: fit-content; margin: 0 auto; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1); }
 
                 .section-title { font-size: 36px; font-weight: 850; margin-bottom: 60px; letter-spacing: -1px; }
+                .features-section { padding: 120px 0; background: #000; overflow: hidden; }
+                .features-grid-v9 { 
+                    display: grid; 
+                    grid-template-columns: repeat(3, 1fr); 
+                    gap: 32px; 
+                    margin-top: 60px;
+                }
+                .feature-card-v9 { 
+                    padding: 32px; 
+                    border-radius: 20px; 
+                    border: 2px solid rgba(255,255,255,0.05); 
+                    transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                    position: relative;
+                    background: rgba(255,255,255,0.01);
+                }
+                .feature-card-v9:hover {
+                    transform: translateY(-8px);
+                    border-color: var(--primary);
+                    box-shadow: 0 20px 40px rgba(var(--primary-rgb), 0.1);
+                    background: rgba(var(--primary-rgb), 0.03);
+                }
 
-                .features-section { padding: 120px 0; }
-                .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-                .feature-card { padding: 32px; border-radius: 16px; border: 1px solid var(--border); transition: 0.3s; }
-                .feature-icon { margin-bottom: 24px; color: var(--alabaster); opacity: 0.8; }
-                .glass-hover:hover { background: var(--glass); transform: translateY(-4px); }
+                .feature-card-grande {
+                    grid-column: span 2;
+                    grid-row: span 2;
+                    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.8) 100%);
+                    display: flex;
+                    flex-direction: column;
+                }
+                .feature-card-grande h3 { font-size: 32px; font-weight: 900; line-height: 1.1; margin-bottom: 16px; color: #fff; }
+                .feature-card-grande p { font-size: 18px; line-height: 1.6; color: var(--text-soft); }
+                
+                .hero-mockup-mini {
+                    margin-top: auto;
+                    padding-top: 30px;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    opacity: 0.8;
+                    transition: 0.3s;
+                }
+                .feature-card-grande:hover .hero-mockup-mini { opacity: 1; transform: scale(1.02); }
+                .hero-mockup-mini img { width: 100%; display: block; filter: contrast(1.1) brightness(0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; }
+
+                .feature-card-medio { grid-column: span 1; padding: 40px 32px; }
+                .feature-card-pequeno { grid-column: span 1; padding: 24px; }
+                .feature-card-v9 h3 { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
+                .feature-card-v9 p { font-size: 14px; color: var(--text-soft); line-height: 1.6; }
+                .feature-icon { margin-bottom: 24px; color: var(--primary); }
+
+                @media (max-width: 1024px) {
+                    .features-grid-v9 { grid-template-columns: 1fr; }
+                    .feature-card-grande, .feature-card-medio, .feature-card-pequeno { grid-column: span 1; grid-row: auto; }
+                    .feature-card-grande h3 { font-size: 24px; }
+                }
 
                 .plans-section { padding: 100px 0; background: rgba(0,0,0,0.2); }
                 .plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
