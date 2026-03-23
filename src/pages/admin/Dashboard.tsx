@@ -12,6 +12,7 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const fetchData = async () => {
         setLoading(true);
@@ -33,8 +34,12 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         fetchData();
-        window.addEventListener('pedobra_new_order', fetchData);
-        return () => window.removeEventListener('pedobra_new_order', fetchData);
+    }, [refreshTrigger]);
+
+    useEffect(() => {
+        const handleNewOrder = () => setRefreshTrigger(prev => prev + 1);
+        window.addEventListener('pedobra_new_order', handleNewOrder);
+        return () => window.removeEventListener('pedobra_new_order', handleNewOrder);
     }, []);
 
     const filteredOrders = useMemo(() => {
