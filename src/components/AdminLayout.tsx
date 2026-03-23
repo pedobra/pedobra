@@ -104,7 +104,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 triggerNotification();
                 lastCheckRef.current = new Date().toISOString();
             })
-            .subscribe();
+            .subscribe((status) => {
+                if (status === 'CHANNEL_ERROR') {
+                    console.log('Notificações em tempo real (Realtime) indisponíveis. O sistema continuará monitorando via polling (30s).');
+                }
+            });
 
         return () => {
             clearInterval(poll);
