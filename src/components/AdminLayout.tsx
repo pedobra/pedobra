@@ -51,9 +51,40 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         localStorage.getItem('pedobra_last_check') || new Date().toISOString()
     );
 
+    const playAudioNotification = () => {
+        try {
+            const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+            if (!AudioContext) return;
+            const ctx = new AudioContext();
+            
+            const playBeep = (timeOffset: number) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime + timeOffset);
+                
+                gain.gain.setValueAtTime(0, ctx.currentTime + timeOffset);
+                gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + timeOffset + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + timeOffset + 0.2);
+                
+                osc.start(ctx.currentTime + timeOffset);
+                osc.stop(ctx.currentTime + timeOffset + 0.2);
+            };
+            
+            playBeep(0);
+            playBeep(0.3);
+        } catch (e) {
+            // Navegadores bloqueiam áudio se não houve interação prévia, capturamos e ignoramos o erro
+        }
+    };
+
     const triggerNotification = () => {
         setHasNotification(true);
         localStorage.setItem('pedobra_notif', 'true');
+        playAudioNotification();
         if (navigator.vibrate) navigator.vibrate([300, 100, 300, 100, 500]);
         if ('Notification' in window && Notification.permission === 'granted') {
             new Notification('📦 Novo Pedido — PedObra', {
