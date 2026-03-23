@@ -603,6 +603,16 @@ const OrderViewPage = () => {
                 
                 .btn-ghost.delete:hover { background: rgba(255,59,48,0.1); color: var(--status-denied); border-color: rgba(255,59,48,0.2); }
                 .loading-state, .error-state { padding: 100px; text-align: center; color: var(--text-muted); }
+
+                @media (max-width: 1024px) {
+                    .view-grid { grid-template-columns: 1fr; gap: 24px; }
+                    .view-header { flex-direction: column; align-items: stretch; gap: 16px; }
+                    .header-info { width: 100%; }
+                    .header-actions { flex-wrap: wrap; width: 100%; justify-content: flex-start; }
+                    .order-timeline-container { overflow-x: auto; padding-bottom: 12px; }
+                    .timeline-horizontal { min-width: 600px; } /* Ensures timeline nodes dont crush together */
+                    .details-table-wrapper { overflow-x: auto; width: 100%; }
+                }
             `}</style>
         </div>
     );
