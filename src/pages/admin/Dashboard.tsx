@@ -19,6 +19,7 @@ const AdminDashboard = () => {
             const { data, error } = await supabase
                 .from('orders')
                 .select('*, sites(name), profiles(name)')
+                .not('id', 'eq', `bust-${Date.now()}`) // Cache-buster dinâmico para evitar Cache 200 (Disk) do navegador
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
