@@ -19,6 +19,8 @@ interface ModernTableProps<T> {
     idField?: string;
     rowHeight?: number;
     maxRows?: number;
+    renderSubRow?: (item: T) => React.ReactNode;
+    expandedId?: string | null;
 }
 
 // Memoized Row for high performance with thousands of records
@@ -29,32 +31,43 @@ const TableRow = memo(({
     selectable, 
     isSelected, 
     onToggle, 
-    onRowClick 
+    onRowClick,
+    renderSubRow,
+    isExpanded
 }: any) => {
     return (
-        <tr 
-            className={`${isSelected ? 'selected' : ''} ${onRowClick ? 'clickable' : ''}`}
-            onClick={() => onRowClick && onRowClick(item)}
-        >
-            {selectable && (
-                <td className="checkbox-col">
-                    <div 
-                        className={`checkbox-custom ${isSelected ? 'active' : ''}`}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onToggle(id);
-                        }}
-                    >
-                        {isSelected && <Check size={12} strokeWidth={4} />}
-                    </div>
-                </td>
+        <>
+            <tr 
+                className={`${isSelected ? 'selected' : ''} ${onRowClick ? 'clickable' : ''} ${isExpanded ? 'expanded' : ''}`}
+                onClick={() => onRowClick && onRowClick(item)}
+            >
+                {selectable && (
+                    <td className="checkbox-col">
+                        <div 
+                            className={`checkbox-custom ${isSelected ? 'active' : ''}`}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onToggle(id);
+                            }}
+                        >
+                            {isSelected && <Check size={12} strokeWidth={4} />}
+                        </div>
+                    </td>
+                )}
+                {columns.map((col: any, colIdx: number) => (
+                    <td key={colIdx} style={{ textAlign: col.align || 'center' }}>
+                        {col.accessor(item)}
+                    </td>
+                ))}
+            </tr>
+            {isExpanded && renderSubRow && (
+                <tr className="sub-row-wrapper animate-slide-down">
+                    <td colSpan={columns.length + (selectable ? 1 : 0)} className="sub-row-cell">
+                        {renderSubRow(item)}
+                    </td>
+                </tr>
             )}
-            {columns.map((col: any, colIdx: number) => (
-                <td key={colIdx} style={{ textAlign: col.align || 'center' }}>
-                    {col.accessor(item)}
-                </td>
-            ))}
-        </tr>
+        </>
     );
 });
 
@@ -69,7 +82,9 @@ function ModernTable<T>({
     onRowClick,
     idField = 'id',
     rowHeight = 32,
-    maxRows = 30
+    maxRows = 30,
+    renderSubRow,
+    expandedId
 }: ModernTableProps<T>) {
     
     // We keep this memo for isAllSelected check, but use Set for row-level checks
@@ -167,6 +182,8 @@ function ModernTable<T>({
                                 isSelected={selectedSet.has(id)}
                                 onToggle={handleToggleRow}
                                 onRowClick={onRowClick}
+                                renderSubRow={renderSubRow}
+                                isExpanded={expandedId === id}
                             />
                         );
                     })}
@@ -217,6 +234,10 @@ function ModernTable<T>({
                 .modern-table tr:hover td { background: var(--bg-dark); }
                 .modern-table tr.clickable { cursor: pointer; }
                 .modern-table tr.selected td { background: rgba(255,215,0,0.02); }
+                .modern-table tr.expanded td { background: var(--bg-dark); border-bottom: none; }
+                
+                .sub-row-cell { padding: 0 !important; border-top: none !important; background: var(--bg-dark); }
+                .sub-row-wrapper { background: var(--bg-dark); }
 
                 .checkbox-col { width: 44px; padding-right: 0 !important; }
                 .checkbox-custom {

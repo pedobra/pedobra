@@ -17,6 +17,9 @@ const AdminObras = () => {
     const [viewMode] = useState<'table' | 'cards'>('table');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [expandedSiteId, setExpandedSiteId] = useState<string | null>(null);
+    const [siteOrders, setSiteOrders] = useState<Record<string, any[]>>({});
+    const [loadingOrders, setLoadingOrders] = useState<Record<string, boolean>>({});
     const { maxSites } = useSubscription();
 
     const isLimitReached = maxSites ? obras.length >= maxSites : false;
@@ -74,6 +77,33 @@ const AdminObras = () => {
             console.error('Error:', error.message);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const toggleExpand = async (siteId: string) => {
+        if (expandedSiteId === siteId) {
+            setExpandedSiteId(null);
+            return;
+        }
+
+        setExpandedSiteId(siteId);
+
+        if (!siteOrders[siteId]) {
+            setLoadingOrders(prev => ({ ...prev, [siteId]: true }));
+            try {
+                const { data, error } = await supabase
+                    .from('orders')
+                    .select('id, created_at, status, worker_name')
+                    .eq('site_id', siteId)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+                setSiteOrders(prev => ({ ...prev, [siteId]: data || [] }));
+            } catch (err) {
+                console.error('Error fetching orders:', err);
+            } finally {
+                setLoadingOrders(prev => ({ ...prev, [siteId]: false }));
+            }
         }
     };
 
@@ -185,6 +215,61 @@ const AdminObras = () => {
         }
     ];
 
+    const renderOrdersList = (site: any) => {
+        const orders = siteOrders[site.id] || [];
+        const isLoading = loadingOrders[site.id];
+
+        if (isLoading) {
+            return (
+                <div className="orders-drilldown-loading">
+                    <div className="mini-spinner"></div>
+                    <span>Carregando pedidos...</span>
+                </div>
+            );
+        }
+
+        if (orders.length === 0) {
+            return (
+                <div className="orders-drilldown-empty">
+                    Esta obra ainda não possui pedidos registrados.
+                </div>
+            );
+        }
+
+        return (
+            <div className="orders-drilldown-container animate-fade">
+                <div className="drilldown-header">
+                    <span>LISTA DE PEDIDOS - {site.name}</span>
+                </div>
+                <div className="drilldown-list">
+                    {orders.map(order => (
+                        <div 
+                            key={order.id} 
+                            className="drilldown-item-link"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/admin/orders/visualizar/${order.id}`);
+                            }}
+                        >
+                            <div className="dd-status">
+                                <StatusBadge status={order.status} />
+                            </div>
+                            <div className="dd-ref">
+                                <strong>REF {order.id.slice(0, 8).toUpperCase()}</strong>
+                                <span>{new Date(order.created_at).toLocaleDateString('pt-BR')}</span>
+                            </div>
+                            <div className="dd-worker">
+                                <label>SOLICITANTE</label>
+                                <span>{order.worker_name || 'Desconhecido'}</span>
+                            </div>
+                            <div className="dd-arrow">→</div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="obras-view animate-fade">
             <header className="dashboard-header">
@@ -237,6 +322,9 @@ const AdminObras = () => {
                             selectable={true}
                             selectedIds={selectedIds}
                             onSelectionChange={setSelectedIds}
+                            onRowClick={(site) => toggleExpand(site.id)}
+                            expandedId={expandedSiteId}
+                            renderSubRow={renderOrdersList}
                         />
                     </div>
                 ) : (
@@ -364,6 +452,66 @@ const AdminObras = () => {
                         height: 44px;
                     }
                     .limit-warning { display: none; } /* Hide to save space on mobile row */
+                }
+
+                /* Drilldown Styles */
+                .orders-drilldown-container {
+                    padding: 24px 40px;
+                    background: var(--bg-dark);
+                    border-bottom: 3px solid var(--border);
+                }
+                .drilldown-header {
+                    margin-bottom: 20px;
+                    font-size: 10px;
+                    font-weight: 850;
+                    color: var(--text-muted);
+                    letter-spacing: 1px;
+                }
+                .drilldown-list {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                }
+                .drilldown-item-link {
+                    background: var(--bg-card);
+                    border: 1.5px solid var(--border);
+                    border-radius: 12px;
+                    padding: 14px 24px;
+                    display: flex;
+                    align-items: center;
+                    gap: 32px;
+                    cursor: pointer;
+                    transition: 0.2s;
+                }
+                .drilldown-item-link:hover {
+                    border-color: var(--primary);
+                    transform: translateX(6px);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                }
+                .dd-ref { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+                .dd-ref strong { font-size: 13px; color: var(--text-primary); }
+                .dd-ref span { font-size: 11px; color: var(--text-muted); }
+                
+                .dd-worker { display: flex; flex-direction: column; gap: 2px; width: 180px; }
+                .dd-worker label { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+                .dd-worker span { font-size: 12px; color: var(--text-primary); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                
+                .dd-arrow { color: var(--primary); font-weight: 900; opacity: 0.8; font-size: 18px; }
+                
+                .orders-drilldown-loading, .orders-drilldown-empty {
+                    padding: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                    color: var(--text-muted);
+                    font-size: 13px;
+                    font-weight: 700;
+                    background: var(--bg-dark);
+                    border-bottom: 2px solid var(--border);
+                }
+                .mini-spinner {
+                    width: 20px; height: 20px; border: 2.5px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.82s infinite linear;
                 }
             `}</style>
         </div>
