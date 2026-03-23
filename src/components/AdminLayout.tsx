@@ -92,6 +92,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 icon: '/favicon.ico',
             });
         }
+        window.dispatchEvent(new Event('pedobra_new_order'));
     };
 
     useEffect(() => {

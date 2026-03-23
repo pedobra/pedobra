@@ -13,25 +13,27 @@ const AdminDashboard = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
+    const fetchData = async () => {
+        setLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('orders')
+                .select('*, sites(name), profiles(name)')
+                .order('created_at', { ascending: false });
+
+            if (error) throw error;
+            setOrders(data || []);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const { data, error } = await supabase
-                    .from('orders')
-                    .select('*, sites(name), profiles(name)')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-                setOrders(data || []);
-            } catch (err) {
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchData();
+        window.addEventListener('pedobra_new_order', fetchData);
+        return () => window.removeEventListener('pedobra_new_order', fetchData);
     }, []);
 
     const filteredOrders = useMemo(() => {
@@ -123,7 +125,12 @@ const AdminDashboard = () => {
                     <div 
                         key={String(card.key)} 
                         className={`stat-card-saas ${statusFilter === card.key ? 'active-filter' : ''}`}
-                        onClick={() => setStatusFilter(statusFilter === card.key ? null : card.key)}
+                        onClick={() => {
+                            setStatusFilter(statusFilter === card.key ? null : card.key);
+                            if (window.innerWidth <= 1024) {
+                                document.getElementById('orders-table-view')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }}
                         style={{ cursor: 'pointer', flexDirection: 'column', alignItems: 'flex-start', padding: '16px', gap: '12px' }}
                     >
                         <div className="stat-icon-bg" style={{ width: 34, height: 34 }}>{card.icon}</div>
@@ -135,17 +142,19 @@ const AdminDashboard = () => {
                 ))}
             </div>
 
-            <StandardCard
-                title="Movimentações Recentes"
-                subtitle="Acompanhe e gerencie as últimas solicitações do sistema."
-            >
-                <ModernTable 
-                    columns={columns} 
-                    data={filteredOrders.slice(0, 10)} 
-                    loading={loading} 
-                    onRowClick={(o) => navigate(`/admin/orders/visualizar/${o.id}`)}
-                />
-            </StandardCard>
+            <div id="orders-table-view" style={{ scrollMarginTop: '80px' }}>
+                <StandardCard
+                    title="Movimentações Recentes"
+                    subtitle="Acompanhe e gerencie as últimas solicitações do sistema."
+                >
+                    <ModernTable 
+                        columns={columns} 
+                        data={filteredOrders.slice(0, 10)} 
+                        loading={loading} 
+                        onRowClick={(o) => navigate(`/admin/orders/visualizar/${o.id}`)}
+                    />
+                </StandardCard>
+            </div>
 
             <style>{`
                 .dashboard-container { display: flex; flex-direction: column; gap: 32px; }
