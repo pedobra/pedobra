@@ -270,7 +270,7 @@ const AdminReports = () => {
                         <div className="trend-content">
                             <div className="trend-main-stat">
                                 <div className="stat-value">{filteredOrders.length}</div>
-                                <div className="stat-label">Total de Pedidos Realizados</div>
+                                <div className="stat-label">Total de Pedidos Concluídos</div>
                             </div>
 
                             <div className="wow-comparison">
