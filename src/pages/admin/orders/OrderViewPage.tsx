@@ -172,9 +172,13 @@ const OrderViewPage = () => {
                 fetchOrder();
                 setShowDenyModal(false);
                 setDenialReason('');
+            } else {
+                console.error('Update error:', error);
+                alert('Erro ao atualizar status: ' + error.message);
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error('Error updating status:', err);
+            alert('Erro inesperado: ' + (err.message || String(err)));
         } finally {
             setProcessing(false);
         }
