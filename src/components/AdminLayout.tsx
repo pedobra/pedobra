@@ -92,7 +92,6 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                 icon: '/favicon.ico',
             });
         }
-        window.dispatchEvent(new Event('pedobra_new_order'));
     };
 
     useEffect(() => {
@@ -193,7 +192,11 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                     {hasNotification && (
                         <button
                             className="notif-badge-mobile"
-                            onClick={() => { setHasNotification(false); localStorage.removeItem('pedobra_notif'); }}
+                            onClick={() => { 
+                                setHasNotification(false); 
+                                localStorage.removeItem('pedobra_notif'); 
+                                window.dispatchEvent(new Event('pedobra_new_order')); 
+                            }}
                             style={{ background: 'var(--status-pending)', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '10px', color: 'var(--primary-foreground)' }}
                         >
                             Novo Pedido
@@ -349,8 +352,12 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
                         {hasNotification && (
                             <div 
                                 className="notif-badge-modern" 
-                                onClick={() => { setHasNotification(false); localStorage.removeItem('pedobra_notif'); }}
-                                title="Clique para remover"
+                                onClick={() => { 
+                                    setHasNotification(false); 
+                                    localStorage.removeItem('pedobra_notif'); 
+                                    window.dispatchEvent(new Event('pedobra_new_order')); 
+                                }}
+                                title="Clique para remover e atualizar"
                             >
                                 <div className="dot-container">
                                     <span className="dot-core" />
