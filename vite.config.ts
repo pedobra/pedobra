@@ -10,7 +10,8 @@ export default defineConfig({
       injectRegister: 'auto',
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
-        cleanupOutdatedCaches: true
+        cleanupOutdatedCaches: true,
+        navigateFallback: '/index.html'
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
@@ -18,8 +19,11 @@ export default defineConfig({
         short_name: 'PedObra',
         description: 'Gestão Inteligente de Pedidos e Materiais para Construção Cívil',
         theme_color: '#0D0D0D',
-        background_color: '#0D0D0D',
+        background_color: '#FFFFFF',
         display: 'standalone',
+        start_url: '/',
+        scope: '/',
+        orientation: 'portrait',
         icons: [
           {
             src: '/assets/pwa-192x192.png',
