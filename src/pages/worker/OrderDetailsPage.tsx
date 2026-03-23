@@ -24,6 +24,7 @@ const OrderDetailsPage = () => {
     const fetchOrder = async () => {
         setLoading(true);
         try {
+            // Buscamos todos os campos, incluindo denial_reason
             const { data, error } = await supabase
                 .from('orders')
                 .select('*, sites(name), profiles(name)')
@@ -129,6 +130,7 @@ const OrderDetailsPage = () => {
                                     <div className="step-info">
                                         <span className="step-label">{order.status === 'denied' ? 'Não Autorizado' : 'Aprovado'}</span>
                                         <span className="step-user">{order.approved_by_name || 'Admin'}</span>
+                                        {/* Exibição da justificativa para o worker */}
                                         {order.status === 'denied' && order.denial_reason && (
                                             <span className="step-reason">"{order.denial_reason}"</span>
                                         )}
