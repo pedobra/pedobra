@@ -39,11 +39,10 @@ const AdminObras = () => {
 
             if (sitesError) throw sitesError;
 
-            // Buscamos os pedidos para calcular o valor utilizado real
+            // Buscamos todos os pedidos para contagem e cálculo de orçamento
             const { data: orders } = await supabase
                 .from('orders')
-                .select('site_id, items')
-                .in('status', ['approved', 'completed', 'partial']);
+                .select('site_id, items, status');
 
             const totalsBySite: Record<string, { used: number, count: number }> = {};
             
@@ -52,17 +51,20 @@ const AdminObras = () => {
                     totalsBySite[order.site_id] = { used: 0, count: 0 };
                 }
                 
+                // Contamos todos os pedidos para o badge
                 totalsBySite[order.site_id].count++;
                 
-                const items = (order.items as any[]) || [];
-                const orderTotal = items.reduce((acc, item) => {
-                    const price = parseFloat(item.unit_value || item.price_hint) || 0;
-                    // Somamos apenas o que foi de fato recebido (received_quantity)
-                    const qty = parseFloat(item.received_quantity || 0) || 0;
-                    return acc + (price * qty);
-                }, 0);
-                
-                totalsBySite[order.site_id].used += orderTotal;
+                // Calculamos o gasto apenas para pedidos aprovados ou em andamento
+                if (['approved', 'completed', 'partial'].includes(order.status)) {
+                    const items = (order.items as any[]) || [];
+                    const orderTotal = items.reduce((acc, item) => {
+                        const price = parseFloat(item.unit_value || item.price_hint) || 0;
+                        const qty = parseFloat(item.received_quantity || 0) || 0;
+                        return acc + (price * qty);
+                    }, 0);
+                    
+                    totalsBySite[order.site_id].used += orderTotal;
+                }
             });
 
             const enriched = (sites || []).map(o => ({
@@ -93,7 +95,7 @@ const AdminObras = () => {
             try {
                 const { data, error } = await supabase
                     .from('orders')
-                    .select('id, created_at, status, worker_name')
+                    .select('id, created_at, status, profiles(name)')
                     .eq('site_id', siteId)
                     .order('created_at', { ascending: false });
 
@@ -260,7 +262,7 @@ const AdminObras = () => {
                             </div>
                             <div className="dd-worker">
                                 <label>SOLICITANTE</label>
-                                <span>{order.worker_name || 'Desconhecido'}</span>
+                                <span>{order.profiles?.name || 'Desconhecido'}</span>
                             </div>
                             <div className="dd-arrow">→</div>
                         </div>
