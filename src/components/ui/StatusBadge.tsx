@@ -19,7 +19,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label }) => {
         partial: { color: 'var(--status-pending)', bg: 'rgba(245, 158, 11, 0.1)', label: 'Rec. Parcial' },
         delayed: { color: 'var(--status-denied)', bg: 'rgba(239, 68, 68, 0.1)', label: 'Atrasado' },
         cancelled: { color: 'var(--status-denied)', bg: 'rgba(239, 68, 68, 0.1)', label: 'Cancelado' },
-        denied: { color: 'var(--status-denied)', bg: 'rgba(239, 68, 68, 0.1)', label: 'Negado' },
+        denied: { color: 'var(--status-denied)', bg: 'rgba(239, 68, 68, 0.1)', label: 'Não Autorizado' },
     };
 
     const current = config[s] || { color: 'var(--text-muted)', bg: 'var(--bg-dark)', label: label || status };

@@ -127,8 +127,11 @@ const OrderDetailsPage = () => {
                                     <div className="step-line"></div>
                                     <div className="step-point"></div>
                                     <div className="step-info">
-                                        <span className="step-label">{order.status === 'denied' ? 'Negado' : 'Aprovado'}</span>
+                                        <span className="step-label">{order.status === 'denied' ? 'Não Autorizado' : 'Aprovado'}</span>
                                         <span className="step-user">{order.approved_by_name || 'Admin'}</span>
+                                        {order.status === 'denied' && order.denial_reason && (
+                                            <span className="step-reason">"{order.denial_reason}"</span>
+                                        )}
                                         <span className="step-date">{order.approved_at ? new Date(order.approved_at).toLocaleDateString('pt-BR') : '-'}</span>
                                         <span className="step-time">{order.approved_at ? new Date(order.approved_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '-'}</span>
                                     </div>
@@ -258,6 +261,7 @@ const OrderDetailsPage = () => {
                 .step-user { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
                 .step-date { font-size: 10px; color: var(--text-muted); opacity: 0.8; margin-top: 4px; }
                 .step-time { font-size: 10px; color: var(--text-muted); opacity: 0.6; }
+                .step-reason { font-size: 12px; color: var(--status-denied); font-weight: 700; margin: 4px 0; background: rgba(255,59,48,0.05); padding: 4px 8px; border-radius: 6px; border: 1px dashed rgba(255,59,48,0.2); }
                 
                 .loading-spinner-box, .error-box { height: 100vh; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-weight: 700; }
             `}</style>

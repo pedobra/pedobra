@@ -14,6 +14,9 @@ const OrderViewPage = () => {
     const [parentOrder, setParentOrder] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [priceSuggestions, setPriceSuggestions] = useState<Record<string, { supplierName: string; unitValue: number }>>({});
+    const [showDenyModal, setShowDenyModal] = useState(false);
+    const [denialReason, setDenialReason] = useState('');
+    const [processing, setProcessing] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -76,22 +79,17 @@ const OrderViewPage = () => {
         const items = o.items || [];
         if (items.length === 0) return;
         
-        // If not pending/new, items might already have hints saved at approval time
-        // but it's always better to show the latest best price as a reference
-        
         try {
-            // 1. Fetch completed/partial orders from the same organization
             const { data: pastOrders, error: ordersError } = await supabase
                 .from('orders')
                 .select('items')
                 .eq('organization_id', o.organization_id)
                 .in('status', ['completed', 'partial'])
                 .order('created_at', { ascending: false })
-                .limit(500); // Look at last 500 fulfilled orders
+                .limit(500);
 
             if (ordersError) throw ordersError;
 
-            // 2. Extract and find best price per material
             const bestPrices: Record<string, { unitValue: number; supplierId: string }> = {};
             
             pastOrders?.forEach(order => {
@@ -115,11 +113,10 @@ const OrderViewPage = () => {
                 });
             });
 
-            // 3. Fetch supplier names for the best prices
             const supplierIds = Array.from(new Set(
                 Object.values(bestPrices)
                     .map(bp => bp.supplierId)
-                    .filter(id => id && id !== 'other' && id.length > 10) // Basic UUID check
+                    .filter(id => id && id !== 'other' && id.length > 10)
             ));
 
             let supplierMap: Record<string, string> = {};
@@ -134,7 +131,6 @@ const OrderViewPage = () => {
                 });
             }
 
-            // 4. Map back to items in current order
             const hints: Record<string, { supplierName: string; unitValue: number }> = {};
             items.forEach((it: any) => {
                 const materialKey = it.material_id || it.name;
@@ -153,16 +149,35 @@ const OrderViewPage = () => {
         }
     };
 
-    const updateStatus = async (newStatus: string) => {
-        const { data: { user } } = await supabase.auth.getUser();
-        let payload: any = { status: newStatus };
-        if (newStatus === 'approved') {
+    const updateStatus = async (newStatus: string, reason?: string) => {
+        setProcessing(true);
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
             const { data: profile } = await supabase.from('profiles').select('name').eq('id', user?.id).single();
-            payload.approved_by_name = profile?.name || 'Admin';
-            payload.approved_at = new Date().toISOString();
+            const adminName = profile?.name || 'Admin';
+            
+            let payload: any = { status: newStatus };
+            
+            if (newStatus === 'approved') {
+                payload.approved_by_name = adminName;
+                payload.approved_at = new Date().toISOString();
+            } else if (newStatus === 'denied') {
+                payload.approved_by_name = adminName;
+                payload.approved_at = new Date().toISOString();
+                payload.denial_reason = reason;
+            }
+            
+            const { error } = await supabase.from('orders').update(payload).eq('id', id);
+            if (!error) {
+                fetchOrder();
+                setShowDenyModal(false);
+                setDenialReason('');
+            }
+        } catch (err) {
+            console.error('Error updating status:', err);
+        } finally {
+            setProcessing(false);
         }
-        const { error } = await supabase.from('orders').update(payload).eq('id', id);
-        if (!error) fetchOrder();
     };
 
     const handleDelete = async () => {
@@ -302,11 +317,11 @@ const OrderViewPage = () => {
 
                     {(order.status === 'new' || order.status === 'pending') && (
                         <div className="approval-actions animate-fade">
-                            <button className="btn-approve" onClick={() => updateStatus('approved')}>
+                            <button className="btn-approve" onClick={() => updateStatus('approved')} disabled={processing}>
                                 <CheckCircle size={18} /> Aprovar Solicitação
                             </button>
-                            <button className="btn-deny" onClick={() => updateStatus('denied')}>
-                                <XCircle size={18} /> Negar
+                            <button className="btn-deny" onClick={() => setShowDenyModal(true)} disabled={processing}>
+                                <XCircle size={18} /> Não Autorizar
                             </button>
                         </div>
                     )}
@@ -332,8 +347,11 @@ const OrderViewPage = () => {
                                     <div className="step-line"></div>
                                     <div className="step-point"></div>
                                     <div className="step-info">
-                                        <span className="step-label">{order.status === 'denied' ? 'Negado' : 'Aprovado'}</span>
+                                        <span className="step-label">{order.status === 'denied' ? 'Não Autorizado' : 'Aprovado'}</span>
                                         <span className="step-user">{order.approved_by_name || 'Admin'}</span>
+                                        {order.status === 'denied' && order.denial_reason && (
+                                            <span className="step-reason">"{order.denial_reason}"</span>
+                                        )}
                                         <span className="step-date">{order.approved_at ? new Date(order.approved_at).toLocaleDateString('pt-BR') : '-'}</span>
                                         <span className="step-time">{order.approved_at ? new Date(order.approved_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '-'}</span>
                                     </div>
@@ -389,6 +407,34 @@ const OrderViewPage = () => {
                     </StandardCard>
                 </div>
             </div>
+
+            {showDenyModal && (
+                <div className="modal-overlay animate-fade">
+                    <div className="denial-modal animate-slide-up">
+                        <div className="denial-header">
+                            <XCircle size={24} color="var(--status-denied)" />
+                            <h3>Motivo da Não Autorização</h3>
+                        </div>
+                        <p>Por favor, informe o motivo para não autorizar este pedido. Esta justificativa será visível para o solicitante.</p>
+                        <textarea 
+                            value={denialReason}
+                            onChange={(e) => setDenialReason(e.target.value)}
+                            placeholder="Ex: Orçamento excedido para este mês / Material já disponível em estoque..."
+                            rows={4}
+                        />
+                        <div className="denial-actions">
+                            <button className="btn-cancel" onClick={() => setShowDenyModal(false)} disabled={processing}>Cancelar</button>
+                            <button 
+                                className="btn-confirm-deny" 
+                                onClick={() => updateStatus('denied', denialReason)}
+                                disabled={!denialReason.trim() || processing}
+                            >
+                                {processing ? 'Processando...' : 'Confirmar Não Autorização'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <style>{`
                 .order-view-page { display: flex; flex-direction: column; gap: 32px; }
@@ -540,6 +586,34 @@ const OrderViewPage = () => {
                 .step-user { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
                 .step-date { font-size: 10px; color: var(--text-muted); opacity: 0.8; margin-top: 4px; }
                 .step-time { font-size: 10px; color: var(--text-muted); opacity: 0.6; }
+                .step-reason { font-size: 12px; color: var(--status-denied); font-weight: 700; margin: 4px 0; background: rgba(255,59,48,0.05); padding: 4px 8px; border-radius: 6px; border: 1px dashed rgba(255,59,48,0.2); }
+
+                /* Modal Styles */
+                .modal-overlay {
+                    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+                    background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+                    display: flex; align-items: center; justify-content: center;
+                    z-index: 1000; padding: 20px;
+                }
+                .denial-modal {
+                    background: var(--bg-card); border: 1px solid var(--border);
+                    border-radius: 24px; padding: 32px; max-width: 500px; width: 100%;
+                    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                }
+                .denial-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+                .denial-header h3 { margin: 0; font-size: 18px; font-weight: 850; color: var(--text-primary); }
+                .denial-modal p { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; }
+                .denial-modal textarea {
+                    width: 100%; background: var(--bg-dark); border: 1px solid var(--border);
+                    border-radius: 12px; padding: 16px; color: var(--text-primary);
+                    font-size: 14px; resize: none; margin-bottom: 24px; outline: none; transition: 0.2s;
+                }
+                .denial-modal textarea:focus { border-color: var(--status-denied); box-shadow: 0 0 0 4px rgba(255,59,48,0.1); }
+                .denial-actions { display: flex; gap: 12px; justify-content: flex-end; }
+                .btn-cancel { background: transparent; border: 1px solid var(--border); color: var(--text-primary); padding: 12px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+                .btn-confirm-deny { background: var(--status-denied); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.2s; }
+                .btn-confirm-deny:disabled { opacity: 0.5; cursor: not-allowed; }
+                .btn-confirm-deny:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
                 
                 .btn-ghost.delete:hover { background: rgba(255,59,48,0.1); color: var(--status-denied); border-color: rgba(255,59,48,0.2); }
                 .loading-state, .error-state { padding: 100px; text-align: center; color: var(--text-muted); }
