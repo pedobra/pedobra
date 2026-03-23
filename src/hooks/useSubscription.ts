@@ -10,6 +10,7 @@ export interface SubscriptionInfo {
     organizationId: string;
     maxSites: number;
     maxWorkers: number;
+    maxAdmins: number;
     systemMessage: string | null;
     systemMessageLevel: 'info' | 'warning' | 'error' | null;
 }
@@ -45,10 +46,10 @@ export const useSubscription = () => {
                     
                     // Definir limites por plano
                     const limits = {
-                        trial: { maxSites: 1, maxWorkers: 1 },
-                        basic: { maxSites: 2, maxWorkers: 2 },
-                        pro: { maxSites: Infinity, maxWorkers: Infinity },
-                        custom: { maxSites: Infinity, maxWorkers: Infinity }
+                        trial: { maxSites: 1, maxWorkers: 1, maxAdmins: 1 },
+                        basic: { maxSites: 2, maxWorkers: 2, maxAdmins: 2 },
+                        pro: { maxSites: Infinity, maxWorkers: Infinity, maxAdmins: Infinity },
+                        custom: { maxSites: Infinity, maxWorkers: Infinity, maxAdmins: Infinity }
                     };
 
                     const currentLimits = limits[org.plan_id as keyof typeof limits] || limits.trial;
@@ -62,6 +63,7 @@ export const useSubscription = () => {
                         organizationId: org.id,
                         maxSites: currentLimits.maxSites,
                         maxWorkers: currentLimits.maxWorkers,
+                        maxAdmins: currentLimits.maxAdmins,
                         systemMessage: org.system_message,
                         systemMessageLevel: org.system_message_level
                     });

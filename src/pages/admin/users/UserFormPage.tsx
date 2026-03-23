@@ -10,7 +10,7 @@ import { maskCPF } from '../../../lib/masks';
 const UserFormPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { maxWorkers } = useSubscription();
+    const { maxWorkers, maxAdmins } = useSubscription();
     const [loading, setLoading] = useState(false);
     const [obras, setObras] = useState<any[]>([]);
     const [adminProfile, setAdminProfile] = useState<any>(null);
@@ -21,7 +21,8 @@ const UserFormPage = () => {
         password: '',
         role: 'worker',
         site_id: '',
-        cpf: ''
+        cpf: '',
+        is_active: true
     });
 
     useEffect(() => {
@@ -51,7 +52,8 @@ const UserFormPage = () => {
             email: data.email, 
             role: data.role, 
             site_id: data.site_id || '',
-            cpf: maskCPF(data.cpf || '')
+            cpf: maskCPF(data.cpf || ''),
+            is_active: data.is_active !== false
         });
     };
 
@@ -59,12 +61,26 @@ const UserFormPage = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            if (!id && formData.role === 'worker') {
-                // Check limits for new worker
-                const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'worker');
-
-                if (count !== null && count >= (maxWorkers || 1)) {
-                    throw new Error(`Limite de operários do seu plano atingido (${count}/${maxWorkers}). Faça upgrade para adicionar mais.`);
+            if (!id) {
+                if (formData.role === 'worker') {
+                    const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'worker');
+                    if (count !== null && count >= (maxWorkers || 1)) {
+                        throw new Error(`Limite de operários do seu plano atingido (${count}/${maxWorkers}). Faça upgrade para adicionar mais.`);
+                    }
+                } else if (formData.role === 'admin') {
+                    const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'admin').eq('is_active', true);
+                    if (count !== null && count >= (maxAdmins || 1)) {
+                        throw new Error(`Limite de administradores do seu plano atingido (${count}/${maxAdmins}).`);
+                    }
+                }
+            } else if (formData.role === 'admin' && formData.is_active) {
+                // Check if we are upgrading a worker to admin or activating an inactive admin
+                const { data: current } = await supabase.from('profiles').select('role, is_active').eq('id', id).single();
+                if (current && (current.role !== 'admin' || !current.is_active)) {
+                    const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'admin').eq('is_active', true);
+                    if (count !== null && count >= (maxAdmins || 1)) {
+                        throw new Error(`Não é possível definir como Administrador Ativo. Limite do plano atingido (${count}/${maxAdmins}).`);
+                    }
                 }
             }
 
@@ -80,7 +96,8 @@ const UserFormPage = () => {
                     name: safeName,
                     role: formData.role,
                     site_id: formData.role === 'worker' ? formData.site_id : null,
-                    cpf: formData.cpf
+                    cpf: formData.cpf,
+                    is_active: formData.is_active
                 }).eq('id', id);
                 if (error) throw error;
             } else {
@@ -107,6 +124,7 @@ const UserFormPage = () => {
                         role: formData.role,
                         site_id: formData.role === 'worker' ? formData.site_id : null,
                         cpf: formData.cpf,
+                        is_active: formData.is_active,
                         organization_id: adminProfile?.organization_id
                     });
                     if (profileError) throw profileError;
@@ -157,6 +175,15 @@ const UserFormPage = () => {
                                     <input type="password" required className="form-input" placeholder="Mínimo 6 caracteres" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} />
                                 </div>
                             )}
+                        </div>
+                        <div className="input-group">
+                            <label>Status da Conta</label>
+                            <div className="status-toggle-box" onClick={() => setFormData({...formData, is_active: !formData.is_active})}>
+                                <div className={`toggle-track ${formData.is_active ? 'active' : ''}`}>
+                                    <div className="toggle-thumb"></div>
+                                </div>
+                                <span>{formData.is_active ? 'Conta Ativa' : 'Conta Inativa (Acesso bloqueado)'}</span>
+                            </div>
                         </div>
                     </StandardCard>
 
@@ -244,6 +271,14 @@ const UserFormPage = () => {
                 .role-card p { font-size: 12px; color: var(--text-secondary); margin: 0; }
                 .check-icon { position: absolute; right: 16px; color: var(--primary); }
                 
+                .status-toggle-box { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 12px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 12px; transition: 0.2s; }
+                .status-toggle-box:hover { border-color: var(--primary); }
+                .status-toggle-box span { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+                .toggle-track { width: 44px; height: 22px; background: #444; border-radius: 100px; position: relative; transition: 0.3s; }
+                .toggle-track.active { background: #27c98c; }
+                .toggle-thumb { width: 16px; height: 16px; background: white; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: 0.3s; }
+                .toggle-track.active .toggle-thumb { left: 25px; }
+
                 .checklist { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
                 .checklist li { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); }
                 .w-full { width: 100%; }

@@ -12,10 +12,13 @@ const AdminUsers = () => {
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const { maxWorkers } = useSubscription();
+    const { maxWorkers, maxAdmins } = useSubscription();
+    
+    const adminsCount = users.filter(u => u.role === 'admin' && u.is_active).length;
 
-    const workersCount = users.filter(u => u.role === 'worker').length;
+    const workersCount = users.filter(u => u.role === 'worker' && u.is_active).length;
     const isLimitReached = maxWorkers ? workersCount >= maxWorkers : false;
+    const isAdminLimitReached = maxAdmins ? adminsCount >= maxAdmins : false;
 
     useEffect(() => {
         fetchUsers();
@@ -33,6 +36,23 @@ const AdminUsers = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleToggleStatus = async (user: any, e: React.MouseEvent) => {
+        e.stopPropagation();
+        const newStatus = !user.is_active;
+        
+        if (newStatus && user.role === 'admin' && isAdminLimitReached) {
+            alert(`Não é possível ativar este administrador. Limite do plano atingido (${adminsCount}/${maxAdmins}).`);
+            return;
+        }
+
+        const { error } = await supabase
+            .from('profiles')
+            .update({ is_active: newStatus })
+            .eq('id', user.id);
+            
+        if (!error) fetchUsers();
     };
 
     const handleDelete = async (id: string, e: React.MouseEvent) => {
@@ -83,6 +103,14 @@ const AdminUsers = () => {
             )
         },
         {
+            header: 'Status',
+            accessor: (user: any) => (
+                <div className={`status-pill ${user.is_active ? 'active' : 'inactive'}`}>
+                    {user.is_active ? 'Ativo' : 'Inativo'}
+                </div>
+            )
+        },
+        {
             header: 'CPF',
             accessor: (user: any) => <span className="text-muted">{maskCPF(user.cpf || '') || '—'}</span>
         },
@@ -100,6 +128,13 @@ const AdminUsers = () => {
             header: 'Ações',
             accessor: (user: any) => (
                 <div className="action-btns" onClick={e => e.stopPropagation()}>
+                    <button 
+                        className={`icon-btn ${user.is_active ? 'deactivate' : 'activate'}`} 
+                        onClick={(e) => handleToggleStatus(user, e)}
+                        title={user.is_active ? "Inativar Usuário" : "Ativar Usuário"}
+                    >
+                        {user.is_active ? <User size={14} style={{ opacity: 0.5 }} /> : <User size={14} />}
+                    </button>
                     <button className="icon-btn" onClick={() => navigate(`/admin/users/editar/${user.id}`)}><Edit2 size={14} /></button>
                     <button className="icon-btn delete" onClick={(e) => handleDelete(user.id, e)}><Trash2 size={14} /></button>
                 </div>
@@ -212,9 +247,17 @@ const AdminUsers = () => {
                 @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
                 .action-btns { display: flex; gap: 8px; justify-content: flex-end; }
-                .icon-btn { background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-muted); padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+                .icon-btn { background: var(--bg-dark); border: 1px solid var(--border); color: var(--text-muted); padding: 8px; border-radius: 8px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
                 .icon-btn:hover { color: var(--text-primary); border-color: var(--text-muted); }
                 .icon-btn.delete:hover { background: rgba(255,59,48,0.1); color: var(--status-denied); border-color: rgba(255,59,48,0.2); }
+                .icon-btn.activate { color: #27c98c; border-color: rgba(39, 201, 140, 0.2); }
+                .icon-btn.activate:hover { background: rgba(39, 201, 140, 0.1); }
+                .icon-btn.deactivate { color: #f59e0b; border-color: rgba(245, 158, 11, 0.2); }
+                .icon-btn.deactivate:hover { background: rgba(245, 158, 11, 0.1); }
+
+                .status-pill { padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+                .status-pill.active { background: rgba(39, 201, 140, 0.1); color: #27c98c; border: 1px solid rgba(39, 201, 140, 0.2); }
+                .status-pill.inactive { background: rgba(var(--text-muted-rgb), 0.1); color: var(--text-muted); border: 1px solid var(--border); }
 
                 .limit-warning {
                     font-size: 11px;
