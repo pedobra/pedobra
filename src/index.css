@@ -289,7 +289,7 @@ h3,
 .btn-primary {
   background: var(--primary);
   color: var(--primary-foreground);
-  height: 44px;
+  height: 48px;
   padding: 0 18px;
   font-weight: 600;
   border-radius: 8px;
@@ -312,7 +312,7 @@ h3,
 .btn-secondary {
   background: var(--bg-card);
   color: var(--text-primary);
-  height: 44px;
+  height: 48px;
   padding: 0 18px;
   font-weight: 600;
   border-radius: 8px;
@@ -336,7 +336,7 @@ h3,
   background: transparent;
   color: var(--text-primary);
   border: 1px solid var(--border);
-  height: 44px;
+  height: 48px;
   padding: 0 18px;
   border-radius: 8px;
   font-weight: 600;
@@ -356,7 +356,7 @@ h3,
 
 /* Global inputs standardization */
 .form-input, input.form-input, select.form-input {
-  height: 44px;
+  height: 48px;
   padding: 0 16px;
   font-size: 14px;
   border-radius: 8px;

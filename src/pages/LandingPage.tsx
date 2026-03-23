@@ -1305,6 +1305,41 @@ const LandingPage = () => {
                     .testimonial-content { font-size: 16px; }
                     .testimonials-carousel { min-height: 300px; }
                 }
+
+                /* GLOBAL RESPONSIVE FIXES (Fase 1 Mobile UX) */
+                @media (max-width: 768px) {
+                    /* Nav & Header */
+                    .nav-container-limit { padding: 0 20px; }
+                    .nav-right { gap: 12px; }
+                    .nav-login-btn { display: none; } 
+                    .nav-cta-btn { padding: 10px 16px; font-size: 13px; min-height: 48px; display: flex; align-items: center; justify-content: center; }
+                    .lp-logo { height: 24px; }
+                    
+                    /* Hero */
+                    .hero-section { padding: 140px 0 60px; }
+                    .hero-title { font-size: 36px; }
+                    .hero-subtitle { font-size: 16px; margin-bottom: 32px; }
+                    .hero-actions { flex-direction: column; width: 100%; gap: 16px; }
+                    .hero-actions .btn-main { width: 100%; min-height: 56px; }
+                    
+                    /* Buttons Full Width Mobile */
+                    .venda-actions .btn-venda, 
+                    .flow-cta-wrapper .btn-venda { width: 100%; min-height: 56px; display: flex; align-items: center; justify-content: center; padding: 16px; }
+                    .plan-btn { min-height: 56px; display: flex; align-items: center; justify-content: center; }
+                    .wl-cta { min-height: 56px; display: flex; align-items: center; justify-content: center; width: 100%; }
+                    
+                    /* Auth Overlay Setup */
+                    .auth-card { padding: 32px 24px; margin: 16px; width: calc(100% - 32px); max-height: 90vh; overflow-y: auto; }
+                    .auth-switch { padding-bottom: 16px; }
+                    
+                    /* Footer Fixes */
+                    .footer-grid { grid-template-columns: 1fr; gap: 44px; text-align: center; }
+                    .footer-brand { align-items: center; display: flex; flex-direction: column; }
+                    .footer-tagline { margin: 0 auto; }
+                    .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
+                    .footer-cta { width: 100%; }
+                    .footer-btn-pulse { width: 100%; min-height: 52px; display: flex; align-items: center; justify-content: center; }
+                }
             `}</style>
         </div>
     );
