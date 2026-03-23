@@ -37,6 +37,11 @@ const LandingPage = () => {
     const [showPWAPrompt, setShowPWAPrompt] = useState(false);
 
     useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('login') === 'true') {
+            setIsLogin(true);
+        }
+
         const shouldOpenLogin = localStorage.getItem('openLogin');
         if (shouldOpenLogin === 'true') {
             setIsLogin(true);
