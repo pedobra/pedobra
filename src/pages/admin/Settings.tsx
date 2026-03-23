@@ -220,19 +220,23 @@ const AdminSettings = ({ profile }: { profile: any }) => {
                         </ul>
                     </StandardCard>
 
-                    {isInstallable && (
-                        <StandardCard title="Aplicativo PedObra" subtitle="Instale no seu dispositivo local.">
-                            <div style={{ textAlign: 'center', padding: '8px 0' }}>
-                                <Smartphone size={32} color="var(--primary)" style={{ margin: '0 auto 12px' }} />
-                                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                                    Tenha acesso rápido diretamente da sua tela inicial, e receba notificações native-like.
-                                </p>
-                                <button type="button" className="btn-main highlight-glow w-full" onClick={promptToInstall}>
-                                    Instalar Agora
-                                </button>
-                            </div>
-                        </StandardCard>
-                    )}
+                    <StandardCard title="Aplicativo PedObra" subtitle="Instale no seu dispositivo local.">
+                        <div style={{ textAlign: 'center', padding: '8px 0' }}>
+                            <Smartphone size={32} color="var(--primary)" style={{ margin: '0 auto 12px' }} />
+                            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                                Tenha acesso rápido diretamente da sua tela inicial, e receba notificações native-like.
+                            </p>
+                            <button type="button" className="btn-main highlight-glow w-full" onClick={() => {
+                                if (isInstallable) {
+                                    promptToInstall();
+                                } else {
+                                    alert('O navegador não autorizou a via expressa (o aplicativo já deve estar instalado, ou em cache). Para reinstalar à força, clique nos "três pontinhos" no canto superior direito do seu navegador e escolha "Instalar Aplicativo".');
+                                }
+                            }}>
+                                Instalar Agora
+                            </button>
+                        </div>
+                    </StandardCard>
                 </div>
             </div>
 
