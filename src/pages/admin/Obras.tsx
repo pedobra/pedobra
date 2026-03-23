@@ -104,7 +104,7 @@ const AdminObras = () => {
             try {
                 const { data, error } = await supabase
                     .from('orders')
-                    .select('id, created_at, status, seq_number, profiles(name)')
+                    .select('id, created_at, status, seq_number, items, profiles(name)')
                     .eq('site_id', siteId)
                     .order('created_at', { ascending: false });
 
@@ -272,6 +272,10 @@ const AdminObras = () => {
                             <div className="dd-worker">
                                 <label>SOLICITANTE</label>
                                 <span>{order.profiles?.name || 'Desconhecido'}</span>
+                            </div>
+                            <div className="dd-value">
+                                <label>VALOR TOTAL</label>
+                                <span>{fmtBRL((order.items as any[] || []).reduce((acc, item) => acc + (parseFloat(item.unit_value || item.price_hint || 0) * parseFloat(item.quantity || 0)), 0))}</span>
                             </div>
                             <div className="dd-arrow">→</div>
                         </div>
@@ -503,10 +507,14 @@ const AdminObras = () => {
                 .dd-ref strong { font-size: 13px; color: var(--text-primary); }
                 .dd-ref span { font-size: 11px; color: var(--text-muted); }
                 
-                .dd-worker { display: flex; flex-direction: column; gap: 2px; width: 180px; }
+                .dd-worker { display: flex; flex-direction: column; gap: 2px; width: 140px; }
                 .dd-worker label { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
-                .dd-worker span { font-size: 12px; color: var(--text-primary); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                .dd-worker span { font-size: 11px; color: var(--text-primary); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
                 
+                .dd-value { display: flex; flex-direction: column; gap: 2px; width: 120px; }
+                .dd-value label { font-size: 9px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; }
+                .dd-value span { font-size: 13px; color: var(--primary); font-weight: 800; }
+
                 .dd-arrow { color: var(--primary); font-weight: 900; opacity: 0.8; font-size: 18px; }
                 
                 .orders-drilldown-loading, .orders-drilldown-empty {
