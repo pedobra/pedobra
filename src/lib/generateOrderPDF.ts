@@ -182,7 +182,7 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
         doc.setTextColor(110, 110, 110);
         
         const genDate = new Date().toLocaleDateString('pt-BR');
-        const footerRight = `Pedido gerado por www.pedobraapp.com em ${genDate}  —  Página ${i}/${totalPages}`;
+        const footerRight = `www.pedobraapp.com em ${genDate}  —  Página ${i}/${totalPages}`;
         doc.text(footerRight, pageWidth - margin, pageHeight - 10, { align: 'right' });
     }
 
