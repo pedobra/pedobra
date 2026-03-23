@@ -67,13 +67,14 @@ const LandingPage = () => {
         e.preventDefault();
         if (detectBot(honey)) return;
         setLoading(true);
+        const formattedEmail = email.trim().toLowerCase();
         try {
             if (showAdminModal) {
-                const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+                const { data: authData, error: authError } = await supabase.auth.signUp({ email: formattedEmail, password });
                 if (authError) throw authError;
                 if (authData.user) {
                     const { error: profileError } = await supabase.from('profiles').insert({
-                        id: authData.user.id, name, email, role: 'admin'
+                        id: authData.user.id, name, email: formattedEmail, role: 'admin'
                     });
                     if (profileError) throw profileError;
                 }
@@ -81,7 +82,7 @@ const LandingPage = () => {
                 setShowAdminModal(false);
                 setIsLogin(true);
             } else if (isSignUp) {
-                const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+                const { data: authData, error: authError } = await supabase.auth.signUp({ email: formattedEmail, password });
                 if (authError) throw authError;
                 if (authData.user) {
                     let userIp = '0.0.0.0';
@@ -97,7 +98,7 @@ const LandingPage = () => {
                     const { error: initialProfileError } = await supabase.from('profiles').insert({
                         id: authData.user.id, 
                         name, 
-                        email, 
+                        email: formattedEmail, 
                         role: 'admin', 
                         cpf: cpfCnpj, 
                         signup_ip: userIp
@@ -122,7 +123,7 @@ const LandingPage = () => {
                     alert('Conta criada com sucesso!');
                 }
             } else {
-                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                const { error } = await supabase.auth.signInWithPassword({ email: formattedEmail, password });
                 if (error) throw error;
             }
         } catch (err: any) { alert(err.message); } finally { setLoading(false); }
@@ -619,24 +620,24 @@ const LandingPage = () => {
                             {(showAdminModal || isSignUp) && (
                                 <div className="input-field">
                                     <label>Seu Nome</label>
-                                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Nome completo" required />
+                                    <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Nome completo" required autoCapitalize="words" />
                                 </div>
                             )}
                             {isSignUp && (
                                 <>
                                     <div className="input-field">
                                         <label>Empresa</label>
-                                        <input type="text" value={companyName} onChange={e => setCompanyName(e.target.value)} placeholder="Nome da sua empresa" required />
+                                        <input type="text" value={companyName} onChange={e => setCompanyName(e.target.value)} placeholder="Nome da sua empresa" required autoCapitalize="words" />
                                     </div>
                                     <div className="input-field">
                                         <label>CPF ou CNPJ</label>
-                                        <input type="text" value={cpfCnpj} onChange={e => setCpfCnpj(maskCPF_CNPJ(e.target.value))} placeholder="000.000.000-00" required />
+                                        <input type="text" value={cpfCnpj} onChange={e => setCpfCnpj(maskCPF_CNPJ(e.target.value))} placeholder="000.000.000-00" required inputMode="numeric" />
                                     </div>
                                 </>
                             )}
                             <div className="input-field">
                                 <label>E-mail</label>
-                                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="E-mail profissional" required />
+                                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="E-mail profissional" required autoCapitalize="none" autoCorrect="off" spellCheck={false} autoComplete="email" />
                             </div>
                             <div className="input-field">
                                 <label>Senha</label>
