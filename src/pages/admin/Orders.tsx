@@ -17,26 +17,9 @@ const AdminOrders = () => {
     useEffect(() => {
         fetchOrders();
         setSelectedIds([]);
-
-        // Realtime subscription
-        const channel = supabase
-            .channel('admin-orders-realtime')
-            .on(
-                'postgres_changes',
-                {
-                    event: '*',
-                    schema: 'public',
-                    table: 'orders'
-                },
-                () => {
-                    fetchOrders();
-                }
-            )
-            .subscribe();
-
-        return () => {
-            supabase.removeChannel(channel);
-        };
+        
+        const poll = setInterval(fetchOrders, 30000);
+        return () => clearInterval(poll);
     }, []);
 
     const fetchOrders = async () => {

@@ -20,27 +20,9 @@ const WorkerDashboard = ({ profile }: { profile: any }) => {
     useEffect(() => {
         if (profile?.site_id) {
             fetchOrders();
-
-            // Realtime subscription
-            const channel = supabase
-                .channel('orders-realtime')
-                .on(
-                    'postgres_changes',
-                    {
-                        event: '*',
-                        schema: 'public',
-                        table: 'orders',
-                        filter: `site_id=eq.${profile.site_id}`
-                    },
-                    () => {
-                        fetchOrders();
-                    }
-                )
-                .subscribe();
-
-            return () => {
-                supabase.removeChannel(channel);
-            };
+            
+            const poll = setInterval(fetchOrders, 30000);
+            return () => clearInterval(poll);
         }
     }, [profile]);
 

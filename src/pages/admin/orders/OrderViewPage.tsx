@@ -22,26 +22,8 @@ const OrderViewPage = () => {
         if (id) {
             fetchOrder();
             
-            // Realtime subscription for status updates
-            const channel = supabase
-                .channel(`order-${id}`)
-                .on(
-                    'postgres_changes',
-                    {
-                        event: 'UPDATE',
-                        schema: 'public',
-                        table: 'orders',
-                        filter: `id=eq.${id}`
-                    },
-                    (payload) => {
-                        setOrder(payload.new);
-                    }
-                )
-                .subscribe();
-
-            return () => {
-                supabase.removeChannel(channel);
-            };
+            const poll = setInterval(fetchOrder, 30000);
+            return () => clearInterval(poll);
         }
     }, [id]);
 

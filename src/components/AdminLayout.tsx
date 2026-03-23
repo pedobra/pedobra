@@ -98,22 +98,9 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
         };
         document.addEventListener('visibilitychange', handleVisibility);
 
-        const channel = supabase
-            .channel('admin-new-orders')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, () => {
-                triggerNotification();
-                lastCheckRef.current = new Date().toISOString();
-            })
-            .subscribe((status) => {
-                if (status === 'CHANNEL_ERROR') {
-                    console.log('Notificações em tempo real (Realtime) indisponíveis. O sistema continuará monitorando via polling (30s).');
-                }
-            });
-
         return () => {
             clearInterval(poll);
             document.removeEventListener('visibilitychange', handleVisibility);
-            supabase.removeChannel(channel);
         };
     }, []);
 
