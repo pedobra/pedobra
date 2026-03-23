@@ -46,7 +46,6 @@ function getOrderRef(order: any): string {
 }
 
 export async function generateOrderPDF(order: any, requestedByName?: string) {
-    // Fetch company settings and current user
     const [settingsRes, userRes] = await Promise.all([
         supabase.from('company_settings').select('*').single(),
         supabase.auth.getUser()
@@ -64,7 +63,6 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
     const creator = requestedByName || order.profiles?.name || order.sites?.name || '—';
     const createdAt = new Date(order.created_at).toLocaleString('pt-BR');
     
-    // Status translation
     const statusMap: Record<string, string> = {
         new: 'NOVO', pending: 'PENDENTE', approved: 'APROVADO', denied: 'NEGADO',
         'não autorizado': 'NEGADO', completed: 'CONCLUÍDO', partial: 'PARCIAL',
@@ -73,8 +71,6 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
     const displayStatus = (statusMap[order.status] || order.status).toUpperCase();
     const isNew = order.status === 'new' || order.status === 'novo';
 
-    // ─── HEADER ─────────────────────────────────────────────────────────
-    // Left: Logo
     if (settings.logo_url) {
         let finalLogoUrl = settings.logo_url;
         if (!settings.logo_url.startsWith('http') && !settings.logo_url.startsWith('data:')) {
@@ -91,7 +87,6 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
         doc.text(settings.company_name, margin, 25);
     }
 
-    // Right: Metadata Block
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(20);
     doc.setTextColor(0, 0, 0);
@@ -122,14 +117,12 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
         }
     }
 
-    // ─── BODY TABLE ─────────────────────────────────────────────────────
     const head = isNew 
         ? [['#', 'MATERIAL / INSUMO', 'UN.', 'QTDE.']]
         : [['#', 'MATERIAL / INSUMO', 'FORNECEDOR', 'UN.', 'QTDE.', 'V. UNIT.', 'TOTAL']];
 
     const body = (order.items || []).map((it: any, i: number) => {
         if (isNew) return [i + 1, it.name || '—', it.unit || '—', it.quantity];
-        
         const val = typeof it.unit_value === 'string' ? (parseFloat(it.unit_value.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0) : (it.unit_value || 0);
         const qty = parseFloat(it.received_quantity) || parseFloat(it.quantity) || 0;
         return [
@@ -143,23 +136,10 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
         head, body, startY: nextY + 4, margin: { left: margin, right: margin },
         theme: 'striped',
         styles: { fontSize: 9, cellPadding: 4, textColor: [0, 0, 0], font: 'helvetica' },
-        headStyles: { 
-            fillColor: [210, 210, 210], // Cinza um pouco mais escuro que a zebra
-            textColor: [0, 0, 0], 
-            fontStyle: 'bold', 
-            lineWidth: 0.1, 
-            lineColor: [180, 180, 180] 
-        },
-        alternateRowStyles: { fillColor: [242, 242, 242] }, // Zebra cinza claro
-        columnStyles: {
-            0: { cellWidth: 10, halign: 'center' },
-            3: { halign: 'center' },
-            4: { halign: 'center' },
-            5: { halign: 'right' },
-            6: { halign: 'right', fontStyle: 'bold' }
-        },
-        didDrawPage: (data) => {
-            // FOOTER on each page
+        headStyles: { fillColor: [210, 210, 210], textColor: [0, 0, 0], fontStyle: 'bold', lineWidth: 0.1, lineColor: [180, 180, 180] },
+        alternateRowStyles: { fillColor: [242, 242, 242] },
+        columnStyles: { 0: { cellWidth: 10, halign: 'center' }, 3: { halign: 'center' }, 4: { halign: 'center' }, 5: { halign: 'right' }, 6: { halign: 'right', fontStyle: 'bold' } },
+        didDrawPage: () => {
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(7.5);
             doc.setTextColor(110, 110, 110);
@@ -167,15 +147,13 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
             const fY = pageHeight - 10;
             const companyAddr = [settings.address_street, settings.address_number, settings.address_neighborhood, settings.address_city, settings.address_state, settings.address_cep].filter(Boolean).join(', ');
             
-            // Left: Admin Email + Company Address
             doc.setFont('helvetica', 'bold');
             doc.text(`${adminEmail}`, margin, fY - 3);
             doc.setFont('helvetica', 'normal');
             doc.text(`${settings.company_name} — ${companyAddr}`, margin, fY);
             
-            // Right: Link sutil, data e paginação
             doc.setFont('helvetica', 'italic');
-            const footerRight = `Pedido gerado por WWW.PEDOBRAAPP.COM em ${new Date().toLocaleDateString('pt-BR')}  —  Página ${data.pageNumber}/${data.pageCount}`;
+            const footerRight = `Pedido gerado por WWW.PEDOBRAAPP.COM em ${new Date().toLocaleDateString('pt-BR')}`;
             doc.text(footerRight, pageWidth - margin, fY, { align: 'right' });
         }
     });
@@ -187,13 +165,22 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
             return acc + (val * qty);
         }, 0);
 
-        const lastY = (doc as any).lastAutoTable.finalY || nextY + 20;
+        const lastY = (doc as any).lastAutoTable.finalY;
         doc.setFillColor(210, 210, 210);
         doc.rect(pageWidth - margin - 60, lastY + 2, 60, 10, 'F');
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10);
         doc.setTextColor(0, 0, 0);
         doc.text(`TOTAL: R$ ${grandTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, pageWidth - margin - 5, lastY + 8.5, { align: 'right' });
+    }
+
+    const totalPages = (doc as any).internal.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(7.5);
+        doc.setTextColor(110, 110, 110);
+        doc.text(`  —  Página ${i}/${totalPages}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
     }
 
     doc.save(`pedido_${ref}.pdf`);
