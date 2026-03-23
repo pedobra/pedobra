@@ -12,6 +12,8 @@ const AdminOrders = () => {
     const [orders, setOrders] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
     useEffect(() => {
@@ -73,10 +75,51 @@ const AdminOrders = () => {
     };
 
     const filteredOrders = orders.filter(order => {
+        // Filtro de Data
+        if (startDate && new Date(order.created_at) < new Date(startDate)) return false;
+        if (endDate) {
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+            if (new Date(order.created_at) > end) return false;
+        }
+
+        if (!searchTerm) return true;
         const term = searchTerm.toLowerCase();
-        return getOrderRef(order).toLowerCase().includes(term) ||
+        
+        // Busca Básica (Ref, Obra, Solicitante)
+        const matchBasic = getOrderRef(order).toLowerCase().includes(term) ||
             (order.sites?.name || '').toLowerCase().includes(term) ||
             (order.profiles?.name || '').toLowerCase().includes(term);
+        if (matchBasic) return true;
+
+        // Busca por Status (traduzido)
+        const statusMap: Record<string, string> = {
+            new: 'novo',
+            pending: 'pendente',
+            approved: 'aprovado',
+            denied: 'negado',
+            'não autorizado': 'negado',
+            completed: 'concluído',
+            partial: 'parcial',
+            'rec. parcial': 'parcial'
+        };
+        if (statusMap[order.status]?.includes(term) || order.status.toLowerCase().includes(term)) return true;
+
+        // Busca por Itens
+        const hasItem = order.items?.some((it: any) => 
+            (it.name || '').toLowerCase().includes(term)
+        );
+        if (hasItem) return true;
+
+        // Busca por Valor Total (se disponível)
+        const total = order.items?.reduce((acc: number, it: any) => {
+            const val = typeof it.unit_value === 'string' ? (parseFloat(it.unit_value.replace(/[^\d,.-]/g, '').replace(',', '.')) || 0) : (it.unit_value || 0);
+            const qty = parseFloat(it.received_quantity) || parseFloat(it.quantity) || 0;
+            return acc + (val * qty);
+        }, 0) || 0;
+        if (total > 0 && total.toFixed(2).replace('.', ',').includes(term)) return true;
+
+        return false;
     });
 
     const columns = [
@@ -114,21 +157,49 @@ const AdminOrders = () => {
 
     return (
         <div className="orders-view animate-fade">
-            <header className="dashboard-header">
-                <div className="header-info">
+            <header className="dashboard-header-modern">
+                <div className="header-info-main">
                     <h1 className="page-title">Gestão de Pedidos</h1>
                     <p className="page-subtitle">Gerencie e autorize as solicitações de materiais de suas obras.</p>
                 </div>
-                <div className="header-actions">
-                    <div className="search-bar-saas">
-                        <Search size={16} color="var(--text-muted)" />
-                        <input type="text" placeholder="Buscar pedidos..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
-                    </div>
-                    <button className="btn-primary" onClick={() => navigate('/admin/orders/novo')}>
-                        Novo Pedido
-                    </button>
-                </div>
+                <button className="btn-primary-mobile-top" onClick={() => navigate('/admin/orders/novo')}>
+                    Novo Pedido
+                </button>
             </header>
+
+            <div className="filters-hub-premium">
+                <div className="search-group-main">
+                    <div className="search-bar-modern">
+                        <Search size={18} color="var(--text-muted)" />
+                        <input 
+                            type="text" 
+                            placeholder="Busca inteligente (Nº, Material, Status, Valor...)" 
+                            value={searchTerm} 
+                            onChange={e => setSearchTerm(e.target.value)} 
+                        />
+                    </div>
+                </div>
+
+                <div className="date-filters-group">
+                    <div className="date-input-wrapper">
+                        <span className="date-label">DE</span>
+                        <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} />
+                    </div>
+                    <div className="date-input-wrapper">
+                        <span className="date-label">ATÉ</span>
+                        <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} />
+                    </div>
+                    {(startDate || endDate || searchTerm) && (
+                        <button className="btn-clear-filters" onClick={() => { setStartDate(''); setEndDate(''); setSearchTerm(''); }}>
+                            Limpar
+                        </button>
+                    )}
+                </div>
+
+                <button className="btn-primary desktop-only" onClick={() => navigate('/admin/orders/novo')}>
+                    Novo Pedido
+                </button>
+            </div>
 
             {selectedIds.length > 0 && (
                 <div className="bulk-actions-floating animate-pop-in">
@@ -168,16 +239,90 @@ const AdminOrders = () => {
             </StandardCard>
 
             <style>{`
-                .orders-view { display: flex; flex-direction: column; gap: 32px; }
-                .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+                .orders-view { display: flex; flex-direction: column; gap: 24px; padding: 0 4px; }
                 
-                .header-actions { display: flex; align-items: center; gap: 12px; }
-                .search-bar-saas { 
-                    background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 8px; 
-                    padding: 0 12px; display: flex; align-items: center; gap: 8px; 
-                    width: 240px; height: 44px; 
+                .dashboard-header-modern { 
+                    display: flex; justify-content: space-between; align-items: flex-start; 
+                    margin-bottom: 8px; 
                 }
-                .search-bar-saas input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; }
+                
+                .filters-hub-premium {
+                    display: flex;
+                    align-items: center;
+                    gap: 16px;
+                    background: var(--bg-card);
+                    padding: 16px;
+                    border: 1px solid var(--border);
+                    border-radius: 16px;
+                    margin-bottom: 8px;
+                    flex-wrap: wrap;
+                }
+
+                .search-group-main { flex: 1; min-width: 280px; }
+                .search-bar-modern {
+                    background: var(--bg-dark);
+                    border: 1.5px solid var(--border);
+                    border-radius: 12px;
+                    padding: 0 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    height: 48px;
+                    transition: 0.2s;
+                }
+                .search-bar-modern:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.1); }
+                .search-bar-modern input { background: transparent; border: none; color: var(--text-primary); outline: none; width: 100%; font-size: 14px; font-weight: 500; }
+
+                .date-filters-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+                .date-input-wrapper {
+                    display: flex;
+                    align-items: center;
+                    background: var(--bg-dark);
+                    border: 1.5px solid var(--border);
+                    border-radius: 12px;
+                    height: 48px;
+                    padding: 0 12px;
+                    gap: 8px;
+                }
+                .date-label { font-size: 10px; font-weight: 850; color: var(--text-muted); }
+                .date-input-wrapper input {
+                    background: transparent;
+                    border: none;
+                    color: var(--text-primary);
+                    outline: none;
+                    font-size: 13px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                }
+
+                .btn-clear-filters {
+                    background: transparent;
+                    border: 1px solid var(--border);
+                    color: var(--text-muted);
+                    padding: 0 16px;
+                    height: 32px;
+                    border-radius: 8px;
+                    font-size: 11px;
+                    font-weight: 700;
+                    text-transform: uppercase;
+                    cursor: pointer;
+                    transition: 0.2s;
+                }
+                .btn-clear-filters:hover { color: var(--text-primary); border-color: var(--text-muted); }
+
+                .btn-primary-mobile-top { display: none; }
+                .desktop-only { display: flex; }
+
+                @media (max-width: 768px) {
+                    .dashboard-header-modern { flex-direction: column; gap: 16px; }
+                    .btn-primary-mobile-top { display: flex; width: 100%; height: 48px; justify-content: center; align-items: center; }
+                    .desktop-only { display: none; }
+                    .filters-hub-premium { flex-direction: column; align-items: stretch; gap: 12px; padding: 12px; }
+                    .search-group-main { min-width: 100%; }
+                    .date-filters-group { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+                    .date-input-wrapper { width: 100%; justify-content: space-between; }
+                    .btn-clear-filters { grid-column: span 2; height: 40px; margin-top: 4px; }
+                }
 
                 .ref-column-text { 
                     font-size: 14px; 
