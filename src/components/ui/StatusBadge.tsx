@@ -25,7 +25,13 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label }) => {
     const current = config[s] || { color: 'var(--text-muted)', bg: 'var(--bg-dark)', label: label || status };
 
     return (
-        <div className="status-badge-container">
+        <div 
+            className="status-badge-container" 
+            style={{ 
+                background: current.bg, 
+                borderColor: current.color 
+            }}
+        >
             <span className="status-dot" style={{ backgroundColor: current.color }} />
             <span className="status-text">{current.label}</span>
             <style>{`
@@ -34,8 +40,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label }) => {
                     align-items: center;
                     gap: 8px;
                     padding: 4px 14px;
-                    background: ${current.bg};
-                    border: 1.5px solid ${current.color};
+                    border: 1.5px solid transparent;
                     border-radius: 12px;
                     width: fit-content;
                     transition: all 0.2s ease;
