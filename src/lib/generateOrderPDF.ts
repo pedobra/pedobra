@@ -140,6 +140,7 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
         alternateRowStyles: { fillColor: [242, 242, 242] },
         columnStyles: { 0: { cellWidth: 10, halign: 'center' }, 3: { halign: 'center' }, 4: { halign: 'center' }, 5: { halign: 'right' }, 6: { halign: 'right', fontStyle: 'bold' } },
         didDrawPage: () => {
+            // FOOTER - Lado Esquerdo (Admin + Endereço Empresa)
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(7.5);
             doc.setTextColor(110, 110, 110);
@@ -152,9 +153,7 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
             doc.setFont('helvetica', 'normal');
             doc.text(`${settings.company_name} — ${companyAddr}`, margin, fY);
             
-            doc.setFont('helvetica', 'italic');
-            const footerRight = `Pedido gerado por WWW.PEDOBRAAPP.COM em ${new Date().toLocaleDateString('pt-BR')}`;
-            doc.text(footerRight, pageWidth - margin, fY, { align: 'right' });
+            // Lado direito será desenhado ao final para evitar sobreposição
         }
     });
 
@@ -174,13 +173,17 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
         doc.text(`TOTAL: R$ ${grandTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, pageWidth - margin - 5, lastY + 8.5, { align: 'right' });
     }
 
+    // Add Right-Side Footer and Pagination X/X on each page
     const totalPages = (doc as any).internal.getNumberOfPages();
     for (let i = 1; i <= totalPages; i++) {
         doc.setPage(i);
         doc.setFont('helvetica', 'italic');
         doc.setFontSize(7.5);
         doc.setTextColor(110, 110, 110);
-        doc.text(`  —  Página ${i}/${totalPages}`, pageWidth - margin, pageHeight - 10, { align: 'right' });
+        
+        const genDate = new Date().toLocaleDateString('pt-BR');
+        const footerRight = `Pedido gerado por www.pedobraapp.com em ${genDate}  —  Página ${i}/${totalPages}`;
+        doc.text(footerRight, pageWidth - margin, pageHeight - 10, { align: 'right' });
     }
 
     doc.save(`pedido_${ref}.pdf`);
