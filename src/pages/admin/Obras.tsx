@@ -10,6 +10,15 @@ import StatusBadge from '../../components/ui/StatusBadge';
 const fmtBRL = (v: number) =>
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v || 0);
 
+const getOrderRef = (o: any) => {
+    if (!o || !o.created_at) return 'N/A';
+    const d = new Date(o.created_at);
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const seq = String(o.seq_number || 0).padStart(4, '0');
+    return `${dd}${mm}-${seq}`;
+};
+
 const AdminObras = () => {
     const navigate = useNavigate();
     const [obras, setObras] = useState<any[]>([]);
@@ -95,7 +104,7 @@ const AdminObras = () => {
             try {
                 const { data, error } = await supabase
                     .from('orders')
-                    .select('id, created_at, status, profiles(name)')
+                    .select('id, created_at, status, seq_number, profiles(name)')
                     .eq('site_id', siteId)
                     .order('created_at', { ascending: false });
 
@@ -257,7 +266,7 @@ const AdminObras = () => {
                                 <StatusBadge status={order.status} />
                             </div>
                             <div className="dd-ref">
-                                <strong>REF {order.id.slice(0, 8).toUpperCase()}</strong>
+                                <strong>{getOrderRef(order)}</strong>
                                 <span>{new Date(order.created_at).toLocaleDateString('pt-BR')}</span>
                             </div>
                             <div className="dd-worker">
