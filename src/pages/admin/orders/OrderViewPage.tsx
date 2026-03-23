@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
-import { ArrowLeft, CheckCircle, XCircle, Trash2, FileDown, History, Building2, User, Sparkles, Package, Clock } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, Trash2, FileDown, History, Building2, User, Sparkles, Package, Clock, AlignLeft } from 'lucide-react';
 import { generateOrderPDF } from '../../../lib/generateOrderPDF';
 import StandardCard from '../../../components/ui/StandardCard';
 import StatusBadge from '../../../components/ui/StatusBadge';
@@ -290,6 +290,16 @@ const OrderViewPage = () => {
                         </div>
                     )}
 
+                    {order.observations && (
+                        <div className="observations-display animate-fade">
+                            <div className="obs-header">
+                                <AlignLeft size={16} />
+                                <span>OBSERVAÇÕES DO SOLICITANTE</span>
+                            </div>
+                            <p className="obs-content">{order.observations}</p>
+                        </div>
+                    )}
+
                     {(order.status === 'new' || order.status === 'pending') && (
                         <div className="approval-actions animate-fade">
                             <button className="btn-approve" onClick={() => updateStatus('approved')}>
@@ -426,6 +436,34 @@ const OrderViewPage = () => {
                 .btn-approve:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(39, 174, 96, 0.2); }
                 .btn-deny { background: transparent; border: 1px solid var(--status-denied); color: var(--status-denied); height: 48px; padding: 0 24px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
                 .btn-deny:hover { background: rgba(255, 59, 48, 0.05); transform: translateY(-1px); }
+
+                .observations-display {
+                    background: var(--bg-card);
+                    border: 2px solid var(--border);
+                    border-radius: 16px;
+                    padding: 24px;
+                    margin: 24px 0;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                }
+                .obs-header {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    color: var(--text-muted);
+                    font-size: 10px;
+                    font-weight: 850;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                .obs-content {
+                    font-size: 14px;
+                    color: var(--text-primary);
+                    line-height: 1.6;
+                    margin: 0;
+                    font-weight: 500;
+                }
 
                 /* Timeline Horizontal */
                 .order-timeline-container {
