@@ -230,8 +230,8 @@ const LandingPage = () => {
                         <img src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" alt="PedObra" />
                     </div>
                     <div className="nav-right">
-                        <ThemeToggle />
-                        <button className="nav-login-btn" onClick={() => setIsLogin(true)}>Entrar</button>
+                        <div className="lp-theme-toggle"><ThemeToggle /></div>
+                        <button className="nav-login-btn highlight-glow" onClick={() => setIsLogin(true)}>Entrar</button>
                         <button className="nav-cta-btn highlight-glow" onClick={() => setIsSignUp(true)}>Começar Grátis</button>
                     </div>
                 </div>
@@ -1345,11 +1345,22 @@ const LandingPage = () => {
                 /* GLOBAL RESPONSIVE FIXES (Fase 1 Mobile UX) */
                 @media (max-width: 768px) {
                     /* Nav & Header */
-                    .nav-container-limit { padding: 0 20px; }
+                    .nav-container-limit { padding: 0 16px; }
                     .nav-right { gap: 12px; }
-                    .nav-login-btn { display: none; } 
-                    .nav-cta-btn { padding: 10px 16px; font-size: 13px; min-height: 48px; display: flex; align-items: center; justify-content: center; }
-                    .lp-logo { height: 24px; }
+                    .lp-theme-toggle { display: none; }
+                    .nav-cta-btn { display: none; } 
+                    .nav-login-btn { 
+                        display: flex; 
+                        padding: 10px 20px; 
+                        font-size: 14px; 
+                        min-height: 44px; 
+                        align-items: center; 
+                        justify-content: center; 
+                        background: #fff;
+                        color: #000;
+                        border-radius: 6px;
+                    }
+                    .lp-logo { height: 32px; }
                     
                     /* Hero */
                     .hero-section { padding: 140px 0 60px; }
