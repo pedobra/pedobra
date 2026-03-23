@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { usePWA } from '../contexts/PWAContext';
 import { 
     ArrowRight, 
     Check, 
@@ -32,6 +33,8 @@ const LandingPage = () => {
     const [activeFaq, setActiveFaq] = useState<number | null>(null);
     const [visibleFaqs, setVisibleFaqs] = useState<Set<number>>(new Set());
 
+    const { isInstallable, promptToInstall } = usePWA();
+    const [showPWAPrompt, setShowPWAPrompt] = useState(false);
 
     useEffect(() => {
         const shouldOpenLogin = localStorage.getItem('openLogin');
@@ -120,7 +123,14 @@ const LandingPage = () => {
                     
                     localStorage.setItem('openLogin', 'true');
                     await supabase.auth.signOut();
-                    alert('Conta criada com sucesso!');
+                    
+                    if (isInstallable && !localStorage.getItem('pwa_declined')) {
+                        setShowPWAPrompt(true);
+                    } else {
+                        alert('Conta criada com sucesso!');
+                        setIsSignUp(false);
+                        setIsLogin(true);
+                    }
                 }
             } else {
                 const { error } = await supabase.auth.signInWithPassword({ email: formattedEmail, password });
@@ -656,6 +666,26 @@ const LandingPage = () => {
                                 </div>
                             )}
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {showPWAPrompt && (
+                <div className="auth-overlay glass-heavy" style={{ zIndex: 9999 }}>
+                    <div className="auth-card premium-card animate-fade text-center" style={{ padding: '32px 24px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+                           <img src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" alt="Logo" style={{ height: '48px' }} />
+                        </div>
+                        <h3 style={{ fontSize: '24px', color: 'white', marginBottom: '12px', fontWeight: 800 }}>Instale o PedObra</h3>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '15px', marginBottom: '32px', lineHeight: 1.5 }}>
+                            Para uma experiência mais rápida e notificações na palma da mão, adicione o aplicativo à sua tela de início.
+                        </p>
+                        <button type="button" className="btn-main highlight-glow w-full" style={{ marginBottom: '12px', height: '56px' }} onClick={() => { promptToInstall(); setShowPWAPrompt(false); setIsSignUp(false); setIsLogin(true); }}>
+                            Instalar Aplicativo
+                        </button>
+                        <button type="button" className="btn-ghost w-full" style={{ height: '56px' }} onClick={() => { localStorage.setItem('pwa_declined', 'true'); setShowPWAPrompt(false); setIsSignUp(false); setIsLogin(true); alert('Você pode instalar a qualquer momento pelo menu Configurações.'); }}>
+                            Não, obrigado
+                        </button>
                     </div>
                 </div>
             )}

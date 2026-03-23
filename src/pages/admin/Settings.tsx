@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Building, MapPin, Globe, Save, CheckCircle2, Star, FileText, Package } from 'lucide-react';
+import { Building, MapPin, Globe, Save, CheckCircle2, Star, FileText, Package, Smartphone } from 'lucide-react';
 import StandardCard from '../../components/ui/StandardCard';
+import { usePWA } from '../../contexts/PWAContext';
 import { sanitizeInput, validateFileUpload, generateSecureFileName } from '../../lib/security';
 import { maskCEP, maskCNPJ } from '../../lib/masks';
 
 const AdminSettings = ({ profile }: { profile: any }) => {
+    const { isInstallable, promptToInstall } = usePWA();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [settings, setSettings] = useState({
@@ -217,6 +219,20 @@ const AdminSettings = ({ profile }: { profile: any }) => {
                             <li className="premium-link"><Package size={14} color="var(--primary)" /> Solicitar Personalização</li>
                         </ul>
                     </StandardCard>
+
+                    {isInstallable && (
+                        <StandardCard title="Aplicativo PedObra" subtitle="Instale no seu dispositivo local.">
+                            <div style={{ textAlign: 'center', padding: '8px 0' }}>
+                                <Smartphone size={32} color="var(--primary)" style={{ margin: '0 auto 12px' }} />
+                                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                                    Tenha acesso rápido diretamente da sua tela inicial, e receba notificações native-like.
+                                </p>
+                                <button type="button" className="btn-main highlight-glow w-full" onClick={promptToInstall}>
+                                    Instalar Agora
+                                </button>
+                            </div>
+                        </StandardCard>
+                    )}
                 </div>
             </div>
 
