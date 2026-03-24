@@ -251,21 +251,63 @@ const SupplierFormPage = () => {
             </form>
 
             <style>{`
-                .catalog-form-view { max-width: 860px; margin: 0 auto; }
+                .catalog-form-view { max-width: 860px; margin: 0 auto; padding-bottom: 80px; }
                 .form-header { margin-bottom: 40px; display: flex; flex-direction: column; gap: 24px; }
                 .btn-back { background: transparent; border: none; color: var(--text-muted); display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0; }
-                .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+                
+                .form-grid { 
+                    display: grid; 
+                    grid-template-columns: 1fr 1fr; 
+                    gap: 20px 24px; 
+                }
+                
                 .full-width { grid-column: span 2; }
-                .input-field label { display: block; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-                .input-wrapper { position: relative; display: flex; align-items: center; }
-                .input-icon { position: absolute; left: 16px; color: var(--text-muted); }
-                .input-field input, .input-field select { width: 100%; height: 44px; padding: 0 16px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; outline: none; }
-                .input-wrapper input { padding-left: 48px !important; }
+                
+                .input-field {
+                    display: flex;
+                    flex-direction: column;
+                    min-width: 0; /* Prevents grid blowout */
+                }
+                
+                .input-field label { 
+                    display: block; 
+                    font-size: 10px; 
+                    font-weight: 800; 
+                    color: var(--text-muted); 
+                    text-transform: uppercase; 
+                    letter-spacing: 0.5px; 
+                    margin-bottom: 8px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                
+                .input-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
+                .input-icon { position: absolute; left: 14px; color: var(--text-muted); pointer-events: none; }
+                
+                .input-field input, .input-field select { 
+                    width: 100%; 
+                    height: 48px; 
+                    padding: 0 16px; 
+                    background: var(--bg-input); 
+                    border: 1px solid var(--border); 
+                    border-radius: 12px; 
+                    color: var(--text-primary); 
+                    font-size: 14px; 
+                    outline: none; 
+                    transition: border-color 0.2s;
+                }
+                
+                .input-wrapper input { padding-left: 44px !important; }
+                
+                .input-field input:focus, .input-field select:focus {
+                    border-color: var(--primary);
+                }
                 
                 .custom-toggle { 
-                    width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 10px;
-                    padding: 0 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-input);
-                    color: var(--text-muted); font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.3s;
+                    width: 100%; height: 48px; display: flex; align-items: center; justify-content: center; gap: 10px;
+                    padding: 0 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-input);
+                    color: var(--text-muted); font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.3s;
                 }
                 .custom-toggle.active { background: var(--primary-glow); border-color: var(--primary); color: var(--primary); }
                 
@@ -273,7 +315,19 @@ const SupplierFormPage = () => {
                 @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
                 .form-actions-sticky { display: flex; justify-content: flex-end; gap: 16px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
-                .btn-save { background: var(--primary); color: var(--bg-card); height: 44px; padding: 0 28px; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+                .btn-save { background: var(--primary); color: var(--bg-card); height: 48px; padding: 0 32px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(39, 201, 140, 0.2); }
+
+                @media (max-width: 640px) {
+                    .catalog-form-view { padding: 0 4px; }
+                    .form-grid { 
+                        grid-template-columns: 1fr 1fr; /* Keep 2 columns but with better sizing */
+                        gap: 16px 12px; 
+                    }
+                    .input-field label { font-size: 9px; letter-spacing: 0; }
+                    .input-field input, .input-field select, .custom-toggle, .btn-save { height: 46px; border-radius: 10px; }
+                    .form-actions-sticky { flex-direction: column-reverse; }
+                    .btn-save, .btn-ghost { width: 100%; height: 52px; }
+                }
             `}</style>
         </div>
     );
