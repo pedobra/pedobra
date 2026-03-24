@@ -628,7 +628,9 @@ const OrderViewPage = () => {
                     .details-table { table-layout: fixed; width: 100%; }
                     .details-table th, .details-table td { padding: 8px 4px; font-size: 11px; word-wrap: break-word; overflow-wrap: break-word; }
                     .details-table th { font-size: 9px; letter-spacing: -0.5px; text-align: center; }
-                    .item-cell { flex-direction: column; align-items: flex-start; gap: 4px; }
+                    .details-table th:first-child, .details-table td:first-child { text-align: left !important; }
+                    .details-table th:not(:first-child), .details-table td:not(:first-child) { text-align: center !important; }
+                    .item-cell { flex-direction: column; align-items: flex-start; gap: 4px; text-align: left; }
                     .hint-cell { text-align: center; padding-right: 2px; }
                     .hint-col { text-align: center !important; }
                     
