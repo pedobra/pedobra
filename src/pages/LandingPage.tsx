@@ -155,7 +155,7 @@ const LandingPage = () => {
             type: "medio",
             icon: <Construction size={24} />, 
             title: "Evite desperdício de material", 
-            desc: "Catálogo unificado e inventário automatizado para evitar que materiais sumam sem explicação." 
+            desc: "Catálogo unificado para evitar que materiais sumam sem explicação e de fácil importação por planilhas." 
         },
         { 
             type: "medio",
