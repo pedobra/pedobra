@@ -14,6 +14,7 @@ export interface CompanySettings {
     email?: string;
     whatsapp?: string;
     instagram?: string;
+    website?: string;
     logo_url?: string;
     pdf_show_site_address?: boolean;
 }
@@ -103,6 +104,7 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
         [settings.address_neighborhood, settings.address_city, settings.address_state].filter(Boolean).join(' - '),
         settings.address_cep ? `CEP: ${settings.address_cep}` : '',
         settings.email ? `E-mail: ${settings.email}` : '',
+        settings.website ? `Site: ${settings.website}` : '',
         settings.whatsapp ? `WhatsApp: ${settings.whatsapp}` : '',
         settings.instagram ? `Instagram: ${settings.instagram}` : ''
     ].filter(Boolean);

@@ -22,6 +22,7 @@ const AdminSettings = ({ profile }: { profile: any }) => {
         email: '',
         whatsapp: '',
         instagram: '',
+        website: '',
         logo_url: '',
         pdf_show_site_address: true,
         allow_custom_materials_global: false
@@ -65,6 +66,7 @@ const AdminSettings = ({ profile }: { profile: any }) => {
                 company_name: sanitizeInput(settings.company_name),
                 address_street: sanitizeInput(settings.address_street),
                 address_neighborhood: sanitizeInput(settings.address_neighborhood),
+                website: sanitizeInput(settings.website || ''),
                 updated_at: new Date().toISOString()
             };
 
@@ -195,6 +197,14 @@ const AdminSettings = ({ profile }: { profile: any }) => {
                                     <label>E-mail Corporativo</label>
                                     <input type="email" className="form-input" value={settings.email} onChange={e => setSettings({...settings, email:e.target.value})} placeholder="exemplo@empresa.com.br" />
                                 </div>
+                            </div>
+                            <div className="form-row">
+                                <div className="form-group flex-1">
+                                    <label>Website / Site</label>
+                                    <input type="text" className="form-input" value={settings.website} onChange={e => setSettings({...settings, website: e.target.value})} placeholder="www.suaempresa.com.br" />
+                                </div>
+                            </div>
+                            <div className="form-row">
                                 <div className="form-group flex-1">
                                     <label>WhatsApp</label>
                                     <input type="text" className="form-input" value={settings.whatsapp} onChange={e => setSettings({...settings, whatsapp: maskPhone(e.target.value)})} placeholder="(00) 00000-0000" />
