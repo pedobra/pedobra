@@ -11,6 +11,9 @@ export interface CompanySettings {
     address_city?: string;
     address_state?: string;
     address_cep?: string;
+    email?: string;
+    whatsapp?: string;
+    instagram?: string;
     logo_url?: string;
     pdf_show_site_address?: boolean;
 }
@@ -46,13 +49,11 @@ function getOrderRef(order: any): string {
 }
 
 export async function generateOrderPDF(order: any, requestedByName?: string) {
-    const [settingsRes, userRes] = await Promise.all([
-        supabase.from('company_settings').select('*').single(),
-        supabase.auth.getUser()
+    const [settingsRes] = await Promise.all([
+        supabase.from('company_settings').select('*').single()
     ]);
 
     const settings: CompanySettings = settingsRes.data || { company_name: 'PedObra' };
-    const adminEmail = userRes.data.user?.email || '—';
 
     const doc = new jsPDF({ unit: 'mm', format: 'a4' }) as any;
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -71,6 +72,8 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
     const displayStatus = (statusMap[order.status] || order.status).toUpperCase();
     const isNew = order.status === 'new' || order.status === 'novo';
 
+    // Seção Superior: Logo + Dados da Empresa (Lado Esquerdo, 50%)
+    let currentY = 12;
     if (settings.logo_url) {
         let finalLogoUrl = settings.logo_url;
         if (!settings.logo_url.startsWith('http') && !settings.logo_url.startsWith('data:')) {
@@ -79,29 +82,53 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
         }
 
         const imgData = await loadImageAsBase64(finalLogoUrl);
-        if (imgData) try { doc.addImage(imgData.data, imgData.format, margin, 12, 40, 20, undefined, 'FAST'); } catch (e) { console.error('PDF Logo:', e); }
+        if (imgData) try { doc.addImage(imgData.data, imgData.format, margin, currentY, 35, 15, undefined, 'FAST'); } catch (e) { console.error('PDF Logo:', e); }
+        currentY += 20;
     } else {
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(18);
-        doc.setTextColor(0, 0, 0);
-        doc.text(settings.company_name, margin, 25);
+        doc.setFontSize(14);
+        doc.text(settings.company_name, margin, currentY + 5);
+        currentY += 10;
     }
 
+    // Dados da Empresa (Blocado à esquerda)
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(60, 60, 60);
+    
+    const companyLines = [
+        settings.company_name !== 'PedObra' ? settings.company_name : '',
+        settings.cnpj ? `CNPJ: ${settings.cnpj}` : '',
+        [settings.address_street, settings.address_number].filter(Boolean).join(', '),
+        [settings.address_neighborhood, settings.address_city, settings.address_state].filter(Boolean).join(' - '),
+        settings.address_cep ? `CEP: ${settings.address_cep}` : '',
+        settings.email ? `E-mail: ${settings.email}` : '',
+        settings.whatsapp ? `WhatsApp: ${settings.whatsapp}` : '',
+        settings.instagram ? `Instagram: ${settings.instagram}` : ''
+    ].filter(Boolean);
+
+    companyLines.forEach(line => {
+        doc.text(line, margin, currentY);
+        currentY += 4.2;
+    });
+
+    // Seção Superior Direita: Info do Pedido
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(20);
+    doc.setFontSize(22);
     doc.setTextColor(0, 0, 0);
     doc.text('PEDIDO', pageWidth - margin, 20, { align: 'right' });
 
-    doc.setFontSize(9);
+    doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     doc.text(`Nº ${ref}`, pageWidth - margin, 28, { align: 'right' });
-    doc.text(`Status: ${displayStatus}`, pageWidth - margin, 33, { align: 'right' });
-    doc.text(`Data: ${createdAt}`, pageWidth - margin, 38, { align: 'right' });
-    doc.text(`Solicitante: ${creator}`, pageWidth - margin, 43, { align: 'right' });
+    doc.text(`Status: ${displayStatus}`, pageWidth - margin, 34, { align: 'right' });
+    doc.text(`Data: ${createdAt}`, pageWidth - margin, 40, { align: 'right' });
+    doc.text(`Solicitante: ${creator}`, pageWidth - margin, 46, { align: 'right' });
 
-    let nextY = 48;
+    let nextY = Math.max(currentY + 5, 52);
     if (order.sites?.name) {
         doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
         doc.text(`Obra: ${order.sites.name}`, pageWidth - margin, nextY, { align: 'right' });
         nextY += 5;
 
@@ -110,7 +137,7 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
             if (siteAddress && typeof siteAddress === 'string') {
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(8);
-                doc.setTextColor(60, 60, 60);
+                doc.setTextColor(100, 100, 100);
                 doc.text(siteAddress, pageWidth - margin, nextY, { align: 'right' });
                 nextY += 6;
             }
@@ -140,20 +167,7 @@ export async function generateOrderPDF(order: any, requestedByName?: string) {
         alternateRowStyles: { fillColor: [242, 242, 242] },
         columnStyles: { 0: { cellWidth: 10, halign: 'center' }, 3: { halign: 'center' }, 4: { halign: 'center' }, 5: { halign: 'right' }, 6: { halign: 'right', fontStyle: 'bold' } },
         didDrawPage: () => {
-            // FOOTER - Lado Esquerdo (Admin + Endereço Empresa)
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(7.5);
-            doc.setTextColor(110, 110, 110);
-            
-            const fY = pageHeight - 10;
-            const companyAddr = [settings.address_street, settings.address_number, settings.address_neighborhood, settings.address_city, settings.address_state, settings.address_cep].filter(Boolean).join(', ');
-            
-            doc.setFont('helvetica', 'bold');
-            doc.text(`${adminEmail}`, margin, fY - 3);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`${settings.company_name} — ${companyAddr}`, margin, fY);
-            
-            // Lado direito será desenhado ao final para evitar sobreposição
+            // FOOTER - Limpo (Apenas URL e Paginação)
         }
     });
 

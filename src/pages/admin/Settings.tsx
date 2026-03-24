@@ -4,7 +4,7 @@ import { Building, MapPin, Globe, Save, CheckCircle2, Star, FileText, Package, S
 import StandardCard from '../../components/ui/StandardCard';
 import { usePWA } from '../../contexts/PWAContext';
 import { sanitizeInput, validateFileUpload, generateSecureFileName } from '../../lib/security';
-import { maskCEP, maskCNPJ } from '../../lib/masks';
+import { maskCEP, maskCNPJ, maskPhone } from '../../lib/masks';
 
 const AdminSettings = ({ profile }: { profile: any }) => {
     const { isInstallable, promptToInstall } = usePWA();
@@ -19,7 +19,10 @@ const AdminSettings = ({ profile }: { profile: any }) => {
         address_neighborhood: '',
         address_city: '',
         address_state: '',
-        logo_url: '', // Agora vai guardar o path do arquivo (ex: "uuid.png")
+        email: '',
+        whatsapp: '',
+        instagram: '',
+        logo_url: '',
         pdf_show_site_address: true,
         allow_custom_materials_global: false
     });
@@ -38,7 +41,8 @@ const AdminSettings = ({ profile }: { profile: any }) => {
                 ...settings, 
                 ...data,
                 cnpj: maskCNPJ(data.cnpj || ''),
-                address_cep: maskCEP(data.address_cep || '')
+                address_cep: maskCEP(data.address_cep || ''),
+                whatsapp: maskPhone(data.whatsapp || '')
             });
             if (data.logo_url && !data.logo_url.startsWith('data:')) {
                 // É um caminho de storage privado, precisamos gerar a Signed URL
@@ -167,12 +171,31 @@ const AdminSettings = ({ profile }: { profile: any }) => {
                         </div>
                         <div className="form-row">
                              <div className="form-group flex-1">
+                                <label>Bairro</label>
+                                <input type="text" className="form-input" value={settings.address_neighborhood} onChange={e => setSettings({...settings, address_neighborhood:e.target.value})} />
+                            </div>
+                             <div className="form-group flex-1">
                                 <label>Cidade</label>
                                 <input type="text" className="form-input" value={settings.address_city} readOnly />
                             </div>
                             <div className="form-group flex-1">
                                 <label>Estado</label>
                                 <input type="text" className="form-input" value={settings.address_state} readOnly />
+                            </div>
+                        </div>
+
+                        <div className="form-row">
+                            <div className="form-group flex-1">
+                                <label>E-mail Corporativo</label>
+                                <input type="email" className="form-input" value={settings.email} onChange={e => setSettings({...settings, email:e.target.value})} placeholder="exemplo@empresa.com.br" />
+                            </div>
+                            <div className="form-group flex-1">
+                                <label>WhatsApp</label>
+                                <input type="text" className="form-input" value={settings.whatsapp} onChange={e => setSettings({...settings, whatsapp: maskPhone(e.target.value)})} placeholder="(00) 00000-0000" />
+                            </div>
+                            <div className="form-group flex-1">
+                                <label>Instagram</label>
+                                <input type="text" className="form-input" value={settings.instagram} onChange={e => setSettings({...settings, instagram: e.target.value})} placeholder="@suaempresa" />
                             </div>
                         </div>
                     </StandardCard>
