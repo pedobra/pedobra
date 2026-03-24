@@ -144,127 +144,137 @@ const AdminSettings = ({ profile }: { profile: any }) => {
 
             <div className="settings-grid">
                 <div className="main-column">
-                    <StandardCard title="Dados da Empresa" subtitle="Estas informações aparecerão nos documentos e PDFs gerados.">
-                        <div className="form-group">
-                            <label><Building size={14} /> Nome da Organização / Razão Social</label>
-                            <input type="text" className="form-input" value={settings.company_name} onChange={e => setSettings({...settings, company_name:e.target.value})} placeholder="Ex: Engenharia & Construções LTDA" />
-                        </div>
-                        <div className="form-row">
-                             <div className="form-group flex-1">
-                                 <label><Globe size={14} /> CNPJ</label>
-                                 <input type="text" className="form-input" value={settings.cnpj} onChange={e => setSettings({...settings, cnpj: maskCNPJ(e.target.value)})} placeholder="00.000.000/0001-00" />
-                             </div>
-                        </div>
+                    <div className="card-data">
+                        <StandardCard title="Dados da Empresa" subtitle="Estas informações aparecerão nos documentos e PDFs gerados.">
+                            <div className="form-group">
+                                <label><Building size={14} /> Nome da Organização / Razão Social</label>
+                                <input type="text" className="form-input" value={settings.company_name} onChange={e => setSettings({...settings, company_name:e.target.value})} placeholder="Ex: Engenharia & Construções LTDA" />
+                            </div>
+                            <div className="form-row">
+                                 <div className="form-group flex-1">
+                                     <label><Globe size={14} /> CNPJ</label>
+                                     <input type="text" className="form-input" value={settings.cnpj} onChange={e => setSettings({...settings, cnpj: maskCNPJ(e.target.value)})} placeholder="00.000.000/0001-00" />
+                                 </div>
+                            </div>
 
-                        <div className="form-row">
-                            <div className="form-group flex-1">
-                                <label><MapPin size={14} /> CEP</label>
-                                <input type="text" className="form-input" value={settings.address_cep} onChange={e => setSettings({...settings, address_cep: maskCEP(e.target.value)})} onBlur={handleCEPBlur} placeholder="00000-000" />
+                            <div className="form-row">
+                                <div className="form-group flex-1">
+                                    <label><MapPin size={14} /> CEP</label>
+                                    <input type="text" className="form-input" value={settings.address_cep} onChange={e => setSettings({...settings, address_cep: maskCEP(e.target.value)})} onBlur={handleCEPBlur} placeholder="00000-000" />
+                                </div>
+                                <div className="form-group flex-3">
+                                    <label>Logradouro</label>
+                                    <input type="text" className="form-input" value={settings.address_street} onChange={e => setSettings({...settings, address_street:e.target.value})} />
+                                </div>
                             </div>
-                            <div className="form-group flex-3">
-                                <label>Logradouro</label>
-                                <input type="text" className="form-input" value={settings.address_street} onChange={e => setSettings({...settings, address_street:e.target.value})} />
-                            </div>
-                        </div>
 
-                        <div className="form-row">
-                            <div className="form-group flex-1">
-                                <label>Número</label>
-                                <input type="text" className="form-input" value={settings.address_number} onChange={e => setSettings({...settings, address_number:e.target.value})} />
+                            <div className="form-row">
+                                <div className="form-group flex-1">
+                                    <label>Número</label>
+                                    <input type="text" className="form-input" value={settings.address_number} onChange={e => setSettings({...settings, address_number:e.target.value})} />
+                                </div>
+                                <div className="form-group flex-2">
+                                    <label>Bairro</label>
+                                    <input type="text" className="form-input" value={settings.address_neighborhood} onChange={e => setSettings({...settings, address_neighborhood:e.target.value})} />
+                                </div>
                             </div>
-                            <div className="form-group flex-2">
-                                <label>Bairro</label>
-                                <input type="text" className="form-input" value={settings.address_neighborhood} onChange={e => setSettings({...settings, address_neighborhood:e.target.value})} />
-                            </div>
-                        </div>
 
-                        <div className="form-row">
-                             <div className="form-group flex-3">
-                                <label>Cidade</label>
-                                <input type="text" className="form-input" value={settings.address_city} readOnly />
+                            <div className="form-row">
+                                 <div className="form-group flex-3">
+                                    <label>Cidade</label>
+                                    <input type="text" className="form-input" value={settings.address_city} readOnly />
+                                </div>
+                                <div className="form-group flex-1">
+                                    <label>Estado</label>
+                                    <input type="text" className="form-input" value={settings.address_state} readOnly />
+                                </div>
                             </div>
-                            <div className="form-group flex-1">
-                                <label>Estado</label>
-                                <input type="text" className="form-input" value={settings.address_state} readOnly />
-                            </div>
-                        </div>
 
-                        <div className="form-row">
-                            <div className="form-group flex-1">
-                                <label>E-mail Corporativo</label>
-                                <input type="email" className="form-input" value={settings.email} onChange={e => setSettings({...settings, email:e.target.value})} placeholder="exemplo@empresa.com.br" />
+                            <div className="form-row">
+                                <div className="form-group flex-1">
+                                    <label>E-mail Corporativo</label>
+                                    <input type="email" className="form-input" value={settings.email} onChange={e => setSettings({...settings, email:e.target.value})} placeholder="exemplo@empresa.com.br" />
+                                </div>
+                                <div className="form-group flex-1">
+                                    <label>WhatsApp</label>
+                                    <input type="text" className="form-input" value={settings.whatsapp} onChange={e => setSettings({...settings, whatsapp: maskPhone(e.target.value)})} placeholder="(00) 00000-0000" />
+                                </div>
+                                <div className="form-group flex-1">
+                                    <label>Instagram</label>
+                                    <input type="text" className="form-input" value={settings.instagram} onChange={e => setSettings({...settings, instagram: e.target.value})} placeholder="@suaempresa" />
+                                </div>
                             </div>
-                            <div className="form-group flex-1">
-                                <label>WhatsApp</label>
-                                <input type="text" className="form-input" value={settings.whatsapp} onChange={e => setSettings({...settings, whatsapp: maskPhone(e.target.value)})} placeholder="(00) 00000-0000" />
-                            </div>
-                            <div className="form-group flex-1">
-                                <label>Instagram</label>
-                                <input type="text" className="form-input" value={settings.instagram} onChange={e => setSettings({...settings, instagram: e.target.value})} placeholder="@suaempresa" />
-                            </div>
-                        </div>
-                    </StandardCard>
+                        </StandardCard>
+                    </div>
 
-                    <StandardCard title="Preferências de Pedidos" subtitle="Controle como as solicitações são feitas em campo.">
-                         <div className="toggle-item" style={{ marginBottom: '16px' }}>
-                            <div>
-                                <strong>Permitir itens fora do catálogo</strong>
-                                <p>Habilita o botão "+ Outro Item" para que o operário solicite materiais não cadastrados.</p>
+                    <div className="card-prefs">
+                        <StandardCard title="Preferências de Pedidos" subtitle="Controle como as solicitações são feitas em campo.">
+                             <div className="toggle-item" style={{ marginBottom: '16px' }}>
+                                <div>
+                                    <strong>Permitir itens fora do catálogo</strong>
+                                    <p>Habilita o botão "+ Outro Item" para que o operário solicite materiais não cadastrados.</p>
+                                </div>
+                                <input type="checkbox" className="ios-toggle" checked={settings.allow_custom_materials_global} onChange={e => setSettings({...settings, allow_custom_materials_global: e.target.checked})} />
                             </div>
-                            <input type="checkbox" className="ios-toggle" checked={settings.allow_custom_materials_global} onChange={e => setSettings({...settings, allow_custom_materials_global: e.target.checked})} />
-                        </div>
-                        <div className="toggle-item">
-                            <div>
-                                <strong>Exibir endereço da obra nos pedidos</strong>
-                                <p>Inclui o endereço completo da obra no cabeçalho dos PDFs.</p>
+                            <div className="toggle-item">
+                                <div>
+                                    <strong>Exibir endereço da obra nos pedidos</strong>
+                                    <p>Inclui o endereço completo da obra no cabeçalho dos PDFs.</p>
+                                </div>
+                                <input type="checkbox" className="ios-toggle" checked={settings.pdf_show_site_address} onChange={e => setSettings({...settings, pdf_show_site_address: e.target.checked})} />
                             </div>
-                            <input type="checkbox" className="ios-toggle" checked={settings.pdf_show_site_address} onChange={e => setSettings({...settings, pdf_show_site_address: e.target.checked})} />
-                        </div>
-                    </StandardCard>
+                        </StandardCard>
+                    </div>
                 </div>
 
                 <div className="side-column">
-                    <StandardCard title="Identidade Visual" subtitle="Faça upload do logotipo da empresa.">
-                        <div className="logo-upload-container">
-                            <div className="logo-preview">
-                                {signedLogoUrl ? (
-                                    <img src={signedLogoUrl} alt="Logo da Empresa" />
-                                ) : (
-                                    <div className="logo-placeholder">Sem Logo</div>
-                                )}
+                    <div className="card-logo">
+                        <StandardCard title="Identidade Visual" subtitle="Faça upload do logotipo da empresa.">
+                            <div className="logo-upload-container">
+                                <div className="logo-preview">
+                                    {signedLogoUrl ? (
+                                        <img src={signedLogoUrl} alt="Logo da Empresa" />
+                                    ) : (
+                                        <div className="logo-placeholder">Sem Logo</div>
+                                    )}
+                                </div>
+                                <label className="btn-secondary w-full" style={{ textAlign: 'center', cursor: 'pointer', display: 'block' }}>
+                                    Selecionar Nova Imagem
+                                    <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleLogoChange} />
+                                </label>
                             </div>
-                            <label className="btn-secondary w-full" style={{ textAlign: 'center', cursor: 'pointer', display: 'block' }}>
-                                Selecionar Nova Imagem
-                                <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleLogoChange} />
-                            </label>
-                        </div>
-                    </StandardCard>
+                        </StandardCard>
+                    </div>
 
-                    <StandardCard title="Suporte Integrado" subtitle="Precisa de ajuda?">
-                        <ul className="support-list">
-                            <li><Star size={14} color="var(--primary)" /> Central de Ajuda</li>
-                            <li><FileText size={14} color="var(--primary)" /> Documentação API</li>
-                            <li className="premium-link"><Package size={14} color="var(--primary)" /> Solicitar Personalização</li>
-                        </ul>
-                    </StandardCard>
+                    <div className="card-support">
+                        <StandardCard title="Suporte Integrado" subtitle="Precisa de ajuda?">
+                            <ul className="support-list">
+                                <li><Star size={14} color="var(--primary)" /> Central de Ajuda</li>
+                                <li><FileText size={14} color="var(--primary)" /> Documentação API</li>
+                                <li className="premium-link"><Package size={14} color="var(--primary)" /> Solicitar Personalização</li>
+                            </ul>
+                        </StandardCard>
+                    </div>
 
-                    <StandardCard title="Aplicativo PedObra" subtitle="Instale no seu dispositivo local.">
-                        <div style={{ textAlign: 'center', padding: '8px 0' }}>
-                            <Smartphone size={32} color="var(--primary)" style={{ margin: '0 auto 12px' }} />
-                            <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
-                                Tenha acesso rápido diretamente da sua tela inicial, e receba notificações native-like.
-                            </p>
-                            <button type="button" className="btn-main highlight-glow w-full" onClick={() => {
-                                if (isInstallable) {
-                                    promptToInstall();
-                                } else {
-                                    alert('O navegador não autorizou a via expressa (o aplicativo já deve estar instalado, ou em cache). Para reinstalar à força, clique nos "três pontinhos" no canto superior direito do seu navegador e escolha "Instalar Aplicativo".');
-                                }
-                            }}>
-                                Instalar Agora
-                            </button>
-                        </div>
-                    </StandardCard>
+                    <div className="card-install">
+                        <StandardCard title="Aplicativo PedObra" subtitle="Instale no seu dispositivo local.">
+                            <div style={{ textAlign: 'center', padding: '8px 0' }}>
+                                <Smartphone size={32} color="var(--primary)" style={{ margin: '0 auto 12px' }} />
+                                <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+                                    Tenha acesso rápido diretamente da sua tela inicial, e receba notificações native-like.
+                                </p>
+                                <button type="button" className="btn-main highlight-glow w-full" onClick={() => {
+                                    if (isInstallable) {
+                                        promptToInstall();
+                                    } else {
+                                        alert('O navegador não autorizou a via expressa (o aplicativo já deve estar instalado, ou em cache). Para reinstalar à força, clique nos "três pontinhos" no canto superior direito do seu navegador e escolha "Instalar Aplicativo".');
+                                    }
+                                }}>
+                                    Instalar Agora
+                                </button>
+                            </div>
+                        </StandardCard>
+                    </div>
                 </div>
             </div>
 
@@ -304,8 +314,13 @@ const AdminSettings = ({ profile }: { profile: any }) => {
                     .settings-view { gap: 24px; }
                     
                     .view-header { flex-direction: column; align-items: stretch; gap: 16px; }
-                    .main-column { width: 100%; }
-                    .side-column { order: -1; } /* Upload logo primeiro no mobile */
+                    .main-column, .side-column { display: contents; }
+                    
+                    .card-logo { order: 1; }
+                    .card-data { order: 2; }
+                    .card-prefs { order: 3; }
+                    .card-support { order: 4; }
+                    .card-install { order: 5; }
                     
                     .toggle-item { padding: 12px; border-radius: 12px; }
                     
