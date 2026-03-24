@@ -150,31 +150,36 @@ const AdminSettings = ({ profile }: { profile: any }) => {
                             <input type="text" className="form-input" value={settings.company_name} onChange={e => setSettings({...settings, company_name:e.target.value})} placeholder="Ex: Engenharia & Construções LTDA" />
                         </div>
                         <div className="form-row">
-                            <div className="form-group flex-1">
-                                <label><Globe size={14} /> CNPJ</label>
-                                <input type="text" className="form-input" value={settings.cnpj} onChange={e => setSettings({...settings, cnpj: maskCNPJ(e.target.value)})} placeholder="00.000.000/0001-00" />
-                            </div>
+                             <div className="form-group flex-1">
+                                 <label><Globe size={14} /> CNPJ</label>
+                                 <input type="text" className="form-input" value={settings.cnpj} onChange={e => setSettings({...settings, cnpj: maskCNPJ(e.target.value)})} placeholder="00.000.000/0001-00" />
+                             </div>
+                        </div>
+
+                        <div className="form-row">
                             <div className="form-group flex-1">
                                 <label><MapPin size={14} /> CEP</label>
                                 <input type="text" className="form-input" value={settings.address_cep} onChange={e => setSettings({...settings, address_cep: maskCEP(e.target.value)})} onBlur={handleCEPBlur} placeholder="00000-000" />
                             </div>
-                        </div>
-                        <div className="form-row">
-                             <div className="form-group flex-3">
+                            <div className="form-group flex-3">
                                 <label>Logradouro</label>
                                 <input type="text" className="form-input" value={settings.address_street} onChange={e => setSettings({...settings, address_street:e.target.value})} />
                             </div>
+                        </div>
+
+                        <div className="form-row">
                             <div className="form-group flex-1">
                                 <label>Número</label>
                                 <input type="text" className="form-input" value={settings.address_number} onChange={e => setSettings({...settings, address_number:e.target.value})} />
                             </div>
-                        </div>
-                        <div className="form-row">
-                             <div className="form-group flex-1">
+                            <div className="form-group flex-2">
                                 <label>Bairro</label>
                                 <input type="text" className="form-input" value={settings.address_neighborhood} onChange={e => setSettings({...settings, address_neighborhood:e.target.value})} />
                             </div>
-                             <div className="form-group flex-1">
+                        </div>
+
+                        <div className="form-row">
+                             <div className="form-group flex-3">
                                 <label>Cidade</label>
                                 <input type="text" className="form-input" value={settings.address_city} readOnly />
                             </div>
@@ -290,11 +295,24 @@ const AdminSettings = ({ profile }: { profile: any }) => {
                 .support-list li:hover { color: var(--text-primary); }
                 .premium-link { font-weight: 700; color: var(--primary) !important; }
                 
-                .w-full { width: 100%; }
-
-                @media (max-width: 800px) {
-                    .settings-grid { grid-template-columns: 1fr; }
+                @media (max-width: 768px) {
+                    .settings-grid { grid-template-columns: 1fr; gap: 16px; }
+                    .form-group { margin-bottom: 0px; gap: 6px; }
+                    .form-row { margin-bottom: 12px; gap: 8px; }
+                    .flex-2 { flex: 2; }
+                    .flex-3 { flex: 3; }
+                    .settings-view { gap: 24px; }
+                    
+                    .view-header { flex-direction: column; align-items: stretch; gap: 16px; }
+                    .main-column { width: 100%; }
+                    .side-column { order: -1; } /* Upload logo primeiro no mobile */
+                    
+                    .toggle-item { padding: 12px; border-radius: 12px; }
+                    
+                    .StandardCard { padding: 20px 16px !important; }
+                    .StandardCard-header { margin-bottom: 16px !important; }
                 }
+                .w-full { width: 100%; }
             `}</style>
         </div>
     );
