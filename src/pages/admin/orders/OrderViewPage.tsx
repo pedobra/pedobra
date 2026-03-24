@@ -323,6 +323,7 @@ const OrderViewPage = () => {
                         </div>
                         <div className="timeline-horizontal">
                             <div className={`timeline-step ${order.created_at ? 'active' : ''}`}>
+                                <div className="step-line"></div>
                                 <div className="step-point"></div>
                                 <div className="step-info">
                                     <span className="step-label">Solicitado</span>
@@ -549,12 +550,13 @@ const OrderViewPage = () => {
                 .step-line {
                     position: absolute;
                     top: 5px;
-                    right: 50%;
+                    left: 50%;
                     width: 100%;
                     height: 2px;
                     background: var(--border);
                     z-index: 1;
                 }
+                .timeline-step:last-child .step-line { display: none; }
                 .timeline-step.active .step-point {
                     background: var(--primary);
                     box-shadow: 0 0 10px rgba(var(--primary-rgb), 0.4);
@@ -635,7 +637,7 @@ const OrderViewPage = () => {
                     .timeline-horizontal { flex-direction: column; align-items: flex-start; gap: 32px; }
                     .timeline-step { flex-direction: row; text-align: left; width: 100%; gap: 16px; justify-content: flex-start; }
                     .step-info { margin-top: 0; align-items: flex-start; }
-                    .step-line { width: 2px; height: calc(100% + 32px); top: 12px; right: auto; left: 5px; }
+                    .step-line { width: 2px; height: calc(100% + 32px); top: 12px; left: 5px; }
                     .timeline-step:last-child .step-line { display: none; }
                 }
             `}</style>
