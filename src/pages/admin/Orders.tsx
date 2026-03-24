@@ -162,7 +162,7 @@ const AdminOrders = () => {
                     <h1 className="page-title">Gestão de Pedidos</h1>
                     <p className="page-subtitle">Gerencie e autorize as solicitações de materiais de suas obras.</p>
                 </div>
-                <button className="btn-primary-mobile-top" onClick={() => navigate('/admin/orders/novo')}>
+                <button className="btn-primary btn-primary-mobile-top" onClick={() => navigate('/admin/orders/novo')}>
                     Novo Pedido
                 </button>
             </header>
@@ -319,8 +319,9 @@ const AdminOrders = () => {
                     .desktop-only { display: none; }
                     .filters-hub-premium { flex-direction: column; align-items: stretch; gap: 12px; padding: 12px; }
                     .search-group-main { min-width: 100%; }
-                    .date-filters-group { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-                    .date-input-wrapper { width: 100%; justify-content: space-between; }
+                    .date-filters-group { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+                    .date-input-wrapper { width: 100%; justify-content: space-between; padding: 0 8px; overflow: hidden; }
+                    .date-input-wrapper input { min-width: 0; width: 100%; flex: 1; text-align: right; }
                     .btn-clear-filters { grid-column: span 2; height: 40px; margin-top: 4px; }
                 }
 
