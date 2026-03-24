@@ -237,10 +237,14 @@ const OrderViewPage = () => {
                                             {order.status === 'new' && (
                                                 <td className="hint-cell">
                                                     {hint ? (
-                                                        <div className="price-tag">
-                                                            <Sparkles size={10} />
-                                                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(hint.unitValue)}
-                                                            <span className="sup">({hint.supplierName})</span>
+                                                        <div className="price-tag-wrapper">
+                                                            <div className="price-tag">
+                                                                <Sparkles size={10} />
+                                                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(hint.unitValue)}
+                                                            </div>
+                                                            <div className="supplier-hint-scroll">
+                                                                <span className="sup">({hint.supplierName})</span>
+                                                            </div>
                                                         </div>
                                                     ) : '—'}
                                                 </td>
@@ -447,8 +451,12 @@ const OrderViewPage = () => {
                 .total-label { font-size: 10px; font-weight: 850; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
                 .total-value { font-size: 20px; font-weight: 900; color: var(--primary); }
                 
-                .price-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(39,174,96,0.1); color: var(--status-approved); padding: 4px 10px; border-radius: 8px; font-weight: 700; font-family: var(--font-main); }
-                .sup { font-size: 10px; opacity: 0.7; font-weight: 400; margin-left: 4px; }
+                .hint-cell { text-align: center; }
+                .price-tag-wrapper { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+                .price-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(39,174,96,0.1); color: var(--status-approved); padding: 4px 10px; border-radius: 8px; font-weight: 700; font-family: var(--font-main); white-space: nowrap; }
+                .supplier-hint-scroll { max-width: 100%; overflow-x: auto; white-space: nowrap; scrollbar-width: none; -ms-overflow-style: none; padding-bottom: 2px; }
+                .supplier-hint-scroll::-webkit-scrollbar { display: none; }
+                .sup { font-size: 10px; opacity: 0.7; font-weight: 600; color: var(--text-muted); }
                 
                 .complementary-box { border-left: 4px solid var(--primary); }
                 .parent-box { border-left: 4px solid var(--text-muted); }
@@ -617,8 +625,10 @@ const OrderViewPage = () => {
                     /* Tabela Responsiva Sem Scroll Lateral */
                     .details-table { table-layout: fixed; width: 100%; }
                     .details-table th, .details-table td { padding: 8px 4px; font-size: 11px; word-wrap: break-word; overflow-wrap: break-word; }
-                    .details-table th { font-size: 9px; letter-spacing: -0.5px; }
+                    .details-table th { font-size: 9px; letter-spacing: -0.5px; text-align: center; }
                     .item-cell { flex-direction: column; align-items: flex-start; gap: 4px; }
+                    .hint-cell { text-align: center; padding-right: 2px; }
+                    .hint-col { text-align: center !important; }
                     
                     /* Linha do Tempo Vertical */
                     .order-timeline-container { padding: 20px; }
