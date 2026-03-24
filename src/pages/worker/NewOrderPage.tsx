@@ -24,8 +24,11 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
         material_id: '',
         name: '',
         quantity: '',
-        unit: 'un'
+        unit: 'un',
+        category: 'Outros'
     });
+    const [existingCategories, setExistingCategories] = useState<string[]>(['Estrutural', 'Elétrica', 'Hidráulica', 'Acabamento', 'Outros']);
+    const [existingUnits, setExistingUnits] = useState<string[]>(['un', 'kg', 't', 'm', 'm²', 'm³', 'L', 'cx', 'saco', 'rolo']);
     const [isCustom, setIsCustom] = useState(false);
     const [observations, setObservations] = useState('');
 
@@ -43,7 +46,16 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
 
     const fetchMaterials = async () => {
         const { data } = await supabase.from('materials').select('*').order('name');
-        if (data) setMaterials(data);
+        if (data) {
+            setMaterials(data);
+            
+            // Extract distinct patterns for suggestions
+            const cats = Array.from(new Set(data.map(m => m.category).filter(Boolean)));
+            const units = Array.from(new Set(data.map(m => m.unit).filter(Boolean)));
+            
+            if (cats.length > 0) setExistingCategories(Array.from(new Set([...['Estrutural', 'Elétrica', 'Hidráulica', 'Acabamento', 'Outros'], ...cats as string[]])));
+            if (units.length > 0) setExistingUnits(Array.from(new Set([...['un', 'kg', 't', 'm', 'm²', 'm³', 'L', 'cx', 'saco', 'rolo'], ...units as string[]])));
+        }
     };
 
     const handleAddItem = () => {
@@ -56,8 +68,8 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
             finalItem.unit = mat?.unit;
         }
 
-        setItems([...items, { ...finalItem, quantity: parseFloat(currentItem.quantity) }]);
-        setCurrentItem({ material_id: '', name: '', quantity: '', unit: 'un' });
+        setItems([...items, { ...finalItem, quantity: parseFloat(currentItem.quantity), isCustom }]);
+        setCurrentItem({ material_id: '', name: '', quantity: '', unit: 'un', category: 'Outros' });
         setSearchTerm('');
         setIsCustom(false);
         setShowResults(false);
@@ -71,16 +83,48 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
         if (items.length === 0) return;
         setLoading(true);
         try {
+            // 1. Process custom materials to add them to catalog first
+            const processedItems = await Promise.all(items.map(async item => {
+                if (item.isCustom) {
+                    const { data, error } = await supabase.from('materials').insert({
+                        name: item.name,
+                        category: item.category || 'Outros',
+                        unit: item.unit || 'un',
+                        organization_id: profile.organization_id
+                    }).select().single();
+                    
+                    if (error) {
+                        console.error('Erro ao cadastrar material:', error);
+                        // Fallback to item as is, but without material_id
+                        return { name: item.name, unit: item.unit, quantity: item.quantity };
+                    }
+                    
+                    return {
+                        material_id: data.id,
+                        name: data.name,
+                        unit: data.unit,
+                        quantity: item.quantity
+                    };
+                }
+                return {
+                    material_id: item.material_id,
+                    name: item.name,
+                    unit: item.unit,
+                    quantity: item.quantity
+                };
+            }));
+
+            // 2. Insert the actual order
             const { error } = await supabase.from('orders').insert({
                 site_id: profile.site_id,
                 user_id: profile.id,
-                items,
+                items: processedItems,
                 observations,
                 status: 'new'
             });
 
             if (error) throw error;
-            alert('Pedido enviado com sucesso!');
+            alert('Pedido enviado com sucesso! Novos materiais foram adicionados ao catálogo.');
             navigate('/dashboard');
         } catch (err: any) {
             alert('Erro: ' + err.message);
@@ -169,6 +213,43 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
                             </div>
                         </div>
 
+                        {isCustom && (
+                            <div className="custom-material-fields animate-fade-in" style={{ marginTop: '16px', border: '1.5px dashed var(--primary)', padding: '16px', borderRadius: '16px', background: 'rgba(var(--primary-rgb), 0.03)' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                    <span style={{ fontSize: '12px', fontWeight: 900, color: 'var(--primary)', textTransform: 'uppercase' }}>Cadastrar Novo Material</span>
+                                    <button onClick={() => setIsCustom(false)} style={{ background: 'transparent', border: 'none', color: 'var(--status-denied)', fontSize: '11px', fontWeight: 700 }}>CANCELAR</button>
+                                </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                    <div className="input-field-group">
+                                        <label className="section-label" style={{ fontSize: '10px' }}>Categoria</label>
+                                        <select 
+                                            className="worker-input-smart compact" 
+                                            value={currentItem.category}
+                                            onChange={e => setCurrentItem({ ...currentItem, category: e.target.value })}
+                                            style={{ height: '44px', paddingLeft: '12px', fontSize: '13px' }}
+                                        >
+                                            {existingCategories.map(cat => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="input-field-group">
+                                        <label className="section-label" style={{ fontSize: '10px' }}>Unidade</label>
+                                        <select 
+                                            className="worker-input-smart compact" 
+                                            value={currentItem.unit}
+                                            onChange={e => setCurrentItem({ ...currentItem, unit: e.target.value })}
+                                            style={{ height: '44px', paddingLeft: '12px', fontSize: '13px' }}
+                                        >
+                                            {existingUnits.map(u => (
+                                                <option key={u} value={u}>{u}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="qty-row-modern" style={{ marginTop: '16px' }}>
                             <div className="qty-input-group">
                                 <label className="section-label">Qtd</label>
@@ -176,6 +257,7 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
                                     type="number" 
                                     className="worker-input-smart qty" 
                                     placeholder="0" 
+                                    inputMode="decimal"
                                     value={currentItem.quantity}
                                     onChange={e => setCurrentItem({ ...currentItem, quantity: e.target.value })}
                                 />
@@ -196,6 +278,7 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
                                     <div className="item-main">
                                         <Package size={14} />
                                         <span>{it.quantity}{it.unit} • {it.name}</span>
+                                        {it.isCustom && <span className="custom-badge">NOVO</span>}
                                     </div>
                                     <button className="delete-btn-mini" onClick={() => handleRemoveItem(idx)}>
                                         <Trash2 size={16} />
@@ -260,6 +343,7 @@ const NewOrderPage = ({ profile }: { profile: any }) => {
                 
                 .added-item-row { height: 44px; background: rgba(59, 130, 246, 0.05); border: 1px solid var(--border); padding: 0 12px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; color: var(--text-primary); }
                 .item-main { display: flex; align-items: center; gap: 8px; }
+                .item-main .custom-badge { font-size: 8px; background: var(--primary); color: var(--bg-dark); padding: 2px 4px; border-radius: 4px; margin-left: 4px; font-weight: 900; vertical-align: middle; }
                 .empty-items { padding: 20px; text-align: center; color: var(--text-muted); border: 1px dashed var(--border); border-radius: 12px; font-size: 13px; font-weight: 600; }
                 .delete-btn-mini { color: var(--status-denied); background: transparent; border: none; padding: 8px; }
                 
