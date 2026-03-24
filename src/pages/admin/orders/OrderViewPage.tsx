@@ -609,9 +609,24 @@ const OrderViewPage = () => {
                     .view-header { flex-direction: column; align-items: stretch; gap: 16px; }
                     .header-info { width: 100%; }
                     .header-actions { flex-wrap: wrap; width: 100%; justify-content: flex-start; }
-                    .order-timeline-container { overflow-x: auto; padding-bottom: 12px; }
-                    .timeline-horizontal { min-width: 600px; } /* Ensures timeline nodes dont crush together */
-                    .details-table-wrapper { overflow-x: auto; width: 100%; }
+                }
+
+                @media (max-width: 768px) {
+                    .order-view-page { width: 100%; max-width: 100vw; overflow-x: clip; }
+                    
+                    /* Tabela Responsiva Sem Scroll Lateral */
+                    .details-table { table-layout: fixed; width: 100%; }
+                    .details-table th, .details-table td { padding: 8px 4px; font-size: 11px; word-wrap: break-word; overflow-wrap: break-word; }
+                    .details-table th { font-size: 9px; letter-spacing: -0.5px; }
+                    .item-cell { flex-direction: column; align-items: flex-start; gap: 4px; }
+                    
+                    /* Linha do Tempo Vertical */
+                    .order-timeline-container { padding: 20px; }
+                    .timeline-horizontal { flex-direction: column; align-items: flex-start; gap: 32px; }
+                    .timeline-step { flex-direction: row; text-align: left; width: 100%; gap: 16px; justify-content: flex-start; }
+                    .step-info { margin-top: 0; align-items: flex-start; }
+                    .step-line { width: 2px; height: calc(100% + 32px); top: 12px; right: auto; left: 5px; }
+                    .timeline-step:last-child .step-line { display: none; }
                 }
             `}</style>
         </div>
