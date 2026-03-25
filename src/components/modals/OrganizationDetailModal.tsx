@@ -224,7 +224,7 @@ const OrganizationDetailModal = ({ organization, onClose, onUpdate }: Organizati
                                             onClick={handleUpdateTrial}
                                             disabled={loading}
                                             className="btn-primary w-full" 
-                                            style={{ background: 'var(--primary)', color: 'black', fontWeight: 800, padding: '12px', borderRadius: '8px', border: 'none', cursor: 'pointer', width: '100%' }}
+                                            style={{ background: 'var(--primary)', color: 'var(--primary-foreground)', fontWeight: 800, padding: '12px', borderRadius: '8px', border: 'none', cursor: 'pointer', width: '100%' }}
                                         >
                                             Atualizar Prazo
                                         </button>
