@@ -1,32 +1,54 @@
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Users, CreditCard, ShieldCheck, Globe, Search } from 'lucide-react';
+import { Users, CreditCard, ShieldCheck, Globe, Search, Mail } from 'lucide-react';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
 import OrganizationManageModal from '../../components/modals/OrganizationManageModal';
+import OrganizationDetailModal from '../../components/modals/OrganizationDetailModal';
 
 const MasterDashboard = () => {
     const [organizations, setOrganizations] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
+    const [detailOrg, setDetailOrg] = useState<any | null>(null);
 
     const fetchOrgs = async () => {
-            setLoading(true);
-            try {
-                const { data, error } = await supabase
-                    .from('organizations')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+        setLoading(true);
+        try {
+            // Fetch organizations
+            const { data: orgs, error: orgsError } = await supabase
+                .from('organizations')
+                .select('*')
+                .order('created_at', { ascending: false });
 
-                if (error) throw error;
-                setOrganizations(data || []);
-            } catch (err) {
-                console.error('Erro ao buscar organizações:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
+            if (orgsError) throw orgsError;
+
+            // Fetch owners for these orgs to get emails
+            const { data: profiles, error: profilesError } = await supabase
+                .from('profiles')
+                .select('email, organization_id, name')
+                .eq('role', 'admin');
+
+            if (profilesError) throw profilesError;
+
+            // Map profiles to orgs
+            const enrichedOrgs = orgs?.map(org => {
+                const owner = profiles?.find(p => p.organization_id === org.id);
+                return {
+                    ...org,
+                    owner_email: owner?.email || 'Sem e-mail',
+                    owner_name: owner?.name || 'Sem responsável'
+                };
+            });
+
+            setOrganizations(enrichedOrgs || []);
+        } catch (err) {
+            console.error('Erro ao buscar organizações:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
         fetchOrgs();
@@ -35,7 +57,8 @@ const MasterDashboard = () => {
     const filteredOrgs = useMemo(() => {
         return organizations.filter(org => 
             org.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (org.slug || '').toLowerCase().includes(searchTerm.toLowerCase())
+            (org.slug || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (org.owner_email || '').toLowerCase().includes(searchTerm.toLowerCase())
         );
     }, [organizations, searchTerm]);
 
@@ -57,7 +80,18 @@ const MasterDashboard = () => {
     };
 
     const columns: any[] = [
-        { header: 'Cliente', accessor: (org: any) => <strong>{org.name}</strong>, align: 'center' },
+        { 
+            header: 'Cliente', 
+            accessor: (org: any) => (
+                <div style={{ textAlign: 'left' }}>
+                    <strong style={{ display: 'block' }}>{org.name}</strong>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Mail size={10} /> {org.owner_email}
+                    </div>
+                </div>
+            ), 
+            align: 'left' 
+        },
         { 
             header: 'Plano', 
             align: 'center',
@@ -118,9 +152,22 @@ const MasterDashboard = () => {
                     <button 
                         className="btn-secondary" 
                         style={{ height: '32px', padding: '0 12px', fontSize: '12px' }}
-                        onClick={() => setSelectedOrg(org)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedOrg(org);
+                        }}
                     >
                         Gerenciar
+                    </button>
+                    <button 
+                        className="btn-ghost" 
+                        style={{ height: '32px', width: '32px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setDetailOrg(org);
+                        }}
+                    >
+                        <Search size={14} />
                     </button>
                 </div>
             )
@@ -142,7 +189,7 @@ const MasterDashboard = () => {
                         <Search size={16} color="var(--text-muted)" />
                         <input 
                             type="text" 
-                            placeholder="Buscar cliente ou slug..." 
+                            placeholder="Buscar cliente, e-mail ou slug..." 
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                         />
@@ -186,6 +233,7 @@ const MasterDashboard = () => {
                     columns={columns} 
                     data={filteredOrgs} 
                     loading={loading}
+                    onRowClick={(org) => setDetailOrg(org)}
                 />
             </StandardCard>
 
@@ -193,6 +241,14 @@ const MasterDashboard = () => {
                 <OrganizationManageModal 
                     organization={selectedOrg} 
                     onClose={() => setSelectedOrg(null)} 
+                    onUpdate={fetchOrgs}
+                />
+            )}
+
+            {detailOrg && (
+                <OrganizationDetailModal 
+                    organization={detailOrg} 
+                    onClose={() => setDetailOrg(null)} 
                     onUpdate={fetchOrgs}
                 />
             )}
