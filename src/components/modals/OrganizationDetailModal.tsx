@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { X, Info, Building, Users, Calendar, Clock, Globe, Shield, Trash2, UserPlus, UserMinus, MoreVertical, ExternalLink } from 'lucide-react';
+import { X, Info, Building, Users, Globe, Shield, Trash2, UserPlus, UserMinus, ExternalLink } from 'lucide-react';
 import { maskCNPJ, maskCEP, maskPhone } from '../../lib/masks';
 import ModernTable from '../ui/ModernTable';
 
