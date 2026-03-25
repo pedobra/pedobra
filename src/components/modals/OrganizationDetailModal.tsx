@@ -17,11 +17,32 @@ const OrganizationDetailModal = ({ organization, onClose, onUpdate }: Organizati
     const [companySettings, setCompanySettings] = useState<any>(null);
     const [signedLogoUrl, setSignedLogoUrl] = useState('');
     const [trialEndDate, setTrialEndDate] = useState(organization.trial_end?.split('T')[0] || '');
+    const [recentOrders, setRecentOrders] = useState<any[]>([]);
 
     useEffect(() => {
+        if (activeTab === 'geral') fetchRecentOrders();
         if (activeTab === 'usuarios') fetchUsers();
         if (activeTab === 'empresa' && !companySettings) fetchCompanySettings();
     }, [activeTab]);
+
+    const fetchRecentOrders = async () => {
+        setLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('orders')
+                .select('id, seq_number, status, created_at, total_amount')
+                .eq('organization_id', organization.id)
+                .order('created_at', { ascending: false })
+                .limit(5);
+
+            if (error) throw error;
+            setRecentOrders(data || []);
+        } catch (err) {
+            console.error('Erro ao buscar pedidos:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -121,8 +142,15 @@ const OrganizationDetailModal = ({ organization, onClose, onUpdate }: Organizati
                             <Building size={24} />
                         </div>
                         <div>
-                            <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'white' }}>{organization.name}</h2>
-                            <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>ID: {organization.id.substring(0, 8)}... • Slug: {organization.slug || 'N/A'}</p>
+                            <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>{organization.name}</h2>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '4px' }}>
+                                <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0 }}>
+                                    <strong>ID:</strong> {organization.id} • <strong>Slug:</strong> {organization.slug || 'N/A'}
+                                </p>
+                                <p style={{ fontSize: '11px', color: 'var(--text-muted)', margin: 0 }}>
+                                    <strong>E-mail Cadastro:</strong> {organization.owner_email || '—'}
+                                </p>
+                            </div>
                         </div>
                     </div>
                     <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px', borderRadius: '50%' }}>
@@ -153,52 +181,83 @@ const OrganizationDetailModal = ({ organization, onClose, onUpdate }: Organizati
 
                 <main style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
                     {activeTab === 'geral' && (
-                        <div className="tab-geral animate-fade-in" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '32px' }}>
-                            <div className="info-section">
-                                <h4 style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '1px' }}>Informações de Assinatura</h4>
-                                <div style={{ background: 'var(--bg-dark)', border: '1px solid var(--border)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Status Atual</span>
-                                        <span style={{ color: organization.subscription_status === 'active' ? 'var(--status-active)' : '#3b82f6', fontWeight: 800, fontSize: '12px', textTransform: 'uppercase' }}>
-                                            {organization.subscription_status || 'Trialing'}
-                                        </span>
+                        <div className="tab-geral animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '32px' }}>
+                                <div className="info-section">
+                                    <h4 style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '1px' }}>Informações de Assinatura</h4>
+                                    <div style={{ background: 'var(--bg-dark)', border: '1px solid var(--border)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Status Atual</span>
+                                            <span style={{ color: organization.subscription_status === 'active' ? 'var(--status-active)' : '#3b82f6', fontWeight: 800, fontSize: '12px', textTransform: 'uppercase' }}>
+                                                {organization.subscription_status || 'Trialing'}
+                                            </span>
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Plano Ativo</span>
+                                            <span style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '14px' }}>{organization.plan_id?.toUpperCase() || 'TRIAL'}</span>
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Data de Cadastro</span>
+                                            <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{new Date(organization.created_at).toLocaleDateString('pt-BR')}</span>
+                                        </div>
                                     </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Plano Ativo</span>
-                                        <span style={{ color: 'white', fontWeight: 700, fontSize: '14px' }}>{organization.plan_id?.toUpperCase() || 'TRIAL'}</span>
-                                    </div>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Data de Cadastro</span>
-                                        <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{new Date(organization.created_at).toLocaleDateString('pt-BR')}</span>
+                                </div>
+
+                                <div className="expiry-section">
+                                    <h4 style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '1px' }}>Gestão de Expiração</h4>
+                                    <div style={{ background: 'var(--bg-dark)', border: '1.5px solid var(--primary)', borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '42px', fontWeight: 950, color: 'var(--primary)', marginBottom: '8px' }}>
+                                            {getRemainingDays(organization.trial_end)}
+                                        </div>
+                                        <p style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '24px' }}>Dias restantes</p>
+                                        
+                                        <div style={{ textAlign: 'left', marginBottom: '16px' }}>
+                                            <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, display: 'block', marginBottom: '6px' }}>ALTERAR DATA FINAL</label>
+                                            <input 
+                                                type="date" 
+                                                value={trialEndDate}
+                                                onChange={e => setTrialEndDate(e.target.value)}
+                                                style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'rgba(var(--bg-card-rgb), 0.5)', border: '1px solid var(--border)', color: 'var(--text-primary)', outline: 'none' }}
+                                            />
+                                        </div>
+                                        <button 
+                                            onClick={handleUpdateTrial}
+                                            disabled={loading}
+                                            className="btn-primary w-full" 
+                                            style={{ background: 'var(--primary)', color: 'black', fontWeight: 800, padding: '12px', borderRadius: '8px', border: 'none', cursor: 'pointer', width: '100%' }}
+                                        >
+                                            Atualizar Prazo
+                                        </button>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="expiry-section">
-                                <h4 style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '1px' }}>Gestão de Expiração</h4>
-                                <div style={{ background: 'var(--bg-dark)', border: '1.5px solid var(--primary)', borderRadius: '16px', padding: '24px', textAlign: 'center' }}>
-                                    <div style={{ fontSize: '42px', fontWeight: 950, color: 'var(--primary)', marginBottom: '8px' }}>
-                                        {getRemainingDays(organization.trial_end)}
-                                    </div>
-                                    <p style={{ fontSize: '12px', color: 'white', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '24px' }}>Dias restantes</p>
-                                    
-                                    <div style={{ textAlign: 'left', marginBottom: '16px' }}>
-                                        <label style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, display: 'block', marginBottom: '6px' }}>ALTERAR DATA FINAL</label>
-                                        <input 
-                                            type="date" 
-                                            value={trialEndDate}
-                                            onChange={e => setTrialEndDate(e.target.value)}
-                                            style={{ width: '100%', padding: '10px', borderRadius: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border)', color: 'white', outline: 'none' }}
-                                        />
-                                    </div>
-                                    <button 
-                                        onClick={handleUpdateTrial}
-                                        disabled={loading}
-                                        className="btn-primary w-full" 
-                                        style={{ background: 'var(--primary)', color: 'black', fontWeight: 800, padding: '12px', borderRadius: '8px', border: 'none', cursor: 'pointer', width: '100%' }}
-                                    >
-                                        Atualizar Prazo
-                                    </button>
+                            <div className="orders-section">
+                                <h4 style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '1px' }}>Últimas Atualizações de Compras</h4>
+                                <div style={{ background: 'var(--bg-dark)', border: '1px solid var(--border)', borderRadius: '16px', overflow: 'hidden' }}>
+                                    <ModernTable 
+                                        columns={[
+                                            { header: 'REF', accessor: (o: any) => <strong>{new Date(o.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }).replace('/', '')}-{String(o.seq_number).padStart(4, '0')}</strong> },
+                                            { header: 'Status', align: 'center', accessor: (o: any) => (
+                                                <span style={{ 
+                                                    fontSize: '11px', fontWeight: 800, textTransform: 'uppercase',
+                                                    color: o.status === 'concluido' ? 'var(--status-active)' : (o.status === 'parcial' ? '#3b82f6' : 'var(--status-pending)')
+                                                }}>
+                                                    {o.status}
+                                                </span>
+                                            )},
+                                            { header: 'Total (BRL)', align: 'center', accessor: (o: any) => <span>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(o.total_amount || 0)}</span> },
+                                            { header: 'Data', align: 'right', accessor: (o: any) => <span style={{ color: 'var(--text-muted)' }}>{new Date(o.created_at).toLocaleDateString('pt-BR')}</span> }
+                                        ]}
+                                        data={recentOrders || []}
+                                        loading={loading}
+                                        rowHeight={40}
+                                    />
+                                    {recentOrders.length === 0 && !loading && (
+                                        <div style={{ textAlign: 'center', padding: '32px', color: 'var(--text-muted)', fontSize: '13px' }}>
+                                            Nenhuma compra registrada ainda.
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -238,7 +297,7 @@ const OrganizationDetailModal = ({ organization, onClose, onUpdate }: Organizati
                                                     <a href={item.value?.startsWith('http') ? item.value : `https://${item.value}`} target="_blank" style={{ color: 'var(--primary)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
                                                         {item.value || '—'} <ExternalLink size={10} />
                                                     </a>
-                                                ) : <div style={{ fontSize: '13px', color: 'white' }}>{item.value || '—'}</div>}
+                                                ) : <div style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{item.value || '—'}</div>}
                                             </div>
                                         ))}
                                     </div>
