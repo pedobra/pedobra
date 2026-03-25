@@ -241,8 +241,8 @@ const LandingPage = () => {
                 <div className="section-container">
                     <div className="hero-badge animate-fade">INOVAÇÃO & TECNOLOGIA</div>
                     <h1 className="hero-title animate-fade">
-                        Pare de <span className="text-glow highlight-accent">perder</span> dinheiro com <br />
-                        pedidos <span className="text-glow highlight-accent">desorganizados</span> na obra
+                        Mais controle na obra, <br />
+                        menos <span className="text-glow highlight-accent">dinheiro perdido</span>
                     </h1>
                     <p className="hero-subtitle mx-auto animate-fade">
                         Gerencie pedidos de materiais em tempo real com um sistema simples, rápido e feito para quem está na obra.
@@ -870,12 +870,12 @@ const LandingPage = () => {
 
                 .hero-badge { font-size: 12px; font-weight: 800; opacity: 0.5; letter-spacing: 2px; margin-bottom: 24px; }
                 .hero-title { 
-                    font-size: clamp(40px, 8vw, 84px); 
+                    font-size: clamp(56px, 10vw, 100px); 
                     font-weight: 900; 
                     line-height: 1.1; 
-                    letter-spacing: -3px; 
+                    letter-spacing: 4px; 
                     margin-bottom: 32px;
-                    text-shadow: 0 4px 15px rgba(0,0,0,0.8); /* Sombra em toda a headline */
+                    text-shadow: 0 4px 15px rgba(0,0,0,0.8);
                 }
                 .text-glow { color: #fff; text-shadow: 0 0 40px rgba(255,255,255,0.3); }
                 .highlight-accent { color: var(--alabaster); text-shadow: 0 0 30px rgba(234, 234, 234, 0.4); }
@@ -1288,7 +1288,7 @@ const LandingPage = () => {
                 .auth-switch button { background: none; border: none; color: #fff; font-weight: 700; cursor: pointer; border-bottom: 1px solid #fff; margin-left: 4px; }
 
                 @media (max-width: 1024px) {
-                    .hero-title { font-size: 48px; }
+                    .hero-title { font-size: 64px; }
                     .steps-grid, .features-grid, .plans-grid { grid-template-columns: 1fr; }
                     .mockup-container { border-radius: 16px; }
                 }
@@ -1364,7 +1364,7 @@ const LandingPage = () => {
                     
                     /* Hero */
                     .hero-section { padding: 140px 0 60px; }
-                    .hero-title { font-size: 36px; }
+                    .hero-title { font-size: 44px; }
                     .hero-subtitle { font-size: 16px; margin-bottom: 32px; }
                     .hero-actions { flex-direction: column; width: 100%; gap: 16px; }
                     .hero-actions .btn-main { width: 100%; min-height: 56px; }
