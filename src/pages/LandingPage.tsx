@@ -242,7 +242,8 @@ const LandingPage = () => {
                     <div className="hero-badge animate-fade">INOVAÇÃO & TECNOLOGIA</div>
                     <h1 className="hero-title animate-fade">
                         Mais controle na obra, <br />
-                        menos <span className="text-glow highlight-accent">dinheiro perdido</span>
+                        menos <span className="text-glow highlight-accent">DINHEIRO</span> <br />
+                        <span className="text-glow highlight-accent">PERDIDO</span>
                     </h1>
                     <p className="hero-subtitle mx-auto animate-fade">
                         Gerencie pedidos de materiais em tempo real com um sistema simples, rápido e feito para quem está na obra.
