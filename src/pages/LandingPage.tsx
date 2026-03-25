@@ -879,7 +879,7 @@ const LandingPage = () => {
                 }
                 .text-glow { color: #fff; text-shadow: 0 0 40px rgba(255,255,255,0.3); }
                 .highlight-accent { color: var(--alabaster); text-shadow: 0 0 30px rgba(234, 234, 234, 0.4); }
-                .hero-subtitle { font-size: 20px; color: var(--text-soft); max-width: 600px; margin-bottom: 48px; line-height: 1.6; }
+                .hero-subtitle { font-size: 20px; color: #fff; max-width: 600px; margin-bottom: 48px; line-height: 1.6; }
                 .hero-actions { display: flex; gap: 16px; }
                 .btn-main { background: var(--alabaster); color: var(--bg-onyx); padding: 18px 36px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; }
                 .highlight-glow { box-shadow: 0 0 50px rgba(255,255,255,0.1); }
