@@ -278,69 +278,24 @@ const LandingPage = () => {
                         </div>
 
                         <div className="venda-mockup-area animate-fade">
-                            <div className="venda-mockup-grid-v7">
-                                {/* Mockup 1: Dashboard */}
-                                <div className="mockup-card-v7">
-                                    <div className="mockup-floating-card glass-heavy">
-                                        <div className="mockup-screen-header">
-                                            <div className="dots"><span></span><span></span><span></span></div>
-                                        </div>
-                                        <div className="mockup-img-wrapper">
-                                            <img src="/assets/screenshots/dashboard.png" alt="Dashboard" className="mockup-img" />
-                                            <div className="floating-element card-stats glass animate-float-slow">
-                                                <div className="stat-label">Economia mensal</div>
-                                                <div className="stat-value">+R$ 12.450</div>
-                                            </div>
-                                        </div>
+                            <div className="venda-video-wrapper">
+                                <div className="video-glass-frame animate-fade">
+                                    <div className="mockup-screen-header">
+                                        <div className="dots"><span></span><span></span><span></span></div>
+                                        <div className="mockup-title-text" style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 600 }}>APRESENTAÇÃO PEDOBRA</div>
+                                    </div>
+                                    <div className="video-aspect-container">
+                                        <iframe
+                                            src="https://www.youtube.com/embed/hRkCAiFULks?autoplay=0"
+                                            title="PedObra - Controle de Obra"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                        ></iframe>
                                     </div>
                                 </div>
-
-                                {/* Mockup 2: Operações de Campo */}
-                                <div className="mockup-card-v7">
-                                    <div className="mockup-floating-card glass-heavy">
-                                        <div className="mockup-screen-header">
-                                            <div className="dots"><span></span><span></span><span></span></div>
-                                        </div>
-                                        <div className="mockup-img-wrapper">
-                                            <img src="/assets/screenshots/operador.png" alt="Campo" className="mockup-img" />
-                                            <div className="floating-element card-alert glass animate-float-fast">
-                                                <div className="stat-label">Recebimento</div>
-                                                <div className="stat-value">Aprovado</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Mockup 3: Gestão de Pedidos */}
-                                <div className="mockup-card-v7">
-                                    <div className="mockup-floating-card glass-heavy">
-                                        <div className="mockup-screen-header">
-                                            <div className="dots"><span></span><span></span><span></span></div>
-                                        </div>
-                                        <div className="mockup-img-wrapper">
-                                            <img src="/assets/screenshots/pedidos.png" alt="Pedidos" className="mockup-img" />
-                                            <div className="floating-element card-stats glass animate-float-slow">
-                                                <div className="stat-label">Aguardando</div>
-                                                <div className="stat-value">3 Pedidos</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Mockup 4: Relatórios */}
-                                <div className="mockup-card-v7">
-                                    <div className="mockup-floating-card glass-heavy">
-                                        <div className="mockup-screen-header">
-                                            <div className="dots"><span></span><span></span><span></span></div>
-                                        </div>
-                                        <div className="mockup-img-wrapper">
-                                            <img src="/assets/screenshots/relatorios.png" alt="Relatórios" className="mockup-img" />
-                                            <div className="floating-element card-alert glass animate-float-fast">
-                                                <div className="stat-label">Gasto Total</div>
-                                                <div className="stat-value">92% Obra</div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div className="floating-video-stats glass animate-float-slow">
+                                    <div className="stat-label">ASSISTA AGORA</div>
+                                    <div className="stat-value">DEMONSTRAÇÃO</div>
                                 </div>
                             </div>
                             
@@ -774,11 +729,29 @@ const LandingPage = () => {
                 .btn-venda:hover { transform: translateY(-4px); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
 
                 .venda-mockup-area { position: relative; }
-                .venda-mockup-grid-v7 { 
-                    display: grid; 
-                    grid-template-columns: repeat(2, 1fr); 
-                    gap: 32px; 
-                    perspective: 2000px;
+                .venda-video-wrapper { position: relative; width: 100%; z-index: 10; display: flex; align-items: center; justify-content: center; transform: perspective(1000px) rotateY(-5deg); transition: 0.5s; }
+                .venda-video-wrapper:hover { transform: perspective(1000px) rotateY(0deg) scale(1.02); }
+                .video-glass-frame { 
+                    background: rgba(0,0,0,0.8); 
+                    backdrop-filter: blur(20px); 
+                    border: 2px solid rgba(255,255,255,0.1); 
+                    border-radius: 24px; 
+                    overflow: hidden;
+                    width: 100%;
+                    box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 40px rgba(255,255,255,0.05);
+                }
+                .video-aspect-container { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; }
+                .video-aspect-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+                
+                .floating-video-stats { 
+                    position: absolute; 
+                    bottom: -20px; 
+                    right: -20px; 
+                    padding: 16px 28px; 
+                    border-radius: 12px; 
+                    z-index: 20; 
+                    text-align: left;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
                 }
                 
                 .mockup-card-v7 { 
