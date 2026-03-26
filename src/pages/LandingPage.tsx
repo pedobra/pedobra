@@ -834,10 +834,11 @@ const LandingPage = () => {
                 .stat-value { font-size: 14px; font-weight: 900; color: #fff; }
 
                 @media (max-width: 1024px) {
-                    .venda-grid { grid-template-columns: 1fr; gap: 60px; text-align: center; }
-                    .venda-content { display: flex; flex-direction: column; align-items: center; }
+                    .venda-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+                    .venda-content { display: flex; flex-direction: column; align-items: center; order: 2; }
+                    .venda-mockup-area { order: 1; margin-bottom: 20px; }
                     .venda-mockup-grid-v7 { grid-template-columns: repeat(2, 1fr); gap: 24px; }
-                    .card-stats, .card-alert { display: none; }
+                    .card-stats, .card-alert, .floating-video-stats { display: none; }
                 }
                 @media (max-width: 640px) {
                     .venda-mockup-grid-v7 { grid-template-columns: 1fr; }
