@@ -286,7 +286,7 @@ const LandingPage = () => {
                                     </div>
                                     <div className="video-aspect-container">
                                         <iframe
-                                            src="https://www.youtube-nocookie.com/embed/hRkCAiFULks"
+                                            src="https://www.youtube.com/embed/hRkCAiFULks"
                                             title="PedObra - Controle de Obra"
                                             frameBorder="0"
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -297,7 +297,7 @@ const LandingPage = () => {
                                 </div>
                                 <div className="floating-video-stats glass animate-float-slow">
                                     <div className="stat-label">ASSISTA AGORA</div>
-                                    <div className="stat-value">DEMONSTRAÇÃO</div>
+                                    <div className="stat-value">APRESENTAÇÃO</div>
                                 </div>
                             </div>
                             
