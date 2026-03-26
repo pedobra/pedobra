@@ -286,9 +286,11 @@ const LandingPage = () => {
                                     </div>
                                     <div className="video-aspect-container">
                                         <iframe
-                                            src="https://www.youtube.com/embed/hRkCAiFULks?autoplay=0"
+                                            src="https://www.youtube-nocookie.com/embed/hRkCAiFULks"
                                             title="PedObra - Controle de Obra"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                            referrerPolicy="strict-origin-when-cross-origin"
                                             allowFullScreen
                                         ></iframe>
                                     </div>
