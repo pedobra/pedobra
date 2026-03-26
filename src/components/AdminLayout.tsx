@@ -157,18 +157,45 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
 
     if (isExpired && location.pathname !== '/admin/plans') {
         return (
-            <div className="expired-overlay">
-                <div className="expired-card premium-card animate-fade">
-                    <div className="expired-icon">
+            <div className="expired-overlay" style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'var(--bg-dark)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 9999,
+                padding: '20px'
+            }}>
+                <div className="expired-card premium-card animate-fade" style={{
+                    maxWidth: '480px',
+                    width: '100%',
+                    textAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '24px',
+                    padding: '40px'
+                }}>
+                    <div className="expired-icon" style={{ 
+                        width: '80px', 
+                        height: '80px', 
+                        borderRadius: '20px', 
+                        background: 'rgba(239, 68, 68, 0.1)', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        marginBottom: '8px'
+                    }}>
                         <ShieldAlert size={48} color="var(--status-denied)" />
                     </div>
-                    <h2>Seu período de acesso expirou</h2>
-                    <p>Para continuar gerenciando suas obras e acessando seus dados, por favor selecione um plano de assinatura.</p>
-                    <div className="expired-actions">
-                        <button className="btn-primary" onClick={() => navigate('/admin/plans')}>
+                    <h2 style={{ fontSize: '24px', fontWeight: 800, margin: 0, color: 'var(--text-primary)' }}>Seu período de acesso expirou</h2>
+                    <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>Para continuar gerenciando suas obras e acessando seus dados, por favor selecione um plano de assinatura.</p>
+                    <div className="expired-actions" style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', marginTop: '8px' }}>
+                        <button className="btn-primary" onClick={() => navigate('/admin/plans')} style={{ width: '100%' }}>
                             Ver Planos de Assinatura
                         </button>
-                        <button className="btn-secondary" onClick={handleLogout}>
+                        <button className="btn-secondary" onClick={handleLogout} style={{ width: '100%' }}>
                             Sair do Sistema
                         </button>
                     </div>
