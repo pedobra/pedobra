@@ -39,7 +39,7 @@ const AdminPlans = () => {
                     <button 
                         className="btn-primary w-full" 
                         style={{ padding: '14px', fontSize: '15px', fontWeight: 700 }}
-                        onClick={() => window.open('https://painel.akadpay.com.br/produto/67e719f5-f157-4aca-b4da-a4b1ea3c0e0b', '_blank')}
+                        onClick={() => window.open('https://www.asaas.com/c/wg55mwgf92zpz20i', '_blank')}
                     >
                         ASSINAR AGORA
                     </button>

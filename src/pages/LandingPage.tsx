@@ -492,7 +492,9 @@ const LandingPage = () => {
                                         if (p.isCustom) {
                                             window.open(`https://wa.me/5583996254920?text=Olá, quero saber mais sobre o Plano ${planCycle}`, '_blank');
                                         } else if (p.name === "Plano Básico") {
-                                            window.open("https://painel.akadpay.com.br/produto/67e719f5-f157-4aca-b4da-a4b1ea3c0e0b", "_blank");
+                                            window.open("https://www.asaas.com/c/wg55mwgf92zpz20i", "_blank");
+                                        } else if (p.name === "Plano Profissional") {
+                                            window.open("https://www.asaas.com/c/2ha7ofn42co4bef6", "_blank");
                                         } else {
                                             setIsSignUp(true);
                                         }
