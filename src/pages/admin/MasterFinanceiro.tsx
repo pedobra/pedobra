@@ -33,6 +33,7 @@ const MasterFinanceiro = () => {
 
     useEffect(() => {
         fetchData();
+        fetchAuditLogs();
     }, []);
 
     const fetchData = async () => {
@@ -113,20 +114,44 @@ const MasterFinanceiro = () => {
                 if (plan === 'pro' || plan === 'professional') {
                     acc.proCount++;
                     acc.gross += config.plan_pro_price;
+                    acc.paidCount++;
                 } else if (plan === 'basic') {
                     acc.basicCount++;
                     acc.gross += config.plan_basic_price;
+                    acc.paidCount++;
                 } else if (plan === 'custom') {
                     acc.gross += Number(org.custom_plan_price || 0);
+                    acc.paidCount++;
                 } else {
                     acc.freeCount++;
                 }
             }
             return acc;
-        }, { gross: 0, proCount: 0, basicCount: 0, freeCount: 0 });
+        }, { gross: 0, proCount: 0, basicCount: 0, freeCount: 0, paidCount: 0 });
 
         const gatewayFee = (stats.gross * config.gateway_fee_percent) / 100;
         const net = stats.gross - gatewayFee;
+
+        // Group by Month (Last 6 months)
+        const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+        const monthlySeries = Array.from({ length: 6 }, (_, i) => {
+            const d = new Date();
+            d.setMonth(d.getMonth() - i);
+            const m = d.getMonth();
+            const y = d.getFullYear();
+            
+            const signups = organizations.filter(org => {
+                const od = new Date(org.created_at);
+                return od.getMonth() === m && od.getFullYear() === y;
+            }).length;
+
+            const sales = auditLogs.filter(log => {
+                const ld = new Date(log.created_at);
+                return ld.getMonth() === m && ld.getFullYear() === y && log.action === 'payment_processed';
+            }).length;
+
+            return { month: monthNames[m], signups, sales, sortIdx: i };
+        }).reverse();
 
         const customTotal = organizations.reduce((sum, org) => {
             if (org.plan_id === 'custom' && org.subscription_status?.toLowerCase() === 'active') {
@@ -142,8 +167,8 @@ const MasterFinanceiro = () => {
             { name: 'Gratuito', value: 0, count: stats.freeCount, key: 'free' }
         ].filter(d => d.count > 0 || d.name === 'Gratuito');
 
-        return { ...stats, gatewayFee, net, chartData };
-    }, [organizations, config]);
+        return { ...stats, gatewayFee, net, chartData, monthlySeries };
+    }, [organizations, config, auditLogs]);
 
     const filteredOrganizations = useMemo(() => {
         if (!selectedPlan) return organizations;
@@ -155,7 +180,16 @@ const MasterFinanceiro = () => {
     }, [organizations, selectedPlan]);
 
     const columns: any[] = [
-        { header: 'Cliente', accessor: (org: any) => <strong>{org.name}</strong>, align: 'center' },
+        { 
+            header: 'Cliente', 
+            accessor: (org: any) => (
+                <div style={{ textAlign: 'left' }}>
+                    <div style={{ fontWeight: 800 }}>{org.name}</div>
+                    <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{org.email || 'N/A'}</div>
+                </div>
+            ),
+            align: 'left' 
+        },
         { 
             header: 'Plano', 
             align: 'center',
@@ -243,37 +277,96 @@ const MasterFinanceiro = () => {
                                 onChange={e => setConfig({...config, gateway_fee_percent: Number(e.target.value)})}
                             />
                         </div>
-                        <button className="btn-primary" onClick={handleSaveConfig} disabled={saving} style={{ marginTop: 'auton' }}>
+                        <button className="btn-primary" onClick={handleSaveConfig} disabled={saving}>
                             {saving ? 'Salvando...' : 'Salvar Alterações'}
                         </button>
                     </div>
                 </StandardCard>
 
-                {/* SUMMARY CARDS */}
-                <div className="summary-cards">
+                {/* SUMMARY CARDS GRID (2x3) */}
+                <div className="summary-grid-saas">
                     <div className="summary-card gold">
-                        <div className="summary-icon"><DollarSign size={24} /></div>
+                        <div className="summary-icon"><DollarSign size={20} /></div>
                         <div className="summary-info">
                             <label>Faturamento Bruto</label>
                             <strong>R$ {financialData.gross.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
                         </div>
-                        <ArrowUpRight className="trend-icon" />
                     </div>
                     <div className="summary-card">
-                        <div className="summary-icon"><Percent size={24} /></div>
+                        <div className="summary-icon"><Percent size={20} /></div>
                         <div className="summary-info">
                             <label>Taxas Gateway</label>
-                            <strong style={{ color: 'var(--status-cancelled)' }}>- R$ {financialData.gatewayFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                            <strong style={{ color: '#ef4444' }}>- R$ {financialData.gatewayFee.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
                         </div>
                     </div>
                     <div className="summary-card success">
-                        <div className="summary-icon"><TrendingUp size={24} /></div>
+                        <div className="summary-icon"><TrendingUp size={20} /></div>
                         <div className="summary-info">
                             <label>Lucro Líquido</label>
-                            <strong style={{ color: 'var(--status-active)' }}>R$ {financialData.net.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                            <strong style={{ color: '#10b981' }}>R$ {financialData.net.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                        </div>
+                    </div>
+                    
+                    <div className="summary-card">
+                        <div className="summary-icon"><CreditCard size={20} /></div>
+                        <div className="summary-info">
+                            <label>Clientes Totais</label>
+                            <strong>{organizations.length}</strong>
+                        </div>
+                    </div>
+                    <div className="summary-card success">
+                        <div className="summary-icon"><ArrowUpRight size={20} /></div>
+                        <div className="summary-info">
+                            <label>Pagantes Ativos</label>
+                            <strong style={{ color: '#10b981' }}>{financialData.paidCount}</strong>
+                        </div>
+                    </div>
+                    <div className="summary-card" style={{ padding: '12px' }}>
+                        <div style={{ height: '60px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <ResponsiveContainer>
+                                <PieChart>
+                                    <Pie
+                                        data={[
+                                            { name: 'Pagantes', value: financialData.paidCount },
+                                            { name: 'Restante', value: Math.max(0, organizations.length - financialData.paidCount) }
+                                        ]}
+                                        innerRadius={15}
+                                        outerRadius={25}
+                                        dataKey="value"
+                                    >
+                                        <Cell fill="#10b981" />
+                                        <Cell fill="#374151" />
+                                    </Pie>
+                                </PieChart>
+                            </ResponsiveContainer>
+                            <div style={{ position: 'absolute', fontSize: '10px', fontWeight: 800 }}>
+                                {organizations.length > 0 ? Math.round((financialData.paidCount / organizations.length) * 100) : 0}%
+                            </div>
+                        </div>
+                        <div className="summary-info" style={{ textAlign: 'center' }}>
+                            <label style={{ fontSize: '9px' }}>Conversão Total</label>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* MONTHLY GROWTH CHART */}
+            <div style={{ margin: '24px 0' }}>
+                <StandardCard title="Crescimento Mensal" subtitle="Comparativo de novos cadastros vs assinaturas confirmadas.">
+                    <div style={{ height: '350px', width: '100%' }}>
+                        <ResponsiveContainer>
+                            <BarChart data={financialData.monthlySeries}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                                <XAxis dataKey="month" fontSize={12} stroke="var(--text-muted)" />
+                                <YAxis fontSize={12} stroke="var(--text-muted)" />
+                                <Tooltip />
+                                <Legend />
+                                <Bar name="Novos Cadastros" dataKey="signups" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                                <Bar name="Novas Vendas" dataKey="sales" fill="#10b981" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </StandardCard>
             </div>
 
             {/* CHARTS SECTION */}
@@ -434,20 +527,26 @@ const MasterFinanceiro = () => {
                 }
                 .input-group-saas input:focus { border-color: var(--primary); }
 
-                .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+                .summary-grid-saas { 
+                    display: grid; 
+                    grid-template-columns: repeat(3, 1fr); 
+                    grid-template-rows: repeat(2, 1fr);
+                    gap: 12px; 
+                }
                 .summary-card { 
                     background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 12px; 
-                    padding: 24px; display: flex; align-items: center; gap: 20px; position: relative;
+                    padding: 16px; display: flex; align-items: center; gap: 12px; position: relative;
                 }
                 .summary-card.gold { border-color: var(--primary); }
+                .summary-card.success { border-color: #10b981; }
                 .summary-icon { 
-                    width: 54px; height: 54px; border-radius: 12px; 
+                    width: 40px; height: 40px; border-radius: 10px; 
                     background: var(--bg-dark); display: flex; align-items: center; justify-content: center;
                     color: var(--primary); border: 1px solid var(--border);
                 }
-                .summary-info label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-                .summary-info strong { font-size: 24px; font-weight: 800; display: block; margin-top: 4px; }
-                .trend-icon { position: absolute; top: 16px; right: 16px; color: var(--status-active); opacity: 0.6; }
+                .summary-info label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+                .summary-info strong { font-size: 18px; font-weight: 800; display: block; margin-top: 2px; }
+                .trend-icon { position: absolute; top: 12px; right: 12px; color: var(--status-active); opacity: 0.6; }
 
                 .nav-tab {
                     padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px;
@@ -478,23 +577,11 @@ const MasterFinanceiro = () => {
 
                 @media (max-width: 768px) {
                     .financeiro-master { padding: 0; }
+                    .summary-grid-saas { grid-template-columns: 1fr !important; grid-template-rows: auto; }
                     .dashboard-header { flex-direction: column; align-items: flex-start !important; gap: 12px; }
                     .page-title { font-size: 20px !important; }
-                    
-                    .summary-cards { 
-                        grid-template-columns: 1fr !important; 
-                        gap: 12px; 
-                    }
-                    .summary-card { 
-                        padding: 16px; 
-                        gap: 12px; 
-                    }
-                    .summary-icon { width: 44px; height: 44px; }
                     .summary-info strong { font-size: 20px; }
-                    
-                    .charts-layout { gap: 16px !important; }
-                    
-                    .input-group-saas input { font-size: 16px; } /* Prevent iOS zoom */
+                    .input-group-saas input { font-size: 16px; }
                     .btn-primary { width: 100%; justify-content: center; }
                 }
             `}</style>
