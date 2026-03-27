@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { 
-    X, Info, Building, Users, Globe, Shield, CreditCard, Calendar, DollarSign
+    X, Info, Building, Users, Globe, Shield, CreditCard, Calendar
 } from 'lucide-react';
 import { maskCNPJ, maskPhone, maskCurrency, parseCurrencyToNumber } from '../../lib/masks';
 import ModernTable from '../ui/ModernTable';
