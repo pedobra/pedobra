@@ -1,12 +1,10 @@
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
 import { 
-    TrendingUp, 
-    CreditCard, 
-    Percent, 
-    DollarSign, 
-    ArrowUpRight, 
-    PieChart as PieChartIcon
+    Search, 
+    Mail,
+    ShieldCheck,
+    Globe
 } from 'lucide-react';
 import { 
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
@@ -14,6 +12,8 @@ import {
 } from 'recharts';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
+import OrganizationManageModal from '../../components/modals/OrganizationManageModal';
+import OrganizationDetailModal from '../../components/modals/OrganizationDetailModal';
 
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'];
 
@@ -30,6 +30,8 @@ const MasterFinanceiro = () => {
     const [activeTab, setActiveTab] = useState<'audit' | 'webhooks' | null>(null);
     const [auditLogs, setAuditLogs] = useState<any[]>([]);
     const [webhookLogs, setWebhookLogs] = useState<any[]>([]);
+    const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
+    const [detailOrg, setDetailOrg] = useState<any | null>(null);
 
     useEffect(() => {
         fetchData();
@@ -39,12 +41,23 @@ const MasterFinanceiro = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const [orgsRes, configRes] = await Promise.all([
-                supabase.from('organizations').select('*'),
+            const [orgsRes, profilesRes, configRes] = await Promise.all([
+                supabase.from('organizations').select('*').order('created_at', { ascending: false }),
+                supabase.from('profiles').select('email, organization_id, name').eq('role', 'admin'),
                 supabase.from('master_config').select('*').single()
             ]);
 
-            if (orgsRes.data) setOrganizations(orgsRes.data);
+            if (orgsRes.data) {
+                const enrichedOrgs = orgsRes.data.map(org => {
+                    const owner = profilesRes.data?.find(p => p.organization_id === org.id);
+                    return {
+                        ...org,
+                        owner_email: owner?.email || 'N/A',
+                        owner_name: owner?.name || 'N/A'
+                    };
+                });
+                setOrganizations(enrichedOrgs);
+            }
             if (configRes.data) {
                 setConfig({
                     plan_basic_price: Number(configRes.data.plan_basic_price),
@@ -184,10 +197,12 @@ const MasterFinanceiro = () => {
             header: 'Cliente', 
             accessor: (org: any) => (
                 <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontWeight: 800 }}>{org.name}</div>
-                    <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{org.email || 'N/A'}</div>
+                    <strong style={{ display: 'block' }}>{org.name}</strong>
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Mail size={10} /> {org.owner_email}
+                    </div>
                 </div>
-            ),
+            ), 
             align: 'left' 
         },
         { 
@@ -234,6 +249,34 @@ const MasterFinanceiro = () => {
             },
             align: 'center'
         },
+        {
+            header: 'Ações',
+            align: 'center',
+            accessor: (org: any) => (
+                <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                    <button 
+                        className="btn-secondary" 
+                        style={{ height: '32px', padding: '0 12px', fontSize: '12px' }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedOrg(org);
+                        }}
+                    >
+                        Gerenciar
+                    </button>
+                    <button 
+                        className="btn-ghost" 
+                        style={{ height: '32px', width: '32px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setDetailOrg(org);
+                        }}
+                    >
+                        <Search size={14} />
+                    </button>
+                </div>
+            )
+        }
     ];
 
     return (
@@ -461,8 +504,25 @@ const MasterFinanceiro = () => {
                         columns={columns} 
                         data={filteredOrganizations} 
                         loading={loading}
+                        onRowClick={(org) => setDetailOrg(org)}
                     />
                 </StandardCard>
+            )}
+
+            {selectedOrg && (
+                <OrganizationManageModal 
+                    organization={selectedOrg} 
+                    onClose={() => setSelectedOrg(null)} 
+                    onUpdate={fetchData}
+                />
+            )}
+
+            {detailOrg && (
+                <OrganizationDetailModal 
+                    organization={detailOrg} 
+                    onClose={() => setDetailOrg(null)} 
+                    onUpdate={fetchData}
+                />
             )}
 
             {activeTab === 'audit' && (
