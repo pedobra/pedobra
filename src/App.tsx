@@ -15,6 +15,7 @@ import AdminAuditLogs from './pages/admin/AuditLogs';
 import AdminReports from './pages/admin/Reports';
 import MasterDashboard from './pages/admin/MasterDashboard';
 import MasterFinanceiro from './pages/admin/MasterFinanceiro';
+import MasterLinks from './pages/admin/MasterLinks';
 import WorkerDashboard from './pages/worker/Dashboard';
 import WorkerReceiving from './pages/worker/Receiving';
 import SiteFormPage from './pages/admin/sites/SiteFormPage';
@@ -131,6 +132,9 @@ function App() {
         } />
         <Route path="/master/financeiro" element={
           session && profile?.role === 'master' && profile?.is_active !== false ? <AdminLayout><MasterFinanceiro /></AdminLayout> : <Navigate to="/" />
+        } />
+        <Route path="/master/links" element={
+          session && profile?.role === 'master' && profile?.is_active !== false ? <AdminLayout><MasterLinks /></AdminLayout> : <Navigate to="/" />
         } />
 
         <Route path="/admin/*" element={
