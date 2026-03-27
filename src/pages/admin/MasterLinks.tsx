@@ -162,7 +162,7 @@ const MasterLinks = () => {
                                     <button 
                                         onClick={handleAddLink}
                                         title="Adicionar Novo Plano"
-                                        style={{ position: 'absolute', right: '-12px', top: '50%', transform: 'translateY(-50%)', width: '24px', height: '24px', borderRadius: '50%', background: 'var(--primary)', border: 'none', color: '#000', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(255,215,0,0.3)', zIndex: 10 }}
+                                        style={{ position: 'absolute', right: '-12px', top: '50%', transform: 'translateY(-50%)', width: '24px', height: '24px', borderRadius: '50%', background: 'var(--primary)', border: 'none', color: 'var(--primary-foreground)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(255,215,0,0.3)', zIndex: 10 }}
                                     >
                                         <Plus size={16} strokeWidth={3} />
                                     </button>
