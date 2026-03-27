@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { 
-    X, Info, Building, Users, Globe, Shield, CreditCard 
+    X, Info, Building, Users, Globe, Shield, CreditCard, Calendar, DollarSign
 } from 'lucide-react';
-import { maskCNPJ, maskPhone } from '../../lib/masks';
+import { maskCNPJ, maskPhone, maskCurrency, parseCurrencyToNumber } from '../../lib/masks';
 import ModernTable from '../ui/ModernTable';
 
 interface OrganizationAdminPanelProps {
@@ -22,8 +22,8 @@ const OrganizationAdminPanel = ({ organization, onClose, onUpdate }: Organizatio
     const [status, setStatus] = useState(organization.subscription_status || 'trialing');
     const [message, setMessage] = useState(organization.system_message || '');
     const messageLevel = organization.system_message_level || 'info';
-    const customDays = 30;
-    const [customPrice] = useState(organization.custom_plan_price || 0);
+    const [customDays, setCustomDays] = useState(30);
+    const [customPrice, setCustomPrice] = useState(organization.custom_plan_price || 0);
 
     // Detail State
     const [orgUsers, setOrgUsers] = useState<any[]>([]);
@@ -183,6 +183,30 @@ const OrganizationAdminPanel = ({ organization, onClose, onUpdate }: Organizatio
                                     <option value="custom">Plano Personalizado</option>
                                 </select>
                             </div>
+
+                            {planId === 'custom' && (
+                                <div className="animate-fade-in" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                                    <div className="field">
+                                        <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px', display: 'block' }}>Preço Personalizado</label>
+                                        <input 
+                                            type="text"
+                                            value={maskCurrency(customPrice)}
+                                            onChange={e => setCustomPrice(parseCurrencyToNumber(e.target.value))}
+                                            style={{ width: '100%', height: '40px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '0 12px', color: 'var(--text-primary)' }}
+                                        />
+                                    </div>
+                                    <div className="field">
+                                        <label style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px', display: 'block' }}>Dias de Acesso</label>
+                                        <input 
+                                            type="number"
+                                            value={customDays}
+                                            onChange={e => setCustomDays(Number(e.target.value))}
+                                            style={{ width: '100%', height: '40px', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '8px', padding: '0 12px', color: 'var(--text-primary)' }}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="field">
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
                                     Status Financeiro
@@ -238,18 +262,36 @@ const OrganizationAdminPanel = ({ organization, onClose, onUpdate }: Organizatio
 
                         <section>
                              <h4 style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '16px' }}>Prazo de Expiração</h4>
-                             <div style={{ background: 'rgba(255,215,0,0.05)', border: '2px solid var(--primary)', borderRadius: '16px', padding: '20px', textAlign: 'center' }}>
-                                <div style={{ fontSize: '32px', fontWeight: 950, color: 'var(--primary)' }}>{getRemainingDays(organization.trial_end)}</div>
-                                <p style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '16px' }}>DIAS RESTANTES</p>
-                                <input 
-                                    type="date" 
-                                    value={trialEndDate}
-                                    onChange={e => setTrialEndDate(e.target.value)}
-                                    style={{ width: '100%', marginBottom: '12px', padding: '8px', borderRadius: '6px', background: 'var(--bg-card)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
-                                />
-                                <button onClick={handleUpdateTrialDate} disabled={saving} style={{ width: '100%', padding: '10px', background: 'var(--primary)', border: 'none', borderRadius: '8px', fontWeight: 800, cursor: 'pointer', color: 'white' }}>
-                                    {saving ? 'Gravando...' : 'Ajustar Expiração'}
-                                </button>
+                             <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '16px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                    <div style={{ width: 48, height: 48, borderRadius: '12px', background: 'rgba(255,215,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                                        <Calendar size={24} />
+                                    </div>
+                                    <div>
+                                        <div style={{ fontSize: '24px', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1 }}>{getRemainingDays(organization.trial_end)}</div>
+                                        <div style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Dias Restantes</div>
+                                    </div>
+                                </div>
+
+                                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+                                    <label style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>Nova Data de Expiração</label>
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <input 
+                                            type="date" 
+                                            value={trialEndDate}
+                                            onChange={e => setTrialEndDate(e.target.value)}
+                                            style={{ flex: 1, padding: '0 12px', height: '40px', borderRadius: '8px', background: 'var(--bg-dark)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+                                        />
+                                        <button 
+                                            onClick={handleUpdateTrialDate} 
+                                            disabled={saving} 
+                                            className="btn-primary"
+                                            style={{ height: '40px', padding: '0 16px', fontSize: '12px' }}
+                                        >
+                                            Atualizar
+                                        </button>
+                                    </div>
+                                </div>
                              </div>
                         </section>
                     </div>
@@ -259,7 +301,7 @@ const OrganizationAdminPanel = ({ organization, onClose, onUpdate }: Organizatio
                     <div className="animate-fade-in" style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: '32px' }}>
                         <div style={{ background: 'var(--bg-card)', borderRadius: '12px', padding: '12px', border: '1px solid var(--border)', textAlign: 'center' }}>
                             <div style={{ width: '100%', height: '120px', background: '#000', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '12px' }}>
-                                {signedLogoUrl ? <img src={signedLogoUrl} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <Building size={32} opacity={0.2} />}
+                                {signedLogoUrl ? <img src={signedLogoUrl} alt="Logo" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} /> : <Building size={32} opacity={0.2} />}
                             </div>
                             <strong style={{ display: 'block', fontSize: '13px' }}>{companySettings?.company_name || 'N/A'}</strong>
                         </div>
