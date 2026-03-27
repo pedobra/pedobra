@@ -14,6 +14,8 @@ import {
     Activity,
     Menu,
     X,
+    ShieldAlert,
+    Crown,
     PieChart,
     Link as LinkIcon
 } from 'lucide-react';
@@ -24,7 +26,7 @@ import { useSubscription } from '../hooks/useSubscription';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();
-    const { loading: subLoading, systemMessage, systemMessageLevel } = useSubscription();
+    const { planId, loading: subLoading, systemMessage, systemMessageLevel } = useSubscription();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [userName, setUserName] = useState('Admin Master');
