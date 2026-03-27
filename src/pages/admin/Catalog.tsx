@@ -86,6 +86,42 @@ const AdminCatalog = () => {
         document.body.removeChild(link);
     };
 
+    const handleLoadSuggested = async () => {
+        if (!adminProfile?.organization_id) return;
+        
+        const suggestedMaterials = [
+            { name: "Cimento CPII", category: "Estrutural", unit: "Saco 50kg" },
+            { name: "Areia Média", category: "Agregados", unit: "m³" },
+            { name: "Brita 1", category: "Agregados", unit: "m³" },
+            { name: "Tijolo Cerâmico 8 Furos", category: "Alvenaria", unit: "Milheiro" },
+            { name: "Tijolo Baiano 9 Furos", category: "Alvenaria", unit: "Unidade" },
+            { name: "Argamassa AC-I", category: "Acabamento", unit: "Saco 20kg" },
+            { name: "Argamassa AC-III", category: "Acabamento", unit: "Saco 20kg" },
+            { name: "Vergalhão 10mm 3/8", category: "Aço", unit: "Barra 12m" },
+            { name: "Vergalhão 8mm 5/16", category: "Aço", unit: "Barra 12m" },
+            { name: "Arame Recozido nº 18", category: "Aço", unit: "kg" },
+            { name: "Prego 17x21", category: "Ferragens", unit: "kg" },
+            { name: "Táboa de Pinus 30cm", category: "Madeiras", unit: "Unidade" },
+            { name: "Sarrafo de Pinus 5cm", category: "Madeiras", unit: "Unidade" },
+            { name: "Tubo PVC 100mm Esgoto", category: "Hidráulica", unit: "Barra 6m" },
+            { name: "Tubo PVC 25mm Água", category: "Hidráulica", unit: "Barra 6m" }
+        ].map(m => ({ ...m, organization_id: adminProfile.organization_id }));
+
+        if (!window.confirm("Deseja carregar 15 materiais básicos para começar seu catálogo?")) return;
+
+        setLoading(true);
+        try {
+            const { error } = await supabase.from('materials').insert(suggestedMaterials);
+            if (error) throw error;
+            alert('Catálogo sugerido carregado com sucesso!');
+            fetchData();
+        } catch (error: any) {
+            alert('Erro ao carregar sugestões: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleCSVImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -303,6 +339,15 @@ const AdminCatalog = () => {
                     <div className="btns-row-mobile">
                         {type === 'materials' && (
                             <>
+                                {totalCount === 0 && !loading && (
+                                    <button 
+                                        className="btn-secondary btn-mini-mobile suggested-btn-pulse" 
+                                        onClick={handleLoadSuggested}
+                                        style={{ borderColor: 'var(--primary)', color: 'var(--primary)' }}
+                                    >
+                                        <Plus size={16} /> <span className="txt-mobile">Carregar Sugestões</span>
+                                    </button>
+                                )}
                                 <button className="btn-secondary btn-mini-mobile" onClick={downloadCSVTemplate} title="Modelo">
                                     <Download size={16} /> <span className="txt-mobile">Modelo</span>
                                 </button>
@@ -532,6 +577,16 @@ const AdminCatalog = () => {
                     @media (max-width: 360px) {
                         .txt-mobile { display: none; }
                     }
+                }
+
+                .suggested-btn-pulse {
+                    animation: subtle-pulse 2s infinite;
+                    box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4);
+                }
+                @keyframes subtle-pulse {
+                    0% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0.4); }
+                    70% { box-shadow: 0 0 0 10px rgba(var(--primary-rgb), 0); }
+                    100% { box-shadow: 0 0 0 0 rgba(var(--primary-rgb), 0); }
                 }
             `}</style>
         </div>
