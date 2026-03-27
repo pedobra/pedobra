@@ -259,9 +259,12 @@ const AdminSettings = ({ profile }: { profile: any }) => {
                     <div className="card-support">
                         <StandardCard title="Suporte Integrado" subtitle="Precisa de ajuda?">
                             <ul className="support-list">
-                                <li><Star size={14} color="var(--primary)" /> Central de Ajuda</li>
-                                <li><FileText size={14} color="var(--primary)" /> Documentação API</li>
-                                <li className="premium-link"><Package size={14} color="var(--primary)" /> Solicitar Personalização</li>
+                                <li onClick={() => window.open(`https://wa.me/5583996254920?text=${encodeURIComponent(`Olá, sou ${settings.company_name} (${profile?.email || ''}), preciso de ajuda no Sistema.`)}`, '_blank')}>
+                                    <Star size={14} color="var(--primary)" /> Central de Ajuda
+                                </li>
+                                <li className="premium-link" onClick={() => window.open(`https://wa.me/5583996254920?text=${encodeURIComponent(`Olá, sou ${settings.company_name} (${profile?.email || ''}), queria ver a possibilidade de personalização.`)}`, '_blank')}>
+                                    <Package size={14} color="var(--primary)" /> Solicitar Personalização
+                                </li>
                             </ul>
                         </StandardCard>
                     </div>
