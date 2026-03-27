@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import {
     LayoutDashboard,
     Users,
@@ -14,8 +14,6 @@ import {
     Activity,
     Menu,
     X,
-    ShieldAlert,
-    Crown,
     PieChart,
     Link as LinkIcon
 } from 'lucide-react';
@@ -26,8 +24,7 @@ import { useSubscription } from '../hooks/useSubscription';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
     const navigate = useNavigate();
-    const location = useLocation();
-    const { planId, isExpired, loading: subLoading, systemMessage, systemMessageLevel } = useSubscription();
+    const { loading: subLoading, systemMessage, systemMessageLevel } = useSubscription();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [userName, setUserName] = useState('Admin Master');
