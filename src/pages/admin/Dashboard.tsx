@@ -180,6 +180,9 @@ const AdminDashboard = () => {
                             </div>
                         ))}
                     </div>
+                    <div className="onboarding-footer-note">
+                        <p>💡 <strong>Dica:</strong> Não esqueça de entrar no menu <strong>Configurações</strong>, cadastrar os dados da sua empresa, sua identidade visual (logomarca) e baixar o aplicativo do PedObra App.</p>
+                    </div>
                 </div>
             )}
  
@@ -257,6 +260,15 @@ const AdminDashboard = () => {
                 .dot { width: 4px; height: 4px; background: var(--text-muted); border-radius: 50%; }
                 .item-label { font-size: 13px; font-weight: 600; }
                 .completed .item-label { text-decoration: line-through; color: var(--text-muted); }
+
+                .onboarding-footer-note { 
+                    margin-top: 8px; 
+                    padding: 12px; 
+                    background: rgba(var(--primary-rgb), 0.05); 
+                    border-radius: 8px; 
+                    border-left: 3px solid var(--primary);
+                }
+                .onboarding-footer-note p { font-size: 12px; color: var(--text-secondary); margin: 0; line-height: 1.5; }
                 
                 @media (max-width: 1024px) {
                     .onboarding-grid { grid-template-columns: repeat(2, 1fr); }
