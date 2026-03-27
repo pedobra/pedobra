@@ -218,7 +218,7 @@ const LandingPage = () => {
         { q: "Como funciona o período de teste de 7 dias?", a: "Ao se cadastrar, você ganha acesso total a todas as funcionalidades do plano Professional por 7 dias. Nenhuma cobrança é feita durante este período." },
         { q: "Posso exportar meus pedidos para PDF?", a: "Com certeza. Todos os pedidos podem ser exportados para PDF, assim você pode enviar o anexo via WhatsApp." },
         { q: "O suporte está incluso nos planos?", a: "Sim, oferecemos suporte premium via WhatsApp e e-mail para todos os nossos parceiros." },
-        { q: "Quantas obras posso gerenciar?", a: "Oferecemos planos flexíveis que atendem desde o pequeno construtor (1 obra) até grandes incorporadoras (obras ilimitadas)." },
+        { q: "Quantas obras posso gerenciar?", a: "Oferecemos planos flexíveis que atendem desde o pequeno construtor (2 obras) até grandes incorporadoras (obras ilimitadas)." },
         { q: "Posso cancelar a assinatura quando quiser?", a: "Sim, não trabalhamos com contratos de fidelidade. Você pode cancelar sua assinatura a qualquer momento diretamente pelo painel." },
     ];
 
@@ -420,8 +420,10 @@ const LandingPage = () => {
                                     price: "97,00", 
                                     period: "30 DIAS",
                                     features: [
-                                        "2 obras",
-                                        "2 dois usuários (Operários)",
+                                        "2 (Dois) Cadastros de Obras",
+                                        "1 (Um) Usuário Administrativo",
+                                        "2 (Dois) Usuários Operários",
+                                        "30 (Trinta) Materiais Cadastrados",
                                         "Suporte Via WhatsApp"
                                     ]
                                 },
