@@ -3,8 +3,12 @@ import { supabase } from '../../lib/supabase';
 import { 
     Search, 
     Mail,
-    ShieldCheck,
-    Globe
+    CreditCard,
+    TrendingUp,
+    Percent,
+    DollarSign,
+    ArrowUpRight,
+    PieChart as PieChartIcon
 } from 'lucide-react';
 import { 
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
