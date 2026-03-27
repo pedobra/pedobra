@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Building, MapPin, Globe, Save, CheckCircle2, Star, FileText, Package, Smartphone } from 'lucide-react';
+import { Building, MapPin, Globe, Save, CheckCircle2, Star, Package, Smartphone } from 'lucide-react';
 import StandardCard from '../../components/ui/StandardCard';
 import { usePWA } from '../../contexts/PWAContext';
 import { sanitizeInput, validateFileUpload, generateSecureFileName } from '../../lib/security';
