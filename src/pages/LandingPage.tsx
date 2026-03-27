@@ -246,12 +246,15 @@ const LandingPage = () => {
                         <span className="text-glow highlight-accent">PERDIDO</span>
                     </h1>
                     <p className="hero-subtitle mx-auto animate-fade">
-                        Gerencie pedidos de materiais em tempo real com um sistema simples, rápido e feito para quem está na obra.
+                        Gerencie pedidos de materiais em tempo real com um sistema simples, rápido e reduza o desperdício em poucos dias.
                     </p>
-                    <div className="hero-actions justify-center animate-fade">
-                        <button className="btn-main highlight-glow" onClick={() => setIsSignUp(true)}>
-                            Iniciar Teste Grátis <ArrowRight size={20} />
-                        </button>
+                    <div className="hero-actions-container animate-fade">
+                        <div className="hero-actions justify-center">
+                            <button className="btn-main highlight-glow" onClick={() => setIsSignUp(true)}>
+                                Iniciar Teste Grátis <ArrowRight size={20} />
+                            </button>
+                        </div>
+                        <p className="hero-trial-text">ACESSO TOTAL - GRÁTIS - 7 DIAS</p>
                     </div>
                 </div>
             </header>
@@ -864,6 +867,8 @@ const LandingPage = () => {
                 .highlight-accent { color: var(--alabaster); text-shadow: 0 0 30px rgba(234, 234, 234, 0.4); }
                 .hero-subtitle { font-size: 20px; color: #fff; max-width: 600px; margin-bottom: 48px; line-height: 1.6; }
                 .hero-actions { display: flex; gap: 16px; }
+                .hero-actions-container { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+                .hero-trial-text { font-size: 11px; font-weight: 800; color: var(--text-soft); letter-spacing: 1.5px; opacity: 0.8; }
                 .btn-main { background: var(--alabaster); color: var(--bg-onyx); padding: 18px 36px; border-radius: 12px; font-weight: 800; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; }
                 .highlight-glow { box-shadow: 0 0 50px rgba(255,255,255,0.1); }
 
