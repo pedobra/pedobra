@@ -27,6 +27,7 @@ import UserFormPage from './pages/admin/users/UserFormPage';
 import NewOrderPage from './pages/worker/NewOrderPage';
 import OrderDetailsPage from './pages/worker/OrderDetailsPage';
 import ReceivingConfirmPage from './pages/worker/ReceivingConfirmPage';
+import { SubscriptionGuard } from './components/SubscriptionGuard';
 
 function App() {
   const [session, setSession] = useState<any>(null);
@@ -139,43 +140,47 @@ function App() {
 
         <Route path="/admin/*" element={
           session && profile?.role === 'admin' && profile?.is_active !== false ? (
-            <AdminLayout>
-              <Routes>
-                <Route path="/" element={<AdminDashboard />} />
-                <Route path="users" element={<AdminUsers />} />
-                <Route path="users/novo" element={<UserFormPage />} />
-                <Route path="users/editar/:id" element={<UserFormPage />} />
-                <Route path="orders" element={<AdminOrders />} />
-                <Route path="orders/novo" element={<OrderFormPage />} />
-                <Route path="orders/editar/:id" element={<OrderFormPage />} />
-                <Route path="orders/visualizar/:id" element={<OrderViewPage />} />
-                <Route path="sites" element={<AdminObras />} />
-                <Route path="sites/novo" element={<SiteFormPage />} />
-                <Route path="sites/editar/:id" element={<SiteFormPage />} />
-                <Route path="materials" element={<AdminCatalog />} />
-                <Route path="materials/novo" element={<MaterialFormPage />} />
-                <Route path="materials/editar/:id" element={<MaterialFormPage />} />
-                <Route path="suppliers" element={<AdminCatalog />} />
-                <Route path="suppliers/novo" element={<SupplierFormPage />} />
-                <Route path="suppliers/editar/:id" element={<SupplierFormPage />} />
-                <Route path="settings" element={<AdminSettings profile={profile} />} />
-                <Route path="plans" element={<AdminPlans />} />
-                <Route path="audit-logs" element={<AdminAuditLogs />} />
-                <Route path="reports" element={<AdminReports />} />
-              </Routes>
-            </AdminLayout>
+            <SubscriptionGuard role="admin">
+              <AdminLayout>
+                <Routes>
+                  <Route path="/" element={<AdminDashboard />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="users/novo" element={<UserFormPage />} />
+                  <Route path="users/editar/:id" element={<UserFormPage />} />
+                  <Route path="orders" element={<AdminOrders />} />
+                  <Route path="orders/novo" element={<OrderFormPage />} />
+                  <Route path="orders/editar/:id" element={<OrderFormPage />} />
+                  <Route path="orders/visualizar/:id" element={<OrderViewPage />} />
+                  <Route path="sites" element={<AdminObras />} />
+                  <Route path="sites/novo" element={<SiteFormPage />} />
+                  <Route path="sites/editar/:id" element={<SiteFormPage />} />
+                  <Route path="materials" element={<AdminCatalog />} />
+                  <Route path="materials/novo" element={<MaterialFormPage />} />
+                  <Route path="materials/editar/:id" element={<MaterialFormPage />} />
+                  <Route path="suppliers" element={<AdminCatalog />} />
+                  <Route path="suppliers/novo" element={<SupplierFormPage />} />
+                  <Route path="suppliers/editar/:id" element={<SupplierFormPage />} />
+                  <Route path="settings" element={<AdminSettings profile={profile} />} />
+                  <Route path="plans" element={<AdminPlans />} />
+                  <Route path="audit-logs" element={<AdminAuditLogs />} />
+                  <Route path="reports" element={<AdminReports />} />
+                </Routes>
+              </AdminLayout>
+            </SubscriptionGuard>
           ) : <Navigate to="/" />
         } />
 
         <Route path="/dashboard/*" element={
           session && profile?.role === 'worker' && profile?.is_active !== false ? (
-            <Routes>
-                <Route path="/" element={<WorkerDashboard profile={profile} />} />
-                <Route path="receipts" element={<WorkerReceiving profile={profile} />} />
-                <Route path="receipts/:id" element={<ReceivingConfirmPage profile={profile} />} />
-                <Route path="pedir" element={<NewOrderPage profile={profile} />} />
-                <Route path="pedido/:id" element={<OrderDetailsPage />} />
-            </Routes>
+            <SubscriptionGuard role="worker">
+              <Routes>
+                  <Route path="/" element={<WorkerDashboard profile={profile} />} />
+                  <Route path="receipts" element={<WorkerReceiving profile={profile} />} />
+                  <Route path="receipts/:id" element={<ReceivingConfirmPage profile={profile} />} />
+                  <Route path="pedir" element={<NewOrderPage profile={profile} />} />
+                  <Route path="pedido/:id" element={<OrderDetailsPage />} />
+              </Routes>
+            </SubscriptionGuard>
           ) : <Navigate to="/" />
         } />
 
