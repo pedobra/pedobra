@@ -152,7 +152,7 @@ const AdminDashboard = () => {
                 </div>
             </header>
  
-            {progressValue < 100 && (
+            {!loading && progressValue < 100 && (
                 <div className="onboarding-card glass-premium animate-fade-in">
                     <div className="onboarding-header">
                         <div className="onboarding-title-group">
