@@ -123,7 +123,7 @@ const AdminDashboard = () => {
     const onboardingItems = [
         { label: 'Cadastrar primeira Obra', completed: onboardingStats.sites > 0, link: '/admin/sites/novo' },
         { label: 'Alimentar Catálogo', completed: onboardingStats.materials > 0, link: '/admin/materials' },
-        { label: 'Convidar Equipe', completed: onboardingStats.team > 1, link: '/admin/users/novo' },
+        { label: 'Cadastre um Operário da Obra', completed: onboardingStats.team > 1, link: '/admin/users/novo' },
         { label: 'Realizar Pedido de Teste', completed: onboardingStats.orders > 0, link: '/admin/orders' }
     ];
 

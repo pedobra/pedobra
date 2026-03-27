@@ -131,7 +131,7 @@ const UserFormPage = () => {
                 }
             }
 
-            navigate('/admin/users');
+            navigate('/admin');
         } catch (err: any) {
             alert(err.message);
         } finally {

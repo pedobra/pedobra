@@ -114,7 +114,7 @@ const AdminCatalog = () => {
             const { error } = await supabase.from('materials').insert(suggestedMaterials);
             if (error) throw error;
             alert('Catálogo sugerido carregado com sucesso!');
-            fetchData();
+            navigate('/admin');
         } catch (error: any) {
             alert('Erro ao carregar sugestões: ' + error.message);
         } finally {

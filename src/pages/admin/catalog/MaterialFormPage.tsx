@@ -76,7 +76,7 @@ const MaterialFormPage = () => {
                 : await supabase.from('materials').insert(formData);
 
             if (error) throw error;
-            navigate('/admin/materials');
+            navigate('/admin');
         } catch (err: any) {
             alert(err.message);
         } finally {

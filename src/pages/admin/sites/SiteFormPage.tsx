@@ -95,8 +95,9 @@ const SiteFormPage = () => {
 
         if (error) {
             alert(error.message);
+            throw error;
         } else {
-            navigate('/admin/sites');
+            navigate('/admin');
         }
         setLoading(false);
     };
