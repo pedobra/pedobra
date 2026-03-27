@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { 
-    X, Info, Building, Users, Globe, Shield, Trash2, 
-    UserPlus, UserMinus, ExternalLink, CreditCard, Send, Power, Banknote 
+    X, Info, Building, Users, Globe, Shield, Trash2, CreditCard 
 } from 'lucide-react';
-import { maskCNPJ, maskCEP, maskPhone, maskCurrency, parseCurrencyToNumber } from '../../lib/masks';
+import { maskCNPJ, maskPhone } from '../../lib/masks';
 import ModernTable from '../ui/ModernTable';
 
 interface OrganizationAdminPanelProps {
@@ -22,9 +21,9 @@ const OrganizationAdminPanel = ({ organization, onClose, onUpdate }: Organizatio
     const [planId, setPlanId] = useState(organization.plan_id || 'trial');
     const [status, setStatus] = useState(organization.subscription_status || 'trialing');
     const [message, setMessage] = useState(organization.system_message || '');
-    const [messageLevel, setMessageLevel] = useState(organization.system_message_level || 'info');
-    const [customDays, setCustomDays] = useState(30);
-    const [customPrice, setCustomPrice] = useState(organization.custom_plan_price || 0);
+    const messageLevel = organization.system_message_level || 'info';
+    const customDays = 30;
+    const [customPrice] = useState(organization.custom_plan_price || 0);
 
     // Detail State
     const [orgUsers, setOrgUsers] = useState<any[]>([]);
