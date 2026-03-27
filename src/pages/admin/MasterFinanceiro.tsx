@@ -16,8 +16,7 @@ import {
 } from 'recharts';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
-import OrganizationManageModal from '../../components/modals/OrganizationManageModal';
-import OrganizationDetailModal from '../../components/modals/OrganizationDetailModal';
+import OrganizationAdminPanel from '../../components/admin/OrganizationAdminPanel';
 
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444'];
 
@@ -34,8 +33,7 @@ const MasterFinanceiro = () => {
     const [activeTab, setActiveTab] = useState<'audit' | 'webhooks' | null>(null);
     const [auditLogs, setAuditLogs] = useState<any[]>([]);
     const [webhookLogs, setWebhookLogs] = useState<any[]>([]);
-    const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
-    const [detailOrg, setDetailOrg] = useState<any | null>(null);
+    const [expandedId, setExpandedId] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedMonth, setSelectedMonth] = useState<string>('all');
 
@@ -314,7 +312,7 @@ const MasterFinanceiro = () => {
                         style={{ height: '32px', padding: '0 12px', fontSize: '12px' }}
                         onClick={(e) => {
                             e.stopPropagation();
-                            setSelectedOrg(org);
+                            setExpandedId(expandedId === org.id ? null : org.id);
                         }}
                     >
                         Gerenciar
@@ -324,7 +322,7 @@ const MasterFinanceiro = () => {
                         style={{ height: '32px', width: '32px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         onClick={(e) => {
                             e.stopPropagation();
-                            setDetailOrg(org);
+                            setExpandedId(expandedId === org.id ? null : org.id);
                         }}
                     >
                         <Search size={14} />
@@ -333,6 +331,14 @@ const MasterFinanceiro = () => {
             )
         }
     ];
+
+    const renderSubRow = (org: any) => (
+        <OrganizationAdminPanel 
+            organization={org} 
+            onClose={() => setExpandedId(null)}
+            onUpdate={fetchData}
+        />
+    );
 
     return (
         <div className="financeiro-master animate-fade">
@@ -587,26 +593,14 @@ const MasterFinanceiro = () => {
                         columns={columns} 
                         data={filteredOrganizations} 
                         loading={loading}
-                        onRowClick={(org) => setDetailOrg(org)}
+                        expandedId={expandedId}
+                        renderSubRow={renderSubRow}
+                        onRowClick={(org: any) => setExpandedId(expandedId === org.id ? null : org.id)}
                     />
                 </StandardCard>
             )}
 
-            {selectedOrg && (
-                <OrganizationManageModal 
-                    organization={selectedOrg} 
-                    onClose={() => setSelectedOrg(null)} 
-                    onUpdate={fetchData}
-                />
-            )}
 
-            {detailOrg && (
-                <OrganizationDetailModal 
-                    organization={detailOrg} 
-                    onClose={() => setDetailOrg(null)} 
-                    onUpdate={fetchData}
-                />
-            )}
 
             {activeTab === 'audit' && (
                 <StandardCard title="Auditoria de Pagamentos" subtitle="Log cumulativo de ativações automáticas via Gateways.">

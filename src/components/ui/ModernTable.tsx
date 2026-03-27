@@ -250,6 +250,12 @@ function ModernTable<T>({
                 
                 .modern-table-wrapper::-webkit-scrollbar { width: 8px; height: 8px; }
                 .modern-table-wrapper::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 4px; }
+
+                @keyframes slide-down {
+                    from { opacity: 0; transform: translateY(-10px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-slide-down { animation: slide-down 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
             `}</style>
         </div>
     );
