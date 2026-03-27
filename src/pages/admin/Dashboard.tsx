@@ -13,18 +13,35 @@ const AdminDashboard = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState<string | null>(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [onboardingStats, setOnboardingStats] = useState({ sites: 0, materials: 0, team: 0, orders: 0 });
 
     const fetchData = async () => {
         setLoading(true);
         try {
-            const { data, error } = await supabase
-                .from('orders')
-                .select('*, sites(name), profiles(name)')
-                .lte('created_at', new Date().toISOString()) // Cache-buster dinâmico que o Postgre entende perfeitamente
-                .order('created_at', { ascending: false });
+            // Get user profile first to get organization_id
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) return;
+            
+            const { data: profile } = await supabase.from('profiles').select('organization_id').eq('id', user.id).single();
+            if (!profile) return;
 
-            if (error) throw error;
-            setOrders(data || []);
+            const orgId = profile.organization_id;
+
+            // Fetch everything in parallel
+            const [ordersRes, sitesRes, materialsRes, teamRes] = await Promise.all([
+                supabase.from('orders').select('*, sites(name), profiles(name)').eq('organization_id', orgId).order('created_at', { ascending: false }),
+                supabase.from('sites').select('id', { count: 'exact', head: true }).eq('organization_id', orgId),
+                supabase.from('materials').select('id', { count: 'exact', head: true }).eq('organization_id', orgId),
+                supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('organization_id', orgId)
+            ]);
+
+            setOrders(ordersRes.data || []);
+            setOnboardingStats({
+                orders: ordersRes.data?.length || 0,
+                sites: sitesRes.count || 0,
+                materials: materialsRes.count || 0,
+                team: teamRes.count || 0
+            });
         } catch (err) {
             console.error(err);
         } finally {
@@ -103,6 +120,15 @@ const AdminDashboard = () => {
         }
     ];
 
+    const onboardingItems = [
+        { label: 'Cadastrar primeira Obra', completed: onboardingStats.sites > 0, link: '/admin/sites/novo' },
+        { label: 'Alimentar Catálogo', completed: onboardingStats.materials > 0, link: '/admin/materials' },
+        { label: 'Convidar Equipe', completed: onboardingStats.team > 1, link: '/admin/users/novo' },
+        { label: 'Realizar Pedido de Teste', completed: onboardingStats.orders > 0, link: '/admin/orders' }
+    ];
+
+    const progressValue = Math.round((onboardingItems.filter(i => i.completed).length / onboardingItems.length) * 100);
+
     return (
         <div className="dashboard-container animate-fade">
             <header className="dashboard-header">
@@ -125,7 +151,38 @@ const AdminDashboard = () => {
                     </button>
                 </div>
             </header>
-
+ 
+            {progressValue < 100 && (
+                <div className="onboarding-card glass-premium animate-fade-in">
+                    <div className="onboarding-header">
+                        <div className="onboarding-title-group">
+                            <h3 className="onboarding-title">🎯 Seus Primeiros Passos</h3>
+                            <p className="onboarding-subtitle">Complete estas tarefas para dominar o PedObra.</p>
+                        </div>
+                        <div className="onboarding-progress-container">
+                            <div className="progress-text">{progressValue}% Concluído</div>
+                            <div className="progress-bar-bg">
+                                <div className="progress-bar-fill" style={{ width: `${progressValue}%` }}></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="onboarding-grid">
+                        {onboardingItems.map((item, idx) => (
+                            <div 
+                                key={idx} 
+                                className={`onboarding-item ${item.completed ? 'completed' : ''}`}
+                                onClick={() => !item.completed && navigate(item.link)}
+                            >
+                                <div className="check-orb">
+                                    {item.completed ? <CheckCircle size={14} /> : <div className="dot" />}
+                                </div>
+                                <span className="item-label">{item.label}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+ 
             <div className="stats-layout">
                 {statCards.map(card => (
                     <div 
@@ -164,6 +221,52 @@ const AdminDashboard = () => {
 
             <style>{`
                 .dashboard-container { display: flex; flex-direction: column; gap: 32px; }
+                .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+
+                /* Onboarding Card */
+                .onboarding-card { 
+                    padding: 24px; border: 1px solid var(--primary); 
+                    border-radius: 16px; margin-bottom: 8px;
+                    display: flex; flex-direction: column; gap: 24px;
+                    background: rgba(var(--primary-rgb), 0.02);
+                }
+                .onboarding-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+                .onboarding-title { font-size: 18px; font-weight: 800; margin: 0; }
+                .onboarding-subtitle { font-size: 13px; color: var(--text-muted); margin: 4px 0 0 0; }
+                
+                .onboarding-progress-container { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; min-width: 150px; }
+                .progress-text { font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; }
+                .progress-bar-bg { width: 100%; height: 6px; background: var(--bg-dark); border-radius: 100px; overflow: hidden; border: 1px solid var(--border); }
+                .progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+                
+                .onboarding-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+                .onboarding-item { 
+                    background: var(--bg-dark); border: 1px solid var(--border); border-radius: 12px; 
+                    padding: 16px; display: flex; align-items: center; gap: 12px; cursor: pointer;
+                    transition: 0.2s;
+                }
+                .onboarding-item:hover:not(.completed) { border-color: var(--primary); transform: translateY(-2px); }
+                .onboarding-item.completed { opacity: 0.7; cursor: default; background: rgba(255, 255, 255, 0.02); border-color: var(--border); }
+                
+                .check-orb { 
+                    width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--border); 
+                    display: flex; align-items: center; justify-content: center; color: var(--primary);
+                    flex-shrink: 0;
+                }
+                .completed .check-orb { background: var(--primary); color: var(--bg-dark); border-color: var(--primary); }
+                .dot { width: 4px; height: 4px; background: var(--text-muted); border-radius: 50%; }
+                .item-label { font-size: 13px; font-weight: 600; }
+                .completed .item-label { text-decoration: line-through; color: var(--text-muted); }
+                
+                @media (max-width: 1024px) {
+                    .onboarding-grid { grid-template-columns: repeat(2, 1fr); }
+                }
+                @media (max-width: 640px) {
+                    .onboarding-header { flex-direction: column; align-items: stretch; }
+                    .onboarding-progress-container { align-items: flex-start; }
+                    .onboarding-grid { grid-template-columns: 1fr; }
+                }
+
                 .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
                 
                 .header-actions { display: flex; align-items: center; gap: 12px; }
