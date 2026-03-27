@@ -189,6 +189,20 @@ const MasterFinanceiro = () => {
         return { ...stats, gatewayFee, net, chartData, monthlySeries };
     }, [organizations, config, auditLogs]);
 
+    const activationDates = useMemo(() => {
+        const map: Record<string, string> = {};
+        // Find earliest payment for each org
+        auditLogs.forEach(log => {
+            const orgId = log.organization_id;
+            if (orgId && log.action === 'payment_processed') {
+                if (!map[orgId] || new Date(log.created_at) < new Date(map[orgId])) {
+                    map[orgId] = log.created_at;
+                }
+            }
+        });
+        return map;
+    }, [auditLogs]);
+
     const filteredOrganizations = useMemo(() => {
         return organizations.filter(org => {
             const matchesSearch = 
@@ -197,24 +211,27 @@ const MasterFinanceiro = () => {
                 org.owner_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 org.id?.toLowerCase().includes(searchTerm.toLowerCase());
 
-            const orgDate = new Date(org.created_at);
-            const matchesMonth = selectedMonth === 'all' || 
-                `${orgDate.getFullYear()}-${String(orgDate.getMonth() + 1).padStart(2, '0')}` === selectedMonth;
+            const activationDate = activationDates[org.id];
+            const displayDate = activationDate ? new Date(activationDate) : null;
+            
+            const matchesMonth = selectedMonth === 'all' || (
+                displayDate && `${displayDate.getFullYear()}-${String(displayDate.getMonth() + 1).padStart(2, '0')}` === selectedMonth
+            );
 
             const matchesPlan = !selectedPlan || (org.plan_id || 'free').toLowerCase() === selectedPlan;
 
             return matchesSearch && matchesMonth && matchesPlan;
         });
-    }, [organizations, searchTerm, selectedMonth, selectedPlan]);
+    }, [organizations, searchTerm, selectedMonth, selectedPlan, activationDates]);
 
     const months = useMemo(() => {
         const m = new Set<string>();
-        organizations.forEach(org => {
-            const d = new Date(org.created_at);
+        Object.values(activationDates).forEach(dateStr => {
+            const d = new Date(dateStr);
             m.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
         });
         return Array.from(m).sort().reverse();
-    }, [organizations]);
+    }, [activationDates]);
 
     const columns: any[] = [
         { 
@@ -230,8 +247,17 @@ const MasterFinanceiro = () => {
             align: 'left' 
         },
         { 
-            header: 'Assinado em', 
-            accessor: (org: any) => <span style={{ fontSize: '12px' }}>{new Date(org.created_at).toLocaleDateString('pt-BR')}</span>,
+            header: 'Registrado em', 
+            accessor: (org: any) => <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{new Date(org.created_at).toLocaleDateString('pt-BR')}</span>,
+            align: 'center' 
+        },
+        { 
+            header: 'Ativado em', 
+            accessor: (org: any) => {
+                const date = activationDates[org.id];
+                if (!date || (org.plan_id || 'trial') === 'trial') return <span style={{ color: 'var(--text-muted)', fontSize: '11px', opacity: 0.5 }}>—</span>;
+                return <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--primary)' }}>{new Date(date).toLocaleDateString('pt-BR')}</span>;
+            },
             align: 'center' 
         },
         { 
