@@ -31,8 +31,10 @@ const AdminPlans = () => {
                     <div className="plan-body-new">
                         <span className="plan-access-title">Terá acesso:</span>
                         <ul className="features-list">
-                            <li><CheckCircle2 size={16} color="var(--primary)" /> 2 obras</li>
-                            <li><CheckCircle2 size={16} color="var(--primary)" /> 2 dois usuários (Operários)</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> 2 (Dois) Cadastros de Obras</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> 1 (Um) Usuário Administrativo</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> 2 (Dois) Usuários Operários</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> 30 (Trinta) Materiais Cadastrados</li>
                             <li><CheckCircle2 size={16} color="var(--primary)" /> Suporte Via WhatsApp</li>
                         </ul>
                     </div>

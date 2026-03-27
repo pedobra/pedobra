@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../../../lib/supabase';
+import { useSubscription } from '../../../hooks/useSubscription';
 import { Save, ArrowLeft, Box, Tags } from 'lucide-react';
 import StandardCard from '../../../components/ui/StandardCard';
 
 const MaterialFormPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { maxMaterials } = useSubscription();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -55,18 +57,31 @@ const MaterialFormPage = () => {
             // (The fetchSuggestions will handle the list, but we don't need to force custom mode unless the user wants to change it to something else)
         }
     };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
-        const { error } = id
-            ? await supabase.from('materials').update(formData).eq('id', id)
-            : await supabase.from('materials').insert(formData);
+        try {
+            if (!id && maxMaterials) {
+                const { count } = await supabase.from('materials').select('*', { count: 'exact', head: true });
+                if (count !== null && count >= maxMaterials) {
+                    alert(`Limite Atingido: Seu plano permite apenas ${maxMaterials} materiais cadastrados.`);
+                    setLoading(false);
+                    return;
+                }
+            }
 
-        if (error) alert(error.message);
-        else navigate('/admin/materials');
-        setLoading(false);
+            const { error } = id
+                ? await supabase.from('materials').update(formData).eq('id', id)
+                : await supabase.from('materials').insert(formData);
+
+            if (error) throw error;
+            navigate('/admin/materials');
+        } catch (err: any) {
+            alert(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
