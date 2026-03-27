@@ -39,7 +39,7 @@ const AdminPlans = () => {
                     <button 
                         className="btn-primary w-full" 
                         style={{ padding: '14px', fontSize: '15px', fontWeight: 700 }}
-                        onClick={() => window.open('https://www.asaas.com/c/9nwgg4nla0huulff', '_blank')}
+                        onClick={() => window.open('https://pay.cakto.com.br/3ckappu_821108', '_blank')}
                     >
                         ASSINAR AGORA
                     </button>

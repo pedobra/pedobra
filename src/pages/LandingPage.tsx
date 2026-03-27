@@ -492,7 +492,7 @@ const LandingPage = () => {
                                         if (p.isCustom) {
                                             window.open(`https://wa.me/5583996254920?text=Olá, quero saber mais sobre o Plano ${planCycle}`, '_blank');
                                         } else if (p.name === "Plano Básico") {
-                                            window.open("https://www.asaas.com/c/9nwgg4nla0huulff", "_blank");
+                                            window.open("https://pay.cakto.com.br/3ckappu_821108", "_blank");
                                         } else if (p.name === "Plano Profissional") {
                                             window.open("https://www.asaas.com/c/2ha7ofn42co4bef6", "_blank");
                                         } else {
