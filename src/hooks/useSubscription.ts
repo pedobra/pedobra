@@ -49,7 +49,7 @@ export const useSubscription = () => {
                     const limits = {
                         trial: { maxSites: 1, maxWorkers: 1, maxAdmins: 1, maxMaterials: 15 },
                         basic: { maxSites: 2, maxWorkers: 2, maxAdmins: 1, maxMaterials: 30 },
-                        pro: { maxSites: Infinity, maxWorkers: Infinity, maxAdmins: Infinity, maxMaterials: Infinity },
+                        pro: { maxSites: Infinity, maxWorkers: Infinity, maxAdmins: 3, maxMaterials: Infinity },
                         custom: { maxSites: Infinity, maxWorkers: Infinity, maxAdmins: Infinity, maxMaterials: Infinity }
                     };
 

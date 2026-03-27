@@ -436,9 +436,9 @@ const LandingPage = () => {
                                     badge: "MELHOR CUSTO BENEFÍCIO",
                                     features: [
                                         "Obras Ilimitadas",
-                                        "Usuários Ilimitados (Operários)",
-                                        "Pedidos Ilimitados",
-                                        "Cadastro de Materiais Ilimitado",
+                                        "3 (Três) Usuários Administrativos",
+                                        "Usuários Operários Ilimitados",
+                                        "Cadastros de Materiais Ilimitados",
                                         "Relatórios Interativos",
                                         "Suporte Via WhatsApp"
                                     ]

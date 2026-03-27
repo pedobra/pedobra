@@ -64,9 +64,9 @@ const AdminPlans = () => {
                         <span className="plan-access-title">Terá acesso:</span>
                         <ul className="features-list">
                             <li><CheckCircle2 size={16} color="var(--primary)" /> Obras Ilimitadas</li>
-                            <li><CheckCircle2 size={16} color="var(--primary)" /> Usuários Ilimitados (Operários)</li>
-                            <li><CheckCircle2 size={16} color="var(--primary)" /> Pedidos Ilimitados</li>
-                            <li><CheckCircle2 size={16} color="var(--primary)" /> Cadastro de Materiais Ilimitado</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> 3 (Três) Usuários Administrativos</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> Usuários Operários Ilimitados</li>
+                            <li><CheckCircle2 size={16} color="var(--primary)" /> Cadastros de Materiais Ilimitados</li>
                             <li><CheckCircle2 size={16} color="var(--primary)" /> Relatórios Interativos</li>
                             <li><CheckCircle2 size={16} color="var(--primary)" /> Suporte Via WhatsApp</li>
                         </ul>
