@@ -449,9 +449,9 @@ const LandingPage = () => {
                                     isCustom: true,
                                     features: [
                                         "Obras Ilimitadas",
-                                        "Usuários Ilimitados (Operários)",
-                                        "Pedidos Ilimitados",
-                                        "Cadastro de Materiais Ilimitado",
+                                        "Usuários Administrativos Ilimitados",
+                                        "Usuários Operários Ilimitados",
+                                        "Cadastros de Materiais Ilimitados",
                                         "Relatórios Interativos",
                                         "Suporte Via WhatsApp"
                                     ],
