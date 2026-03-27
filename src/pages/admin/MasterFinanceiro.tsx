@@ -454,7 +454,12 @@ const MasterFinanceiro = () => {
                     background: var(--bg-dark); color: var(--text-muted); font-size: 12px; font-weight: 700;
                     cursor: pointer; transition: all 0.2s;
                 }
-                .nav-tab.active { background: var(--primary); color: #000; border-color: var(--primary); }
+                .nav-tab.active { 
+                    background: var(--primary); 
+                    color: white; 
+                    border-color: var(--primary); 
+                    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+                }
                 .nav-tab:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
 
                 .btn-ghost.small { padding: 4px 8px; font-size: 10px; }
