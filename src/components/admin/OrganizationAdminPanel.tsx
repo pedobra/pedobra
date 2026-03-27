@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { 
-    X, Info, Building, Users, Globe, Shield, Trash2, CreditCard 
+    X, Info, Building, Users, Globe, Shield, CreditCard 
 } from 'lucide-react';
 import { maskCNPJ, maskPhone } from '../../lib/masks';
 import ModernTable from '../ui/ModernTable';
