@@ -20,25 +20,26 @@ const OrganizationDetailModal = ({ organization, onClose, onUpdate }: Organizati
     const [recentOrders, setRecentOrders] = useState<any[]>([]);
 
     useEffect(() => {
-        if (activeTab === 'geral') fetchRecentOrders();
+        if (activeTab === 'geral') fetchRecentPayments();
         if (activeTab === 'usuarios') fetchUsers();
         if (activeTab === 'empresa' && !companySettings) fetchCompanySettings();
     }, [activeTab]);
 
-    const fetchRecentOrders = async () => {
+    const fetchRecentPayments = async () => {
         setLoading(true);
         try {
             const { data, error } = await supabase
-                .from('orders')
-                .select('id, seq_number, status, created_at, total_amount')
+                .from('audit_logs')
+                .select('*')
                 .eq('organization_id', organization.id)
+                .eq('action', 'payment_processed')
                 .order('created_at', { ascending: false })
-                .limit(5);
+                .limit(10);
 
             if (error) throw error;
             setRecentOrders(data || []);
         } catch (err) {
-            console.error('Erro ao buscar pedidos:', err);
+            console.error('Erro ao buscar pagamentos:', err);
         } finally {
             setLoading(false);
         }
@@ -134,7 +135,18 @@ const OrganizationDetailModal = ({ organization, onClose, onUpdate }: Organizati
     };
 
     return (
-        <div className="modal-overlay animate-fade-in" style={{ zIndex: 1100, position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(8px)', padding: '20px' }}>
+        <div className="modal-overlay animate-fade-in" style={{ 
+            zIndex: 9999, 
+            position: 'fixed', 
+            top: 0, left: 0, right: 0, bottom: 0, 
+            background: 'rgba(0,0,0,0.85)', 
+            display: 'flex', 
+            alignItems: 'flex-start', 
+            justifyContent: 'center', 
+            backdropFilter: 'blur(12px)', 
+            padding: '40px 20px',
+            overflowY: 'auto'
+        }}>
             <div className="modal-container-elite animate-scale-up" style={{ width: '100%', maxWidth: '900px', height: '600px', background: 'var(--bg-card)', borderRadius: '24px', border: '1px solid var(--border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 60px rgba(0,0,0,0.6)' }}>
                 <header style={{ padding: '24px', background: 'var(--bg-dark)', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -233,29 +245,22 @@ const OrganizationDetailModal = ({ organization, onClose, onUpdate }: Organizati
                             </div>
 
                             <div className="orders-section">
-                                <h4 style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '1px' }}>Últimas Atualizações de Compras</h4>
+                                <h4 style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '20px', letterSpacing: '1px' }}>Histórico de Mensalidades</h4>
                                 <div style={{ background: 'var(--bg-dark)', border: '1px solid var(--border)', borderRadius: '16px', overflow: 'hidden' }}>
                                     <ModernTable 
                                         columns={[
-                                            { header: 'REF', accessor: (o: any) => <strong>{new Date(o.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }).replace('/', '')}-{String(o.seq_number).padStart(4, '0')}</strong> },
-                                            { header: 'Status', align: 'center', accessor: (o: any) => (
-                                                <span style={{ 
-                                                    fontSize: '11px', fontWeight: 800, textTransform: 'uppercase',
-                                                    color: o.status === 'concluido' ? 'var(--status-active)' : (o.status === 'parcial' ? '#3b82f6' : 'var(--status-pending)')
-                                                }}>
-                                                    {o.status}
-                                                </span>
-                                            )},
-                                            { header: 'Total (BRL)', align: 'center', accessor: (o: any) => <span>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(o.total_amount || 0)}</span> },
-                                            { header: 'Data', align: 'right', accessor: (o: any) => <span style={{ color: 'var(--text-muted)' }}>{new Date(o.created_at).toLocaleDateString('pt-BR')}</span> }
+                                            { header: 'Data', accessor: (o: any) => <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{new Date(o.created_at).toLocaleDateString('pt-BR')}</span> },
+                                            { header: 'Plano', align: 'center', accessor: (o: any) => <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--primary)' }}>{o.details?.plan?.toUpperCase()}</span> },
+                                            { header: 'Valor (BRL)', align: 'center', accessor: (o: any) => <span>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(o.details?.amount || 0)}</span> },
+                                            { header: 'ID Pagamento', align: 'right', accessor: (o: any) => <code style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{o.record_id?.split('_').pop() || o.id.slice(0,8)}</code> }
                                         ]}
                                         data={recentOrders || []}
                                         loading={loading}
-                                        rowHeight={40}
+                                        rowHeight={42}
                                     />
                                     {recentOrders.length === 0 && !loading && (
                                         <div style={{ textAlign: 'center', padding: '32px', color: 'var(--text-muted)', fontSize: '13px' }}>
-                                            Nenhuma compra registrada ainda.
+                                            Nenhum pagamento registrado ainda.
                                         </div>
                                     )}
                                 </div>

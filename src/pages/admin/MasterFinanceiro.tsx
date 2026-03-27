@@ -36,6 +36,8 @@ const MasterFinanceiro = () => {
     const [webhookLogs, setWebhookLogs] = useState<any[]>([]);
     const [selectedOrg, setSelectedOrg] = useState<any | null>(null);
     const [detailOrg, setDetailOrg] = useState<any | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedMonth, setSelectedMonth] = useState<string>('all');
 
     useEffect(() => {
         fetchData();
@@ -188,13 +190,31 @@ const MasterFinanceiro = () => {
     }, [organizations, config, auditLogs]);
 
     const filteredOrganizations = useMemo(() => {
-        if (!selectedPlan) return organizations;
         return organizations.filter(org => {
-            const p = (org.plan_id || 'free').toLowerCase();
-            if (selectedPlan === 'pro') return p === 'pro' || p === 'professional';
-            return p === selectedPlan;
+            const matchesSearch = 
+                org.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                org.owner_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                org.owner_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                org.id?.toLowerCase().includes(searchTerm.toLowerCase());
+
+            const orgDate = new Date(org.created_at);
+            const matchesMonth = selectedMonth === 'all' || 
+                `${orgDate.getFullYear()}-${String(orgDate.getMonth() + 1).padStart(2, '0')}` === selectedMonth;
+
+            const matchesPlan = !selectedPlan || (org.plan_id || 'free').toLowerCase() === selectedPlan;
+
+            return matchesSearch && matchesMonth && matchesPlan;
         });
-    }, [organizations, selectedPlan]);
+    }, [organizations, searchTerm, selectedMonth, selectedPlan]);
+
+    const months = useMemo(() => {
+        const m = new Set<string>();
+        organizations.forEach(org => {
+            const d = new Date(org.created_at);
+            m.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
+        });
+        return Array.from(m).sort().reverse();
+    }, [organizations]);
 
     const columns: any[] = [
         { 
@@ -210,6 +230,11 @@ const MasterFinanceiro = () => {
             align: 'left' 
         },
         { 
+            header: 'Assinado em', 
+            accessor: (org: any) => <span style={{ fontSize: '12px' }}>{new Date(org.created_at).toLocaleDateString('pt-BR')}</span>,
+            align: 'center' 
+        },
+        { 
             header: 'Plano', 
             align: 'center',
             accessor: (org: any) => (
@@ -218,7 +243,7 @@ const MasterFinanceiro = () => {
                     background: org.plan_id === 'pro' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(108, 117, 125, 0.1)',
                     color: org.plan_id === 'pro' ? 'var(--status-active)' : 'var(--text-muted)'
                 }}>
-                    {org.plan_id || 'TRIAL'}
+                    {org.plan_id?.toUpperCase() || 'TRIAL'}
                 </span>
             )
         },
@@ -499,11 +524,39 @@ const MasterFinanceiro = () => {
                     title={selectedPlan ? `Clientes: Plano ${selectedPlan.toUpperCase()}` : "Todos os Clientes (Financeiro)"}
                     subtitle="Listagem detalhada dos recebimentos por organização."
                 >
-                    {selectedPlan && (
-                        <div style={{ marginBottom: '16px' }}>
-                            <button className="btn-ghost" onClick={() => setSelectedPlan(null)}>Limpar Filtro</button>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
+                        <div style={{ position: 'relative', flex: 1, maxWidth: '400px' }}>
+                            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                            <input 
+                                type="text"
+                                placeholder="Busca inteligente (Nome, Email, ID)..."
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
+                                style={{ 
+                                    width: '100%', height: '40px', padding: '0 12px 0 40px', background: 'var(--bg-dark)', 
+                                    border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none'
+                                }}
+                            />
                         </div>
-                    )}
+                        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                            <select 
+                                value={selectedMonth}
+                                onChange={e => setSelectedMonth(e.target.value)}
+                                style={{ 
+                                    height: '40px', padding: '0 12px', background: 'var(--bg-dark)', 
+                                    border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--text-primary)', outline: 'none'
+                                }}
+                            >
+                                <option value="all">Filtrar por Mês (Todos)</option>
+                                {months.map((m: string) => (
+                                    <option key={m} value={m}>{new Date(m + '-01T12:00:00').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}</option>
+                                ))}
+                            </select>
+                            {selectedPlan && (
+                                <button className="btn-ghost" onClick={() => setSelectedPlan(null)}>Limpar Plano</button>
+                            )}
+                        </div>
+                    </div>
                     <ModernTable 
                         columns={columns} 
                         data={filteredOrganizations} 
@@ -619,7 +672,7 @@ const MasterFinanceiro = () => {
                 }
                 .nav-tab.active { 
                     background: var(--primary); 
-                    color: white; 
+                    color: #ffffff !important; 
                     border-color: var(--primary); 
                     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
                 }

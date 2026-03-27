@@ -46,7 +46,18 @@ const OrganizationManageModal = ({ organization, onClose, onUpdate }: Organizati
     };
 
     return (
-        <div className="modal-overlay animate-fade-in" style={{ zIndex: 1000, position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
+        <div className="modal-overlay animate-fade-in" style={{ 
+            zIndex: 9999, 
+            position: 'fixed', 
+            top: 0, left: 0, right: 0, bottom: 0, 
+            background: 'rgba(0,0,0,0.8)', 
+            display: 'flex', 
+            alignItems: 'flex-start', 
+            justifyContent: 'center', 
+            backdropFilter: 'blur(8px)',
+            padding: '60px 20px',
+            overflowY: 'auto'
+        }}>
             <div className="modal-content-saas animate-scale-up" style={{ width: '95%', maxWidth: '500px', background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border)', overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)', margin: '20px' }}>
                 <header style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-dark)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
