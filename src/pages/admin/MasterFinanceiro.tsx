@@ -27,6 +27,9 @@ const MasterFinanceiro = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<'audit' | 'webhooks' | null>(null);
+    const [auditLogs, setAuditLogs] = useState<any[]>([]);
+    const [webhookLogs, setWebhookLogs] = useState<any[]>([]);
 
     useEffect(() => {
         fetchData();
@@ -53,6 +56,29 @@ const MasterFinanceiro = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const fetchAuditLogs = async () => {
+        setLoading(true);
+        const { data } = await supabase
+            .from('audit_logs')
+            .select('*')
+            .eq('action', 'payment_processed')
+            .order('created_at', { ascending: false })
+            .limit(50);
+        if (data) setAuditLogs(data);
+        setLoading(false);
+    };
+
+    const fetchWebhookLogs = async () => {
+        setLoading(true);
+        const { data } = await supabase
+            .from('webhook_logs')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(50);
+        if (data) setWebhookLogs(data);
+        setLoading(false);
     };
 
     const handleSaveConfig = async () => {
@@ -307,21 +333,93 @@ const MasterFinanceiro = () => {
             </div>
 
             {/* DRILL DOWN TABLE */}
-            <StandardCard 
-                title={selectedPlan ? `Clientes: Plano ${selectedPlan.toUpperCase()}` : "Todos os Clientes (Financeiro)"}
-                subtitle="Listagem detalhada dos recebimentos por organização."
-            >
-                {selectedPlan && (
-                    <div style={{ marginBottom: '16px' }}>
-                        <button className="btn-ghost" onClick={() => setSelectedPlan(null)}>Limpar Filtro</button>
-                    </div>
-                )}
-                <ModernTable 
-                    columns={columns} 
-                    data={filteredOrganizations} 
-                    loading={loading}
-                />
-            </StandardCard>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                <button 
+                    className={`nav-tab ${!activeTab ? 'active' : ''}`} 
+                    onClick={() => setActiveTab(null)}
+                >
+                    Clientes e Receita
+                </button>
+                <button 
+                    className={`nav-tab ${activeTab === 'audit' ? 'active' : ''}`} 
+                    onClick={() => { setActiveTab('audit'); fetchAuditLogs(); }}
+                >
+                    Logs de Pagamento
+                </button>
+                <button 
+                    className={`nav-tab ${activeTab === 'webhooks' ? 'active' : ''}`} 
+                    onClick={() => { setActiveTab('webhooks'); fetchWebhookLogs(); }}
+                >
+                    Webhooks Brutos
+                </button>
+            </div>
+
+            {!activeTab && (
+                <StandardCard 
+                    title={selectedPlan ? `Clientes: Plano ${selectedPlan.toUpperCase()}` : "Todos os Clientes (Financeiro)"}
+                    subtitle="Listagem detalhada dos recebimentos por organização."
+                >
+                    {selectedPlan && (
+                        <div style={{ marginBottom: '16px' }}>
+                            <button className="btn-ghost" onClick={() => setSelectedPlan(null)}>Limpar Filtro</button>
+                        </div>
+                    )}
+                    <ModernTable 
+                        columns={columns} 
+                        data={filteredOrganizations} 
+                        loading={loading}
+                    />
+                </StandardCard>
+            )}
+
+            {activeTab === 'audit' && (
+                <StandardCard title="Auditoria de Pagamentos" subtitle="Log cumulativo de ativações automáticas via Gateways.">
+                    <ModernTable 
+                        columns={[
+                            { header: 'Data', accessor: (log: any) => new Date(log.created_at).toLocaleString('pt-BR'), align: 'center' },
+                            { header: 'E-mail', accessor: (log: any) => log.details?.email, align: 'center' },
+                            { header: 'Plano', accessor: (log: any) => (log.details?.plan || '').toUpperCase(), align: 'center' },
+                            { header: 'Gateway', accessor: (log: any) => (log.details?.gateway || 'N/A').toUpperCase(), align: 'center' },
+                            { header: 'ID Transação', accessor: (log: any) => <code style={{ fontSize: '10px' }}>{log.record_id}</code>, align: 'center' }
+                        ]} 
+                        data={auditLogs} 
+                        loading={loading}
+                    />
+                </StandardCard>
+            )}
+
+            {activeTab === 'webhooks' && (
+                <StandardCard title="Webhooks Recebidos" subtitle="Logs brutos das comunicações entre Gateways e PedObra.">
+                    <ModernTable 
+                        columns={[
+                            { header: 'Data', accessor: (log: any) => new Date(log.created_at).toLocaleString('pt-BR'), align: 'center' },
+                            { header: 'Gateway', accessor: (log: any) => (log.gateway || 'N/A').toUpperCase(), align: 'center' },
+                            { 
+                                header: 'Status', 
+                                accessor: (log: any) => (
+                                    <span style={{ 
+                                        color: log.status === 'success' ? '#10b981' : '#ef4444',
+                                        fontWeight: 700
+                                    }}>{(log.status || 'ERROR').toUpperCase()}</span>
+                                ),
+                                align: 'center' 
+                            },
+                            { 
+                                header: 'Payload', 
+                                accessor: (log: any) => (
+                                    <button 
+                                        className="btn-ghost small" 
+                                        onClick={() => { console.log(log.payload); alert('Ver log no console do navegador (F12)'); }}
+                                    >Visualizar JSON</button>
+                                ), 
+                                align: 'center' 
+                            }
+                        ]} 
+                        data={webhookLogs} 
+                        loading={loading}
+                    />
+                </StandardCard>
+            )}
 
             <style>{`
                 .finance-grid { display: grid; grid-template-columns: 350px 1fr; gap: 24px; }
@@ -350,6 +448,16 @@ const MasterFinanceiro = () => {
                 .summary-info label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
                 .summary-info strong { font-size: 24px; font-weight: 800; display: block; margin-top: 4px; }
                 .trend-icon { position: absolute; top: 16px; right: 16px; color: var(--status-active); opacity: 0.6; }
+
+                .nav-tab {
+                    padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px;
+                    background: var(--bg-dark); color: var(--text-muted); font-size: 12px; font-weight: 700;
+                    cursor: pointer; transition: all 0.2s;
+                }
+                .nav-tab.active { background: var(--primary); color: #000; border-color: var(--primary); }
+                .nav-tab:hover:not(.active) { border-color: var(--primary); color: var(--primary); }
+
+                .btn-ghost.small { padding: 4px 8px; font-size: 10px; }
 
                 .charts-layout { 
                     display: grid; 
