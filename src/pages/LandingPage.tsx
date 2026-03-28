@@ -555,6 +555,7 @@ const LandingPage = () => {
                             <img src="https://muegcrtspcrwesyxscgl.supabase.co/storage/v1/object/public/assets/Logo_pedobra01.png" alt="PedObra Logo" className="footer-logo-img" />
                             <p className="footer-tagline">Controle total da sua obra, sem caos e sem perda de pedidos.</p>
                             <p className="footer-email">contato@pedobraapp.com</p>
+                            <p className="footer-cnpj">CNPJ: 05.289.230/0001-36</p>
                         </div>
 
                         {/* BLOCO 2: Navegação */}
@@ -1205,6 +1206,7 @@ const LandingPage = () => {
                 .footer-logo-img:hover { transform: scale(1.05); filter: brightness(1.2); }
                 .footer-tagline { font-size: 15px; font-weight: 500; color: var(--text-soft); line-height: 1.6; max-width: 320px; }
                 .footer-email { font-size: 14px; color: var(--text-soft); margin-top: 12px; font-weight: 600; }
+                .footer-cnpj { font-size: 12px; color: var(--text-soft); margin-top: 4px; opacity: 0.8; }
                 
                 .footer-title { font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 24px; color: #fff; opacity: 0.9; }
                 .footer-links { list-style: none; padding: 0; margin: 0; }
