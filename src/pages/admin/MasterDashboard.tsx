@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '../../lib/supabase';
-import { Users, CreditCard, ShieldCheck, Globe, Search, Mail } from 'lucide-react';
+import { Users, CreditCard, ShieldCheck, Globe, Search, Mail, Phone } from 'lucide-react';
 import ModernTable from '../../components/ui/ModernTable';
 import StandardCard from '../../components/ui/StandardCard';
 import OrganizationManageModal from '../../components/modals/OrganizationManageModal';
@@ -27,7 +27,7 @@ const MasterDashboard = () => {
             // Fetch owners for these orgs to get emails
             const { data: profiles, error: profilesError } = await supabase
                 .from('profiles')
-                .select('email, organization_id, name')
+                .select('email, organization_id, name, whatsapp')
                 .eq('role', 'admin');
 
             if (profilesError) throw profilesError;
@@ -38,7 +38,8 @@ const MasterDashboard = () => {
                 return {
                     ...org,
                     owner_email: owner?.email || 'Sem e-mail',
-                    owner_name: owner?.name || 'Sem responsável'
+                    owner_name: owner?.name || 'Sem responsável',
+                    whatsapp: owner?.whatsapp || 'Sem contato'
                 };
             });
 
@@ -88,6 +89,34 @@ const MasterDashboard = () => {
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <Mail size={10} /> {org.owner_email}
                     </div>
+                </div>
+            ), 
+            align: 'left' 
+        },
+        { 
+            header: 'WhatsApp', 
+            accessor: (org: any) => (
+                <div style={{ textAlign: 'left' }}>
+                    {org.whatsapp !== 'Sem contato' ? (
+                        <a 
+                            href={`https://wa.me/${org.whatsapp.replace(/\D/g, '')}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '6px', 
+                                color: '#25D366', 
+                                textDecoration: 'none',
+                                fontWeight: 600,
+                                fontSize: '12px'
+                            }}
+                        >
+                            <Phone size={14} /> {org.whatsapp}
+                        </a>
+                    ) : (
+                        <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>---</span>
+                    )}
                 </div>
             ), 
             align: 'left' 

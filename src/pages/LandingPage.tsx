@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import ThemeToggle from '../components/ThemeToggle';
 import { detectBot } from '../lib/security';
-import { maskCPF_CNPJ } from '../lib/masks';
+import { maskCPF_CNPJ, maskPhone } from '../lib/masks';
 
 const LandingPage = () => {
     const [logoClicks, setLogoClicks] = useState(0);
@@ -25,6 +25,7 @@ const LandingPage = () => {
     const [name, setName] = useState('');
     const [companyName, setCompanyName] = useState('');
     const [cpfCnpj, setCpfCnpj] = useState('');
+    const [whatsapp, setWhatsapp] = useState('');
     const [isLogin, setIsLogin] = useState(false);
     const [isSignUp, setIsSignUp] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -78,11 +79,20 @@ const LandingPage = () => {
         const formattedEmail = email.trim().toLowerCase();
         try {
             if (showAdminModal) {
-                const { data: authData, error: authError } = await supabase.auth.signUp({ email: formattedEmail, password });
+                const { data: authData, error: authError } = await supabase.auth.signUp({ 
+                    email: formattedEmail, 
+                    password,
+                    options: {
+                        data: {
+                            full_name: name,
+                            whatsapp: whatsapp
+                        }
+                    }
+                });
                 if (authError) throw authError;
                 if (authData.user) {
                     const { error: profileError } = await supabase.from('profiles').insert({
-                        id: authData.user.id, name, email: formattedEmail, role: 'admin'
+                        id: authData.user.id, name, email: formattedEmail, role: 'admin', whatsapp
                     });
                     if (profileError) throw profileError;
                 }
@@ -90,7 +100,18 @@ const LandingPage = () => {
                 setShowAdminModal(false);
                 setIsLogin(true);
             } else if (isSignUp) {
-                const { data: authData, error: authError } = await supabase.auth.signUp({ email: formattedEmail, password });
+                const { data: authData, error: authError } = await supabase.auth.signUp({ 
+                    email: formattedEmail, 
+                    password,
+                    options: {
+                        data: {
+                            full_name: name,
+                            company_name: companyName,
+                            cpf_cnpj: cpfCnpj,
+                            whatsapp: whatsapp
+                        }
+                    }
+                });
                 if (authError) throw authError;
                 if (authData.user) {
                     let userIp = '0.0.0.0';
@@ -109,6 +130,7 @@ const LandingPage = () => {
                         email: formattedEmail, 
                         role: 'admin', 
                         cpf: cpfCnpj, 
+                        whatsapp,
                         signup_ip: userIp
                     });
                     if (initialProfileError) throw initialProfileError;
@@ -605,6 +627,12 @@ const LandingPage = () => {
                                 <div className="input-field">
                                     <label>Seu Nome</label>
                                     <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Nome completo" required autoCapitalize="words" />
+                                </div>
+                            )}
+                            {(showAdminModal || isSignUp) && (
+                                <div className="input-field">
+                                    <label>Telefone/WhatsApp</label>
+                                    <input type="text" value={whatsapp} onChange={e => setWhatsapp(maskPhone(e.target.value))} placeholder="(00) 00000-0000" required inputMode="numeric" />
                                 </div>
                             )}
                             {isSignUp && (

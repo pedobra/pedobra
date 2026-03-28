@@ -327,6 +327,9 @@ const OrganizationDetailModal = ({ organization, onClose, onUpdate }: Organizati
                                                 <div>
                                                     <div style={{ fontSize: '13px', fontWeight: 700 }}>{u.name}</div>
                                                     <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{u.email}</div>
+                                                    {u.whatsapp && (
+                                                        <div style={{ fontSize: '10px', color: '#25D366', fontWeight: 600 }}>{u.whatsapp}</div>
+                                                    )}
                                                 </div>
                                             </div>
                                         )},
